@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Listings</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="style.css">
+    <script src="coshin-api.js"></script>
+    <style>
+        .my-listings-container {
+            max-width: 800px;
+            margin: 40px auto;
+            padding: 20px;
+        }
+
+        .my-listings-container h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 30px;
+        }
+
+        .upload-form {
+            background-color: #f9f9f9;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-group label {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 14px;
+            font-family: inherit;
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #0EA5E9;
+            box-shadow: 0 0 5px rgba(14, 165, 233, 0.3);
+        }
+
+        .image-upload-group {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .image-upload-input {
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .preview-images {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+            flex-wrap: wrap;
+        }
+
+        .preview-images img {
+            max-width: 100px;
+            height: 100px;
+            object-fit: cover;
+            border-radius: 5px;
+            border: 2px solid #0EA5E9;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .submit-btn {
+            background-color: #0EA5E9;
+            color: white;
+            padding: 15px 40px;
+            border: none;
+            border-radius: 22px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 100%;
+            margin-top: 20px;
+        }
+
+        .submit-btn:hover {
+            background: linear-gradient(-75deg, #e43905, #FF6B6B, #241f22, #059a34);
+            animation: gradient 5s ease infinite;
+            background-size: 400% 400%;
+            box-shadow: 0 4px 12px rgba(14, 165, 233, 0.4);
+        }
+
+        .submit-btn:active {
+            transform: scale(0.98);
+        }
+
+        .back-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: #0EA5E9;
+            text-decoration: none;
+            font-weight: 600;
+            margin-bottom: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .back-btn:hover {
+            gap: 12px;
+        }
+
+        .success-message {
+            display: none;
+            background-color: #4CAF50;
+            color: white;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        @media (max-width: 768px) {
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+
+            .my-listings-container {
+                margin: 20px;
+                padding: 15px;
+            }
+
+            .upload-form {
+                padding: 20px;
+            }
+        }
+    </style>
+    <!-- Firebase Libraries -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.2/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.2/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.2/firebase-database-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.2/firebase-storage-compat.js"></script>
+    <!-- Your Firebase Config -->
+    <script src="firebase-config.js"></script>
+</head>
+<body style="background-color: white;">
+    <div class="my-listings-container">
+        <a href="coshinmarket.html" class="back-btn">
+            <i class="fa-solid fa-arrow-left"></i> Back to Coshin Market
+        </a>
+
+        <h1><i class="fa-solid fa-box"></i> Upload Your Product</h1>
+
+        <div class="success-message" id="successMessage">
+            Product uploaded successfully! Get back to browsing.
+        </div>
+
+        <form class="upload-form" id="productForm">
+            <div class="form-group">
+                <label for="productName">Product Name *</label>
+                <input type="text" id="productName" name="productName" required placeholder="Enter product name">
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="price">Price (ZWL) *</label>
+                    <input type="number" id="price" name="price" min="0" step="0.01" required placeholder="0.00">
+                </div>
+
+                <div class="form-group">
+                    <label for="category">Category *</label>
+                    <select id="category" name="category" required>
+                        <option value="">Select a category</option>
+                        <option value="electronics">Electronics</option>
+                        <option value="clothing">Clothing</option>
+                        <option value="furniture">Furniture</option>
+                        <option value="books">Books</option>
+                        <option value="sports">Sports & Outdoors</option>
+                        <option value="home">Home & Garden</option>
+                        <option value="other">Other</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="description">Description *</label>
+                <textarea id="description" name="description" required placeholder="Describe your product in detail..."></textarea>
+            </div>
+
+            <div class="form-group">
+                <label for="condition">Condition *</label>
+                <select id="condition" name="condition" required>
+                    <option value="">Select condition</option>
+                    <option value="new">New</option>
+                    <option value="like-new">Like New</option>
+                    <option value="good">Good</option>
+                    <option value="fair">Fair</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="productImages">Product Images (Upload up to 5 images) *</label>
+                <input type="file" id="productImages" name="productImages" multiple accept="image/*" capture="environment" required>
+                <div class="preview-images" id="previewImages"></div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="location">Location *</label>
+                    <input type="text" id="location" name="location" required placeholder="Where are you located?">
+                </div>
+
+                <div class="form-group">
+                    <label for="contact">Contact Number *</label>
+                    <input type="tel" id="contact" name="contact" required placeholder="Your phone number">
+                </div>
+            </div>
+
+            <button type="submit" class="submit-btn">
+                <i class="fa-solid fa-upload"></i> Upload Product
+            </button>
+        </form>
+    </div>
+
+    <script>
+        // Handle image preview
+        const imageInput = document.getElementById('productImages');
+        const previewContainer = document.getElementById('previewImages');
+
+        imageInput.addEventListener('change', (e) => {
+            previewContainer.innerHTML = '';
+            const files = Array.from(e.target.files).slice(0, 5);
+
+            files.forEach(file => {
+                if (file.type.startsWith('image/')) {
+                    const reader = new FileReader();
+                    reader.onload = (event) => {
+                        const img = document.createElement('img');
+                        img.src = event.target.result;
+                        previewContainer.appendChild(img);
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+        });
+
+        // Handle form submission
+        const productForm = document.getElementById('productForm');
+        const successMessage = document.getElementById('successMessage');
+
+        productForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+
+            // Collect form data
+            const formData = {
+                productName: document.getElementById('productName').value,
+                price: document.getElementById('price').value,
+                category: document.getElementById('category').value,
+                description: document.getElementById('description').value,
+                condition: document.getElementById('condition').value,
+                location: document.getElementById('location').value,
+                contact: document.getElementById('contact').value,
+                uploadDate: new Date().toLocaleDateString()
+            };
+
+            // Save to localStorage
+            let products = JSON.parse(localStorage.getItem('userProducts')) || [];
+            products.push(formData);
+            localStorage.setItem('userProducts', JSON.stringify(products));
+
+            // Show success message
+            successMessage.style.display = 'block';
+            productForm.reset();
+            previewContainer.innerHTML = '';
+
+            // Redirect after 2 seconds
+            setTimeout(() => {
+                window.location.href = 'coshinmarket.html';
+            }, 2000);
+            updateActiveFooterLink();
+        });
+    </script>
+
+    <script>
+        function updateActiveFooterLink() {
+            document.querySelectorAll('.footer-link').forEach(link => link.classList.remove('active'));
+        }
+    </script>
+
+    <script src="title-fixer.js"></script>
+
+</body>
+</html>

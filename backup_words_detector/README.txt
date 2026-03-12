@@ -1,0 +1,1 @@
+Backup of all files related to words detector before deletion.

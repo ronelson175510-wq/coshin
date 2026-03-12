@@ -1,0 +1,884 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Voice Search Engine - Coshin</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 40px;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        /* Search Box */
+        .search-box {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            margin-bottom: 30px;
+        }
+
+        .voice-controls {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .voice-btn {
+            flex: 1;
+            min-width: 140px;
+            padding: 15px 25px;
+            font-size: 1.1rem;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .voice-btn.start {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .voice-btn.start:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .voice-btn.start:active {
+            transform: translateY(0);
+        }
+
+        .voice-btn.stop {
+            background: #ff6b6b;
+            color: white;
+        }
+
+        .voice-btn.stop:hover {
+            background: #ff5252;
+        }
+
+        .voice-btn.speak {
+            background: #4ecdc4;
+            color: white;
+        }
+
+        .voice-btn.speak:hover {
+            background: #45b7aa;
+        }
+
+        .voice-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        /* Status Indicator */
+        .status-indicator {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 15px;
+            background: #f0f0f0;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            font-weight: 500;
+        }
+
+        .status-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #ccc;
+            animation: pulse 2s infinite;
+        }
+
+        .status-dot.listening {
+            background: #667eea;
+        }
+
+        .status-dot.processing {
+            background: #ffd93d;
+        }
+
+        .status-dot.idle {
+            background: #ccc;
+            animation: none;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        /* Search Input */
+        .search-input-group {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .search-input-group input {
+            flex: 1;
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+
+        .search-input-group input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .search-input-group button {
+            padding: 12px 25px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: background 0.3s;
+        }
+
+        .search-input-group button:hover {
+            background: #764ba2;
+        }
+
+        /* Filters */
+        .filters {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+        }
+
+        .filter-btn {
+            padding: 8px 16px;
+            border: 2px solid #e0e0e0;
+            background: white;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 500;
+            font-size: 0.9rem;
+        }
+
+        .filter-btn:hover {
+            border-color: #667eea;
+            color: #667eea;
+        }
+
+        .filter-btn.active {
+            background: #667eea;
+            color: white;
+            border-color: #667eea;
+        }
+
+        /* Autocomplete Suggestions */
+        .suggestions-box {
+            position: relative;
+            margin-bottom: 20px;
+        }
+
+        .suggestions-list {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: white;
+            border: 1px solid #e0e0e0;
+            border-radius: 10px;
+            max-height: 250px;
+            overflow-y: auto;
+            z-index: 10;
+            display: none;
+        }
+
+        .suggestions-list.show {
+            display: block;
+        }
+
+        .suggestion-item {
+            padding: 12px 15px;
+            cursor: pointer;
+            transition: background 0.2s;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .suggestion-item:last-child {
+            border-bottom: none;
+        }
+
+        .suggestion-item:hover {
+            background: #f5f5f5;
+        }
+
+        /* Search History */
+        .history-section {
+            margin-bottom: 20px;
+        }
+
+        .history-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .history-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .history-item {
+            padding: 8px 12px;
+            background: #f0f0f0;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .history-item:hover {
+            background: #e0e0e0;
+        }
+
+        .history-item .remove {
+            cursor: pointer;
+            color: #999;
+            font-weight: bold;
+        }
+
+        .history-item .remove:hover {
+            color: #ff6b6b;
+        }
+
+        /* Results */
+        .results-section {
+            margin-top: 30px;
+        }
+
+        .results-container {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .result-item {
+            padding: 20px;
+            border-bottom: 1px solid #e0e0e0;
+            transition: background 0.2s;
+        }
+
+        .result-item:last-child {
+            border-bottom: none;
+        }
+
+        .result-item:hover {
+            background: #f9f9f9;
+        }
+
+        .result-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        .result-category {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: white;
+        }
+
+        .result-category.product {
+            background: #667eea;
+        }
+
+        .result-category.user {
+            background: #ff6b6b;
+        }
+
+        .result-category.post {
+            background: #4ecdc4;
+        }
+
+        .result-category.other {
+            background: #95a5a6;
+        }
+
+        .result-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 5px;
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+
+        .result-title:hover {
+            color: #667eea;
+            text-decoration: underline;
+        }
+
+        .result-description {
+            color: #666;
+            line-height: 1.6;
+            margin-bottom: 10px;
+        }
+
+        .result-meta {
+            font-size: 0.85rem;
+            color: #999;
+            display: flex;
+            gap: 20px;
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 40px;
+            color: #999;
+        }
+
+        .empty-state i {
+            font-size: 3rem;
+            margin-bottom: 15px;
+            opacity: 0.5;
+        }
+
+        .empty-state h2 {
+            color: #666;
+            margin-bottom: 10px;
+        }
+
+        /* Loading State */
+        .loading {
+            text-align: center;
+            padding: 30px;
+        }
+
+        .spinner {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 15px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Mobile Responsive */
+        @media (max-width: 600px) {
+            .header h1 {
+                font-size: 1.8rem;
+            }
+
+            .voice-controls {
+                flex-direction: column;
+            }
+
+            .voice-btn {
+                width: 100%;
+            }
+
+            .search-box {
+                padding: 20px;
+            }
+
+            .results-container {
+                padding: 20px;
+            }
+
+            .result-item {
+                padding: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1><i class="fas fa-microphone-alt"></i> Voice Search</h1>
+            <p>Search Coshin using your voice - Smart, Fast, and Easy</p>
+        </div>
+
+        <div class="search-box">
+            <!-- Voice Controls -->
+            <div class="voice-controls">
+                <button class="voice-btn start" id="startBtn">
+                    <i class="fas fa-microphone"></i> Start Listening
+                </button>
+                <button class="voice-btn stop" id="stopBtn" disabled style="display:none;">
+                    <i class="fas fa-stop"></i> Stop Listening
+                </button>
+                <button class="voice-btn speak" id="speakResultsBtn" disabled>
+                    <i class="fas fa-volume-up"></i> Speak Results
+                </button>
+            </div>
+
+            <!-- Status Indicator -->
+            <div class="status-indicator">
+                <div class="status-dot idle" id="statusDot"></div>
+                <span id="statusText">Ready to listen</span>
+            </div>
+
+            <!-- Manual Search Input -->
+            <div class="search-input-group">
+                <input type="text" id="searchInput" placeholder="Or type your search query...">
+                <button id="searchBtn"><i class="fas fa-search"></i> Search</button>
+            </div>
+
+            <!-- Category Filters -->
+            <div class="filters">
+                <button class="filter-btn active" data-filter="all">All Results</button>
+                <button class="filter-btn" data-filter="products">Products</button>
+                <button class="filter-btn" data-filter="users">Users</button>
+                <button class="filter-btn" data-filter="posts">Posts</button>
+            </div>
+
+            <!-- Search History -->
+            <div class="history-section" id="historySection" style="display:none;">
+                <div class="history-header">
+                    <span>Recent Searches</span>
+                    <a href="#" id="clearHistoryBtn" style="color: #999; text-decoration: none; font-size: 0.9rem;">Clear</a>
+                </div>
+                <div class="history-list" id="historyList"></div>
+            </div>
+        </div>
+
+        <!-- Results Section -->
+        <div class="results-section" id="resultsSection" style="display:none;">
+            <div class="results-container" id="resultsContainer"></div>
+        </div>
+    </div>
+
+    <script src="coshin-api.js"></script>
+    <script>
+        // AI Voice Search Engine with all features
+        class VoiceSearchEngine {
+            constructor() {
+                this.recognition = this.initSpeechRecognition();
+                this.synthesis = window.speechSynthesis;
+                this.currentResults = [];
+                this.currentFilter = 'all';
+                this.searchHistory = this.loadSearchHistory();
+                this.suggestions = [];
+                this.micPermissionKey = 'zim_voice_mic_permission_granted';
+                
+                this.setupEventListeners();
+                this.renderHistory();
+            }
+
+            async ensureMicrophonePermission() {
+                if (localStorage.getItem(this.micPermissionKey) === 'true') {
+                    return true;
+                }
+
+                const continuePrompt = confirm('Voice search needs microphone access. Click OK, then allow mic access in your browser prompt.');
+                if (!continuePrompt) {
+                    return false;
+                }
+
+                if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+                    // Some browsers still show mic prompt when SpeechRecognition starts.
+                    return true;
+                }
+
+                try {
+                    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                    stream.getTracks().forEach(track => track.stop());
+                    localStorage.setItem(this.micPermissionKey, 'true');
+                    return true;
+                } catch (error) {
+                    console.error('Microphone permission denied:', error);
+                    alert('Please allow microphone access to use voice search.');
+                    return false;
+                }
+            }
+
+            initSpeechRecognition() {
+                const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+                if (!SpeechRecognition) {
+                    alert('Your browser does not support Speech Recognition. Please use Chrome, Edge, or Safari.');
+                    return null;
+                }
+
+                const recognition = new SpeechRecognition();
+                recognition.continuous = false;
+                recognition.interimResults = true;
+                recognition.lang = 'en-US';
+
+                recognition.onstart = () => {
+                    localStorage.setItem(this.micPermissionKey, 'true');
+                    this.updateStatus('listening', 'Listening...');
+                };
+                
+                recognition.onresult = (event) => {
+                    let transcript = '';
+                    for (let i = event.resultIndex; i < event.results.length; i++) {
+                        transcript += event.results[i][0].transcript;
+                    }
+                    const cleanedTranscript = transcript
+                        .replace(/[.,!?;:]+/g, ' ')
+                        .replace(/\s+/g, ' ')
+                        .trim();
+                    if (event.results[event.results.length - 1].isFinal) {
+                        this.performSearch(cleanedTranscript);
+                    }
+                };
+
+                recognition.onerror = (event) => {
+                    this.updateStatus('idle', `Error: ${event.error}`);
+                };
+
+                recognition.onend = () => this.updateStatus('idle', 'Ready to listen');
+
+                return recognition;
+            }
+
+            setupEventListeners() {
+                document.getElementById('startBtn').addEventListener('click', () => this.startListening());
+                document.getElementById('stopBtn').addEventListener('click', () => this.stopListening());
+                document.getElementById('searchBtn').addEventListener('click', () => this.handleManualSearch());
+                document.getElementById('searchInput').addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') this.handleManualSearch();
+                });
+                document.getElementById('searchInput').addEventListener('input', (e) => this.handleAutoComplete(e.target.value));
+                document.getElementById('speakResultsBtn').addEventListener('click', () => this.speakResults());
+                document.getElementById('clearHistoryBtn').addEventListener('click', () => this.clearHistory());
+
+                // Filter buttons
+                document.querySelectorAll('.filter-btn').forEach(btn => {
+                    btn.addEventListener('click', (e) => this.setFilter(e.target.dataset.filter));
+                });
+            }
+
+            async startListening() {
+                if (!this.recognition) return;
+                const hasPermission = await this.ensureMicrophonePermission();
+                if (!hasPermission) return;
+                this.recognition.start();
+                document.getElementById('startBtn').style.display = 'none';
+                document.getElementById('stopBtn').style.display = 'flex';
+            }
+
+            stopListening() {
+                if (!this.recognition) return;
+                this.recognition.stop();
+                document.getElementById('startBtn').style.display = 'flex';
+                document.getElementById('stopBtn').style.display = 'none';
+            }
+
+            handleManualSearch() {
+                const query = document.getElementById('searchInput').value.trim();
+                if (query) {
+                    this.performSearch(query);
+                }
+            }
+
+            async handleAutoComplete(query) {
+                if (query.length < 2) {
+                    document.querySelector('.suggestions-list').classList.remove('show');
+                    return;
+                }
+
+                // Generate suggestions based on query
+                const commonSearches = ['laptop', 'phone', 'electronics', 'clothing', 'books', 'games'];
+                this.suggestions = commonSearches.filter(s => s.includes(query.toLowerCase()));
+
+                const suggestionsList = document.querySelector('.suggestions-list') || this.createSuggestionsList();
+                if (this.suggestions.length > 0) {
+                    suggestionsList.innerHTML = this.suggestions.map(s => 
+                        `<div class="suggestion-item" onclick="voiceSearchEngine.performSearch('${s}')">${s}</div>`
+                    ).join('');
+                    suggestionsList.classList.add('show');
+                } else {
+                    suggestionsList.classList.remove('show');
+                }
+            }
+
+            createSuggestionsList() {
+                const list = document.createElement('div');
+                list.className = 'suggestions-list';
+                document.querySelector('.search-input-group').parentElement.appendChild(list);
+                return list;
+            }
+
+            async performSearch(query) {
+                this.updateStatus('processing', `Searching for: "${query}"`);
+                document.getElementById('startBtn').style.display = 'flex';
+                document.getElementById('stopBtn').style.display = 'none';
+
+                try {
+                    // Search across different types
+                    const results = await this.searchCoshin(query);
+                    this.currentResults = results;
+                    
+                    // Add to history
+                    this.addToHistory(query);
+
+                    // Render results
+                    this.renderResults();
+                    
+                    this.updateStatus('idle', `Found ${results.length} results`);
+                    document.getElementById('speakResultsBtn').disabled = results.length === 0;
+                } catch (error) {
+                    console.error('Search error:', error);
+                    this.updateStatus('idle', 'Search failed. Try again.');
+                    this.showError('Failed to perform search');
+                }
+            }
+
+            async searchCoshin(query) {
+                const results = [];
+
+                try {
+                    // Search products
+                    const products = await coshinAPI.searchProducts(query);
+                    if (products && Array.isArray(products)) {
+                        results.push(...products.map(p => ({
+                            category: 'products',
+                            title: p.title || p.name,
+                            description: p.description,
+                            price: p.price,
+                            id: p.id,
+                            type: 'product'
+                        })));
+                    }
+                } catch (e) {
+                    console.log('Products search not available');
+                }
+
+                try {
+                    // Search users
+                    const users = await coshinAPI.searchUsers(query);
+                    if (users && Array.isArray(users)) {
+                        results.push(...users.map(u => ({
+                            category: 'users',
+                            title: u.username || u.name,
+                            description: `@${u.username}`,
+                            id: u.id,
+                            type: 'user'
+                        })));
+                    }
+                } catch (e) {
+                    console.log('Users search not available');
+                }
+
+                try {
+                    // Search posts
+                    const posts = await coshinAPI.searchPosts(query);
+                    if (posts && Array.isArray(posts)) {
+                        results.push(...posts.map(post => ({
+                            category: 'posts',
+                            title: post.title || 'Post',
+                            description: post.content,
+                            id: post.id,
+                            type: 'post'
+                        })));
+                    }
+                } catch (e) {
+                    console.log('Posts search not available');
+                }
+
+                return results.slice(0, 10); // Limit to 10 results
+            }
+
+            setFilter(filter) {
+                this.currentFilter = filter;
+                document.querySelectorAll('.filter-btn').forEach(btn => {
+                    btn.classList.toggle('active', btn.dataset.filter === filter);
+                });
+                this.renderResults();
+            }
+
+            renderResults() {
+                const filtered = this.currentFilter === 'all' 
+                    ? this.currentResults 
+                    : this.currentResults.filter(r => r.category === this.currentFilter);
+
+                const container = document.getElementById('resultsContainer');
+                const section = document.getElementById('resultsSection');
+
+                if (filtered.length === 0) {
+                    container.innerHTML = `
+                        <div class="empty-state">
+                            <i class="fas fa-search"></i>
+                            <h2>No results found</h2>
+                            <p>Try a different search query or refine your filters</p>
+                        </div>
+                    `;
+                } else {
+                    container.innerHTML = filtered.map(result => `
+                        <div class="result-item">
+                            <div class="result-header">
+                                <span class="result-category ${result.category}">${result.category}</span>
+                            </div>
+                            <div class="result-title">${this.highlightQuery(result.title)}</div>
+                            <div class="result-description">${this.truncateText(result.description, 150)}</div>
+                            <div class="result-meta">
+                                ${result.price ? `<span>💰 ${result.price}</span>` : ''}
+                                <span>${new Date().toLocaleDateString()}</span>
+                            </div>
+                        </div>
+                    `).join('');
+                }
+
+                section.style.display = 'block';
+            }
+
+            highlightQuery(text) {
+                const input = document.getElementById('searchInput').value;
+                if (!input) return text;
+                const regex = new RegExp(`(${input})`, 'gi');
+                return text.replace(regex, '<mark style="background: yellow;">$1</mark>');
+            }
+
+            truncateText(text, length) {
+                if (!text) return '';
+                return text.length > length ? text.substring(0, length) + '...' : text;
+            }
+
+            speakResults() {
+                if (this.currentResults.length === 0) return;
+
+                let text = `Found ${this.currentResults.length} results. `;
+                text += this.currentResults.slice(0, 3).map(r => 
+                    `${r.title}. ${r.description}`
+                ).join('. ');
+
+                const utterance = new SpeechSynthesisUtterance(text);
+                utterance.rate = 0.9;
+                this.synthesis.speak(utterance);
+            }
+
+            addToHistory(query) {
+                if (!this.searchHistory.includes(query)) {
+                    this.searchHistory.unshift(query);
+                    this.searchHistory = this.searchHistory.slice(0, 10); // Keep last 10
+                    this.saveSearchHistory();
+                    this.renderHistory();
+                }
+            }
+
+            renderHistory() {
+                const historySection = document.getElementById('historySection');
+                const historyList = document.getElementById('historyList');
+
+                if (this.searchHistory.length === 0) {
+                    historySection.style.display = 'none';
+                } else {
+                    historySection.style.display = 'block';
+                    historyList.innerHTML = this.searchHistory.map((query, index) => `
+                        <div class="history-item">
+                            <span onclick="voiceSearchEngine.performSearch('${query}')" style="cursor: pointer; flex: 1;">
+                                <i class="fas fa-history"></i> ${query}
+                            </span>
+                            <span class="remove" onclick="voiceSearchEngine.removeFromHistory(${index})">×</span>
+                        </div>
+                    `).join('');
+                }
+            }
+
+            removeFromHistory(index) {
+                this.searchHistory.splice(index, 1);
+                this.saveSearchHistory();
+                this.renderHistory();
+            }
+
+            clearHistory() {
+                this.searchHistory = [];
+                this.saveSearchHistory();
+                this.renderHistory();
+            }
+
+            loadSearchHistory() {
+                const saved = localStorage.getItem('voiceSearchHistory');
+                return saved ? JSON.parse(saved) : [];
+            }
+
+            saveSearchHistory() {
+                localStorage.setItem('voiceSearchHistory', JSON.stringify(this.searchHistory));
+            }
+
+            updateStatus(state, message) {
+                const dot = document.getElementById('statusDot');
+                const text = document.getElementById('statusText');
+                dot.className = `status-dot ${state}`;
+                text.textContent = message;
+            }
+
+            showError(message) {
+                const container = document.getElementById('resultsContainer');
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <h2>Error</h2>
+                        <p>${message}</p>
+                    </div>
+                `;
+                document.getElementById('resultsSection').style.display = 'block';
+            }
+        }
+
+        // Initialize
+        const voiceSearchEngine = new VoiceSearchEngine();
+    </script>
+</body>
+</html>

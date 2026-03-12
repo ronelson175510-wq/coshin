@@ -1,0 +1,731 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Profile</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="style.css">
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      :root {
+        --primary: #0EA5E9;
+        --accent: #FF6B6B;
+        --bg: #ffffff;
+        --muted: #f5f6f8;
+        --text: #222;
+        --card-radius: 12px;
+        --container-width: 980px;
+        --fw-semibold: 600;
+      }
+
+      body {
+        font-family: Helvetica, Arial, sans-serif;
+        font-size: 14px;
+        line-height: 1.34;
+        font-weight: 400;
+        color: var(--text);
+        background: #fafafa;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+      }
+
+      .page-content {
+        max-width: var(--container-width);
+        margin: 20px auto;
+        padding: 0 16px 110px;
+        box-sizing: border-box;
+      }
+
+      .container {
+        max-width: var(--container-width);
+        margin: 28px auto;
+        padding: 0 16px;
+        box-sizing: border-box;
+      }
+
+      .edit-profile-container {
+        background: var(--bg);
+        border-radius: var(--card-radius);
+        padding: 30px;
+        margin-top: 20px;
+        box-shadow: 0 6px 18px rgba(16, 24, 40, 0.04);
+        border: 1px solid rgba(16, 24, 40, 0.03);
+      }
+
+      .edit-profile-header {
+        display: flex;
+        gap: 20px;
+        align-items: flex-start;
+        margin-bottom: 30px;
+        flex-wrap: wrap;
+      }
+
+      .profile-image-section {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 12px;
+      }
+
+      .profile-upload-btn {
+        position: relative;
+        background: linear-gradient(180deg, #fff, #fff);
+        border-radius: 50%;
+        width: clamp(76px, 16vw, 120px);
+        height: clamp(76px, 16vw, 120px);
+        padding: 4px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+        border: none;
+        cursor: pointer;
+        transition: all 0.3s ease;
+      }
+
+      .profile-upload-btn:hover {
+        box-shadow: 0 6px 16px rgba(14, 165, 233, 0.2);
+      }
+
+      .profile-upload-btn img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+        border-radius: 50%;
+        border: 4px solid #fff;
+      }
+
+      .profile-camera-icon {
+        position: absolute;
+        right: 8px;
+        bottom: 8px;
+        background: var(--bg);
+        color: var(--primary);
+        padding: 8px;
+        border-radius: 50%;
+        box-shadow: 0 4px 12px rgba(16, 24, 40, 0.08);
+      }
+
+      .change-photo-btn {
+        padding: 8px 16px;
+        background: var(--primary);
+        color: white;
+        border: none;
+        border-radius: 999px;
+        font-weight: 600;
+        cursor: pointer;
+        font-size: 14px;
+        transition: all 0.3s ease;
+      }
+
+      .change-photo-btn:hover {
+        background: #0084d9;
+      }
+
+      .form-group {
+        margin-bottom: 24px;
+      }
+
+      label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: 600;
+        color: var(--text);
+        font-size: 14px;
+      }
+
+      input[type="text"],
+      textarea {
+        width: 100%;
+        padding: 12px;
+        border: 1px solid #e6e9ee;
+        border-radius: 8px;
+        font-size: 14px;
+        font-family: inherit;
+        transition: all 0.3s ease;
+        box-sizing: border-box;
+      }
+
+      input[type="text"]:focus,
+      textarea:focus {
+        outline: none;
+        box-shadow: 0 6px 20px rgba(14, 165, 233, 0.08);
+        border-color: var(--primary);
+      }
+
+      textarea {
+        resize: vertical;
+        min-height: 100px;
+      }
+
+      .bio-tools {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        margin-top: 10px;
+        flex-wrap: wrap;
+      }
+
+      .bio-helper-text {
+        color: #999;
+        font-size: 12px;
+      }
+
+      .bio-ai-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 8px 14px;
+        border-radius: 999px;
+        border: 1px solid #dbeafe;
+        background: rgba(14, 165, 233, 0.08);
+        color: #0369a1;
+        font-size: 13px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.25s ease;
+      }
+
+      .bio-ai-btn:hover {
+        background: rgba(14, 165, 233, 0.14);
+        border-color: #0EA5E9;
+      }
+
+      .bio-ai-btn:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+      }
+
+      .form-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+      }
+
+      @media (max-width: 768px) {
+        .form-row {
+          grid-template-columns: 1fr;
+        }
+        .edit-profile-header {
+          justify-content: center;
+        }
+      }
+
+      .form-actions {
+        display: flex;
+        gap: 12px;
+        margin-top: 30px;
+        justify-content: flex-end;
+      }
+
+      .btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        padding: 10px 24px;
+        border-radius: 999px;
+        font-weight: 600;
+        cursor: pointer;
+        font-size: 14px;
+        border: none;
+        transition: all 0.3s ease;
+      }
+
+      .btn-primary {
+        background: var(--primary);
+        color: white;
+      }
+
+      .btn-primary:hover {
+        background: #0084d9;
+      }
+
+      .btn-secondary {
+        background: transparent;
+        color: var(--text);
+        border: 1px solid #dbdbdb;
+      }
+
+      .btn-secondary:hover {
+        background: var(--muted);
+      }
+
+      .page-title {
+        font-size: 28px;
+        font-weight: 700;
+        margin-bottom: 12px;
+      }
+
+      .page-title {
+        font-size: 24px;
+        font-weight: 700;
+        margin-bottom: 12px;
+      }
+      .page-subtitle {
+        color: #666;
+        font-size: 14px;
+        margin-bottom: 20px;
+      }
+
+      input#profileFileInput {
+        display: none;
+      }
+
+      @media (max-width: 768px) {
+        .edit-profile-container {
+          padding: 20px;
+        }
+        .form-actions {
+          flex-direction: column;
+        }
+        .btn {
+          width: 100%;
+        }
+      }
+    </style>
+    <!-- MySQL API Client -->
+    <script src="coshin-api.js"></script>
+</head>
+<body>
+<div class="page-content">
+  <h1 class="page-title">Edit Profile</h1>
+  <p class="page-subtitle">Update your profile information and picture</p>
+
+  <div class="edit-profile-container">
+    <div class="edit-profile-header">
+      <div class="profile-image-section">
+        <button class="profile-upload-btn" id="profileBtn" title="Click to upload profile picture">
+          <img id="profileImg" src="./COSHIN Assets/profile silhouette 2.jpg" alt="Profile Picture">
+          <i class="fa-solid fa-camera fa-lg profile-camera-icon"></i>
+        </button>
+        <button class="change-photo-btn" id="changePhotoBtn">Change Photo</button>
+        <input type="file" id="profileFileInput" accept="image/*" capture="environment" style="display: none;">
+      </div>
+
+      <div style="flex: 1; min-width: 250px;">
+        <div class="form-group">
+          <label for="profileName">Full Name</label>
+          <input type="text" id="profileName" placeholder="Enter your full name" maxlength="100">
+        </div>
+
+        <div class="form-group">
+          <label for="profileEmail">Email</label>
+          <input type="text" id="profileEmail" placeholder="your.email@example.com" disabled>
+        </div>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label for="profileBio">Bio</label>
+      <textarea id="profileBio" placeholder="Add a short bio about yourself — what you do and what people can expect from your content."></textarea>
+      <div class="bio-tools">
+        <small class="bio-helper-text">Max 150 characters</small>
+        <button type="button" class="bio-ai-btn" id="bioAiCorrectBtn">
+          <i class="fa-solid fa-wand-magic-sparkles"></i>
+          Fix Spelling with AI
+        </button>
+      </div>
+    </div>
+
+    <div class="form-actions">
+      <button class="btn btn-secondary" onclick="goBackToAccount()">Cancel</button>
+      <button class="btn btn-primary" id="saveProfileBtn"><i class="fa-solid fa-check"></i> Save Changes</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  const profileBtn = document.getElementById('profileBtn');
+  const changePhotoBtn = document.getElementById('changePhotoBtn');
+  const profileFileInput = document.getElementById('profileFileInput');
+  const profileImg = document.getElementById('profileImg');
+  const profileNameInput = document.getElementById('profileName');
+  const profileEmailInput = document.getElementById('profileEmail');
+  const profileBioInput = document.getElementById('profileBio');
+  const bioAiCorrectBtn = document.getElementById('bioAiCorrectBtn');
+  const saveProfileBtn = document.getElementById('saveProfileBtn');
+
+  // Get current user
+  let currentUser = null;
+  let currentUserEmail = '';
+
+  // Check authentication state
+  // TEMPORARILY DISABLED: Allow access without authentication
+  /*
+  if (!coshinAPI.isAuthenticated()) {
+    window.location.href = 'login.html';
+  }
+  */
+  
+  // Always allow access for now
+  {
+    currentUserEmail = localStorage.getItem('userEmail');
+    currentUser = { email: currentUserEmail };
+    loadProfileData();
+  }
+
+  // Helper function to sanitize email for Firebase key
+  function sanitizeEmail(email) {
+    return email.replace(/\./g, '_').replace(/@/g, '_at_');
+  }
+
+  // Load profile data on page load
+  async function loadProfileData() {
+    if (!currentUser) return;
+
+    try {
+      // Load from MySQL API
+      const profileData = await coshinAPI.getProfile();
+
+      if (profileData) {
+        profileNameInput.value = profileData.name || profileData.username || '';
+        profileBioInput.value = profileData.bio || '';
+        
+        if (profileData.profilePicture || profileData.profile_picture) {
+          profileImg.src = profileData.profilePicture || profileData.profile_picture;
+          localStorage.setItem('profilePicture', profileData.profilePicture || profileData.profile_picture);
+        }
+        
+        // Save to localStorage for future use
+        const profileToStore = { ...profileData, name: profileData.name || profileData.username };
+        localStorage.setItem('userProfile', JSON.stringify(profileToStore));
+      } else {
+        // Fallback to localStorage
+        const localProfile = JSON.parse(localStorage.getItem('userProfile') || '{}');
+        const profilePicture = localStorage.getItem('profilePicture');
+
+        profileNameInput.value = localProfile.name || '';
+        profileBioInput.value = localProfile.bio || '';
+
+        if (profilePicture) {
+          profileImg.src = profilePicture;
+        }
+      }
+      
+      profileEmailInput.value = currentUserEmail;
+    } catch (error) {
+      console.error('Error loading profile:', error);
+      // Fallback to localStorage
+      const profileData = JSON.parse(localStorage.getItem('userProfile') || '{}');
+      const profilePicture = localStorage.getItem('profilePicture');
+      
+      profileNameInput.value = profileData.name || '';
+      profileEmailInput.value = currentUserEmail;
+      profileBioInput.value = profileData.bio || '';
+      
+      if (profilePicture) {
+        profileImg.src = profilePicture;
+      }
+    }
+  }
+
+  // Profile picture upload
+  profileBtn.addEventListener('click', () => {
+    profileFileInput.click();
+  });
+
+  changePhotoBtn.addEventListener('click', () => {
+    profileFileInput.click();
+  });
+
+  profileFileInput.addEventListener('change', (event) => {
+    const file = event.target.files[0];
+    if (file && file.type.startsWith('image/')) {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        profileImg.src = e.target.result;
+        // Store temporary image
+        localStorage.setItem('profilePicture', e.target.result);
+      };
+      reader.readAsDataURL(file);
+    } else {
+      alert('Please select a valid image file');
+    }
+  });
+
+  // Limit bio to 150 characters
+  profileBioInput.addEventListener('input', () => {
+    if (profileBioInput.value.length > 150) {
+      profileBioInput.value = profileBioInput.value.substring(0, 150);
+    }
+  });
+
+  const QUESTION_STARTERS = [
+    'who', 'what', 'when', 'where', 'why', 'how', 'which', 'whom', 'whose',
+    'is', 'are', 'am', 'was', 'were', 'do', 'does', 'did', 'can', 'could',
+    'will', 'would', 'shall', 'should', 'may', 'might', 'have', 'has', 'had'
+  ];
+
+  function unique(values) {
+    return Array.from(new Set((values || []).filter(Boolean)));
+  }
+
+  function getAiApiBaseCandidates() {
+    const candidates = [];
+    const protocol = (window.location && window.location.protocol) || '';
+    const host = (window.location && window.location.host) || '';
+
+    if (protocol.startsWith('http') && host) {
+      candidates.push(window.location.origin);
+    }
+
+    candidates.push('http://127.0.0.1:5000');
+    candidates.push('http://localhost:5000');
+
+    return unique(candidates);
+  }
+
+  async function applyAIPunctuation(text) {
+    const trimmed = (text || '').trim();
+    if (!trimmed) return text;
+
+    const candidates = getAiApiBaseCandidates();
+    for (let i = 0; i < candidates.length; i += 1) {
+      const base = candidates[i];
+      try {
+        const response = await fetch(`${base}/api/ai/punctuate`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ text: trimmed })
+        });
+
+        if (!response.ok) {
+          continue;
+        }
+
+        const data = await response.json();
+        const punctuated =
+          (data && typeof data.punctuatedText === 'string' && data.punctuatedText) ||
+          (data && typeof data.text === 'string' && data.text) ||
+          '';
+        if (punctuated) {
+          return punctuated;
+        }
+      } catch (error) {
+        // Ignore and try the next candidate.
+      }
+    }
+
+    return text;
+  }
+
+  function isLikelyQuestionSentence(content) {
+    const cleaned = (content || '')
+      .replace(/["'()\[\]{}]+/g, '')
+      .trim()
+      .toLowerCase();
+
+    if (!cleaned) return false;
+
+    const firstWord = cleaned.split(/\s+/)[0] || '';
+    if (QUESTION_STARTERS.includes(firstWord)) {
+      return true;
+    }
+
+    if (cleaned.includes(' or ')) {
+      return true;
+    }
+
+    return /\b(anyone|somebody|please\s+(help|confirm|share)|tell\s+me)\b/.test(cleaned);
+  }
+
+  function normalizeQuestionPunctuation(text) {
+    if (!text || typeof text !== 'string') return text;
+
+    return text.replace(/[^.!?\n]+[.!?]?/g, (segment) => {
+      const trimmed = segment.trim();
+      if (!trimmed) return segment;
+
+      const trailing = /[.!?]$/.test(trimmed) ? trimmed.slice(-1) : '';
+      const core = trailing ? trimmed.slice(0, -1).trim() : trimmed;
+      if (!core) return segment;
+
+      if (isLikelyQuestionSentence(core)) {
+        return `${core}?`;
+      }
+
+      if (!trailing) {
+        return `${core}.`;
+      }
+
+      return `${core}${trailing}`;
+    });
+  }
+
+  function normalizeCapitalization(text) {
+    if (!text || typeof text !== 'string') return text;
+
+    let result = text;
+    result = result.replace(/\bi\b/g, 'I');
+    result = result.replace(/(^|[.!?]\s+|\n\s*)([a-z])/g, (full, prefix, letter) => `${prefix}${letter.toUpperCase()}`);
+
+    return result;
+  }
+
+  async function performBasicCorrections(text) {
+    let preparedText = (text || '').trim();
+
+    preparedText = await applyAIPunctuation(preparedText);
+    preparedText = normalizeQuestionPunctuation(preparedText);
+    preparedText = normalizeCapitalization(preparedText);
+
+    if (window.CoshinAITextCorrector && typeof window.CoshinAITextCorrector.correctText === 'function') {
+      const corrected = window.CoshinAITextCorrector.correctText(preparedText, { mode: 'balanced' });
+      return {
+        correctedText: corrected.correctedText,
+        correctionsCount: corrected.corrections.length,
+        preprocessingChanged: preparedText !== text
+      };
+    }
+
+    return {
+      correctedText: preparedText,
+      correctionsCount: 0,
+      preprocessingChanged: preparedText !== text
+    };
+  }
+
+  async function correctBioWithAI() {
+    const originalBio = profileBioInput.value.trim();
+
+    if (!originalBio) {
+      showNotification('Write your bio first, then tap AI fix.', 'error');
+      return;
+    }
+
+    bioAiCorrectBtn.disabled = true;
+    bioAiCorrectBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Correcting...';
+
+    try {
+      await new Promise((resolve) => setTimeout(resolve, 400));
+      const result = await performBasicCorrections(originalBio);
+      const finalBio = result.correctedText.substring(0, 150);
+
+      profileBioInput.value = finalBio;
+
+      if (result.correctionsCount > 0) {
+        showNotification(`AI fixed ${result.correctionsCount} spelling/grammar issue${result.correctionsCount > 1 ? 's' : ''}.`, 'success');
+      } else if (result.preprocessingChanged) {
+        showNotification('AI improved punctuation and capitalization.', 'success');
+      } else {
+        showNotification('Your bio already looks great.', 'success');
+      }
+    } catch (error) {
+      console.error('Bio correction error:', error);
+      showNotification('Could not correct bio right now. Please try again.', 'error');
+    } finally {
+      bioAiCorrectBtn.disabled = false;
+      bioAiCorrectBtn.innerHTML = '<i class="fa-solid fa-wand-magic-sparkles"></i> Fix Spelling with AI';
+    }
+  }
+
+  bioAiCorrectBtn.addEventListener('click', correctBioWithAI);
+
+  // Show notification
+  function showNotification(message, type = 'success') {
+    const notification = document.createElement('div');
+    notification.style.cssText = `
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      padding: 14px 20px;
+      background: ${type === 'success' ? '#10b981' : '#ef4444'};
+      color: white;
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+      z-index: 9999;
+      animation: slideInRight 0.3s ease;
+      font-weight: 500;
+      max-width: 300px;
+    `;
+    notification.textContent = message;
+    document.body.appendChild(notification);
+
+    setTimeout(() => {
+      notification.style.animation = 'slideOutRight 0.3s ease';
+      setTimeout(() => notification.remove(), 300);
+    }, 3000);
+  }
+
+  // Add animation styles if not already present
+  if (!document.querySelector('style[data-animation-profile]')) {
+    const style = document.createElement('style');
+    style.setAttribute('data-animation-profile', 'true');
+    style.textContent = `
+      @keyframes slideInRight { from { transform: translateX(400px); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+      @keyframes slideOutRight { from { transform: translateX(0); opacity: 1; } to { transform: translateX(400px); opacity: 0; } }
+    `;
+    document.head.appendChild(style);
+  }
+
+  // Save profile changes
+  saveProfileBtn.addEventListener('click', async () => {
+    const name = profileNameInput.value.trim();
+    const bio = profileBioInput.value.trim();
+
+    if (!name) {
+      showNotification('Please enter your name', 'error');
+      return;
+    }
+
+    if (!coshinAPI.isAuthenticated()) {
+      showNotification('You must be logged in to save changes', 'error');
+      return;
+    }
+
+    // Disable button and show loading state
+    saveProfileBtn.disabled = true;
+    saveProfileBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Saving...';
+
+    try {
+      // Prepare update data
+      const updateData = {
+        username: name,
+        bio: bio
+      };
+
+      // Include user ID for backend
+      const currentUser = coshinAPI?.getCurrentUser?.() || {};
+      updateData.user_id = currentUser.id || 1;
+
+      // Include profile picture if it's a new image (base64 data)
+      if (profileImg.src.startsWith('data:image/')) {
+        updateData.profile_picture = profileImg.src;
+      }
+
+      // Update profile via API
+      await coshinAPI.updateProfile(updateData);
+
+      showNotification('Profile updated successfully!', 'success');
+
+      // Redirect to account page after 1.5 seconds
+      setTimeout(() => {
+        window.location.href = 'account.html';
+      }, 1500);
+    } catch (error) {
+      console.error('Error saving profile:', error);
+      showNotification('Error saving profile: ' + error.message, 'error');
+      
+      // Re-enable button
+      saveProfileBtn.disabled = false;
+      saveProfileBtn.innerHTML = '<i class="fa-solid fa-check"></i> Save Changes';
+    }
+  });
+
+  function goBackToAccount() {
+    window.location.href = 'account.html';
+  }
+</script>
+</body>
+</html>
+

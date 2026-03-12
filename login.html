@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - COSHIN</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Helvetica, Arial, sans-serif;
+            font-size: 14px;
+            line-height: 1.34;
+            font-weight: 400;
+            color: #1c1e21;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .login-container {
+            background: #ffffff;
+            padding: 50px 40px;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            width: 100%;
+            max-width: 420px;
+            animation: slideIn 0.5s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .logo {
+            text-align: center;
+            margin-bottom: 24px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #eef2ff;
+            position: relative;
+        }
+
+        .brand-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 12px;
+            border-radius: 999px;
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 0.6px;
+            text-transform: uppercase;
+            color: #4f46e5;
+            background: rgba(79, 70, 229, 0.1);
+            border: 1px solid rgba(99, 102, 241, 0.25);
+            margin-bottom: 12px;
+        }
+
+        .brand-pill i {
+            font-size: 10px;
+        }
+
+        .COSHIN-logo {
+            font-size: 44px;
+            font-weight: 900;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: 2px;
+            line-height: 1;
+            margin-bottom: 8px;
+        }
+
+        .logo-subtitle {
+            color: #6b7280;
+            font-size: 13px;
+            font-weight: 400;
+            letter-spacing: 0.2px;
+        }
+
+        .login-container h2 {
+            color: #1f2937;
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+
+        .welcome-text {
+            color: #6b7280;
+            font-size: 14px;
+            text-align: center;
+            margin-bottom: 35px;
+        }
+
+        .input-group {
+            position: relative;
+            margin-bottom: 25px;
+        }
+
+        .input-icon {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #9ca3af;
+            font-size: 16px;
+            transition: color 0.3s;
+        }
+
+        .login-container input {
+            width: 100%;
+            padding: 15px 15px 15px 45px;
+            border: 2px solid #e5e7eb;
+            border-radius: 12px;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            background: #f9fafb;
+            color: #1f2937;
+        }
+
+        .login-container input:focus {
+            outline: none;
+            border-color: #667eea;
+            background: #ffffff;
+            box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
+        }
+
+        .login-container input:focus + .input-icon {
+            color: #667eea;
+        }
+
+        .login-container input::placeholder {
+            color: #9ca3af;
+        }
+
+        .login-container button {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #fff;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+            margin-top: 10px;
+        }
+
+        .login-container button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.5);
+        }
+
+        .login-container button:active {
+            transform: translateY(0);
+        }
+
+        .login-container button:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        #errorMessage {
+            background: #fee2e2;
+            color: #dc2626;
+            padding: 12px 16px;
+            border-radius: 10px;
+            font-size: 14px;
+            margin-bottom: 20px;
+            border-left: 4px solid #dc2626;
+            display: none;
+            animation: shake 0.3s;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-10px); }
+            75% { transform: translateX(10px); }
+        }
+
+        .links {
+            text-align: center;
+            margin-top: 25px;
+        }
+
+        .links p {
+            color: #6b7280;
+            font-size: 14px;
+            margin: 10px 0;
+        }
+
+        .links a {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 600;
+            transition: color 0.3s;
+        }
+
+        .links a:hover {
+            color: #764ba2;
+            text-decoration: underline;
+        }
+
+        .divider {
+            display: flex;
+            align-items: center;
+            margin: 25px 0;
+            color: #9ca3af;
+            font-size: 13px;
+        }
+
+        .divider::before,
+        .divider::after {
+            content: '';
+            flex: 1;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .divider span {
+            padding: 0 15px;
+        }
+
+        @media (max-width: 480px) {
+            .login-container {
+                padding: 40px 30px;
+            }
+
+            .COSHIN-logo {
+                font-size: 36px;
+            }
+
+            .login-container h2 {
+                font-size: 24px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <div class="logo">
+            <div class="COSHIN-logo">COSHIN</div>
+            <p class="logo-subtitle">Connect, Share, Inspire</p>
+        </div>
+
+        <h2>Welcome Back</h2>
+        <p class="welcome-text">Sign in to continue to your account</p>
+
+        <p id="errorMessage"></p>
+
+        <div class="input-group">
+            <input type="email" id="loginEmail" placeholder="Enter your email">
+            <i class="fa-solid fa-envelope input-icon"></i>
+        </div>
+
+        <div class="input-group">
+            <input type="password" id="loginPassword" placeholder="Enter your password">
+            <i class="fa-solid fa-lock input-icon"></i>
+            <span class="toggle-password" style="position:absolute;right:15px;top:50%;transform:translateY(-50%);cursor:pointer;">
+                <i class="fa-solid fa-eye" id="toggleEye"></i>
+            </span>
+        </div>
+
+        <button id="loginBtn">
+            <i class="fa-solid fa-arrow-right-to-bracket"></i> Sign In
+        </button>
+
+        <div class="links">
+            <p>Don't have an account? <a href="signup.html">Create Account</a></p>
+            <div class="divider"><span>or</span></div>
+            <p><a href="settings.html">API Settings</a></p>
+            <p><a href="termsandcontitions.html">Terms and Conditions</a></p>
+        </div>
+    </div>
+    
+    <!-- Load API Client -->
+    <script src="coshin-api.js"></script>
+    <script>
+        const params = new URLSearchParams(window.location.search);
+        const returnTo = params.get('returnTo') || 'index.html';
+        const currentAuthUser = coshinAPI.getCurrentUser ? coshinAPI.getCurrentUser() : null;
+        const needsProfileSetup =
+            localStorage.getItem('needsProfileSetup') === 'true' ||
+            !currentAuthUser?.profile_picture;
+
+        // Auto-login redirect if already authenticated
+        if (coshinAPI.isAuthenticated()) {
+            window.location.href = needsProfileSetup ? 'profile-setup.html' : returnTo;
+        }
+
+        // Get elements
+        const loginBtn = document.getElementById('loginBtn');
+        const emailInput = document.getElementById('loginEmail');
+        const passwordInput = document.getElementById('loginPassword');
+        const errorMessage = document.getElementById('errorMessage');
+
+        // Login function
+        loginBtn.addEventListener('click', async () => {
+            const email = emailInput.value.trim();
+            const password = passwordInput.value.trim();
+
+            if (!email || !password) {
+                errorMessage.innerHTML = '<i class="fa-solid fa-circle-exclamation"></i> Please enter both email and password.';
+                errorMessage.style.display = 'block';
+                return;
+            }
+
+            try {
+                loginBtn.disabled = true;
+                loginBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Signing in...';
+                errorMessage.style.display = 'none';
+                
+                // Login via MySQL API
+                const loginData = await coshinAPI.login(email, password);
+
+                // Only redirect to profile setup if profile_picture is null AND it was a brand new signup
+                // Don't force existing users back to setup just because they logged in on a new browser
+                const hasProfilePicture = !!loginData?.user?.profile_picture;
+                const wasNewSignup = localStorage.getItem('needsProfileSetup') === 'true';
+                
+                // Only enforce profile setup for brand new users without a picture
+                const mustSetupProfile = wasNewSignup && !hasProfilePicture;
+                localStorage.setItem('needsProfileSetup', mustSetupProfile ? 'true' : 'false');
+                
+                // Redirect to requested page or homepage
+                window.location.href = mustSetupProfile ? 'profile-setup.html' : returnTo;
+            } catch (error) {
+                errorMessage.innerHTML = '<i class="fa-solid fa-circle-exclamation"></i> ' + (error.message || 'Login failed. Please check your credentials.');
+                errorMessage.style.display = 'block';
+                loginBtn.disabled = false;
+                loginBtn.innerHTML = '<i class="fa-solid fa-arrow-right-to-bracket"></i> Sign In';
+            }
+        });
+
+        // Allow Enter key to submit
+        passwordInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                loginBtn.click();
+            }
+        });
+
+        // Toggle password visibility
+        const toggleEye = document.getElementById('toggleEye');
+        toggleEye.addEventListener('click', () => {
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                toggleEye.classList.remove('fa-eye');
+                toggleEye.classList.add('fa-eye-slash');
+            } else {
+                passwordInput.type = 'password';
+                toggleEye.classList.remove('fa-eye-slash');
+                toggleEye.classList.add('fa-eye');
+            }
+        });
+    </script>
+
+</body>
+</html>

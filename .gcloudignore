@@ -1,0 +1,58 @@
+# Ignore Python virtual environments
+backend/.venv/
+
+# Ignore Python cache files
+backend/__pycache__/
+
+# Ignore log and temp files
+*.log
+*.tmp
+
+# Ignore node_modules (if any)
+ai-chat/node_modules/
+
+# Ignore local assets and ngrok folder
+Zim Assets/
+ngrok/
+
+# Ignore other unnecessary files
+__tmp_ignore.txt
+
+# Ignore Mac/Windows system files
+.DS_Store
+Thumbs.db
+
+# Ignore build artifacts
+*.pyc
+*.pyo
+*.swp
+
+# Ignore Jupyter notebook checkpoints
+.ipynb_checkpoints/
+# Ignore backup folders and files
+backup_words_detector/
+*backup*
+
+# Ignore debug files
+*debug.html
+
+# Ignore markdown and text files
+*.md
+*.txt
+
+# Ignore example and env files
+*.env
+*.example
+
+# Ignore git and IDE files
+.git/
+.gitignore
+.vscode/
+.idea/
+
+# Ignore other unnecessary files
+*.code-search
+*.ignore
+*.bak
+*.swo
+*.~

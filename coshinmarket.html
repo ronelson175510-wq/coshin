@@ -1,0 +1,1670 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="style.css">
+    <style>
+  .products-container {
+    max-width: 1200px;
+    margin: 40px auto;
+    padding: 20px;
+  }
+
+  .products-header {
+    text-align: center;
+    margin-bottom: 40px;
+  }
+
+  .products-header h2 {
+    font-size: 32px;
+    color: #333;
+    margin-bottom: 10px;
+  }
+
+  .products-header p {
+    color: #666;
+    font-size: 16px;
+  }
+
+  .sidebar {
+    background: linear-gradient(180deg, #0f172a 0%, #111827 100%);
+    box-shadow: 10px 0 30px rgba(2, 6, 23, 0.45);
+    width: 0;
+    padding-top: 0;
+    z-index: 1200;
+  }
+
+  .sidebar-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 18px 12px;
+    border-bottom: 1px solid rgba(148, 163, 184, 0.22);
+    background: rgba(15, 23, 42, 0.75);
+  }
+
+  .sidebar-brand {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    color: #f8fafc;
+    font-weight: 800;
+    letter-spacing: 0.03em;
+  }
+
+  .sidebar-brand i {
+    color: #38bdf8;
+  }
+
+  .sidebar .closebtn {
+    position: static;
+    margin: 0;
+    width: 36px;
+    height: 36px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 10px;
+    font-size: 22px;
+    color: #cbd5e1;
+    text-decoration: none;
+    background: rgba(148, 163, 184, 0.15);
+  }
+
+  .sidebar .closebtn:hover {
+    background: rgba(56, 189, 248, 0.25);
+    color: #e0f2fe;
+  }
+
+  .sidebar-content {
+    padding: 14px 12px 20px;
+  }
+
+  .sidebar-section-title {
+    color: #94a3b8;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin: 14px 10px 8px;
+  }
+
+  .sidebar a {
+    margin: 2px 0;
+    padding: 10px 12px;
+    border-radius: 10px;
+    text-decoration: none;
+    font-size: 14px;
+    color: #cbd5e1;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 10px;
+    min-height: 42px;
+    line-height: 1.2;
+    transition: all 0.2s ease;
+  }
+
+  .sidebar a i {
+    width: 18px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    color: #7dd3fc;
+  }
+
+  .sidebar a span {
+    display: inline-block;
+    white-space: nowrap;
+  }
+
+  .sidebar a:hover {
+    color: #ffffff;
+    background: rgba(56, 189, 248, 0.18);
+    transform: translateX(2px);
+  }
+
+  .sidebar-footer-note {
+    margin: 16px 10px 0;
+    padding: 10px 12px;
+    border-radius: 10px;
+    color: #94a3b8;
+    font-size: 12px;
+    border: 1px solid rgba(148, 163, 184, 0.25);
+    background: rgba(15, 23, 42, 0.55);
+  }
+
+  #main {
+    justify-content: flex-start;
+    gap: 8px;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+
+  #main::-webkit-scrollbar {
+    display: none;
+  }
+
+  #main .openbtn {
+    margin: 0;
+    flex-shrink: 0;
+  }
+
+  .coshinmarketheader1 {
+    display: flex;
+    align-items: center;
+    justify-content: space-evenly;
+    gap: 10px;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    scrollbar-width: none;
+    margin-bottom: 14px;
+  }
+
+  .coshinmarketheader1::-webkit-scrollbar {
+    display: none;
+  }
+
+  .coshinmarketheader1 > * {
+    flex-shrink: 0;
+  }
+
+  #main .coshinmarketheader1 {
+    margin-bottom: 0;
+  }
+
+  .coshinmarketheader1 .search-container {
+    margin-left: 0;
+    flex-wrap: nowrap;
+    flex-shrink: 0;
+  }
+
+  .coshinmarketheader1 .search-input {
+    width: 220px;
+    min-width: 160px;
+  }
+
+  .coshinmarketheader1 .mylistingsbtn,
+  .coshinmarketheader1 .coshinmarketbtn {
+    padding: 8px 12px;
+    font-size: 12px;
+    line-height: 1.1;
+    border-radius: 8px;
+    min-height: 36px;
+    white-space: nowrap;
+  }
+
+  .coshinmarketheader1 .coshinmarketbtn {
+    max-width: 130px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .filter-section {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 30px;
+    flex-wrap: wrap;
+    align-items: center;
+    width: fit-content;
+  }
+
+  .filter-select {
+    padding: 6px 10px;
+    border: 1px solid #0EA5E9;
+    border-radius: 6px;
+    font-size: 12px;
+    background-color: white;
+    color: #333;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    appearance: none;
+    padding-right: 25px;
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%230EA5E9' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right 5px center;
+    background-size: 18px;
+    min-width: 100px;
+  }
+
+  .filter-select:hover {
+    border-color: #9b6ed9;
+    box-shadow: 0 2px 6px rgba(14, 165, 233, 0.2);
+  }
+
+  .search-container {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .search-icon-btn {
+    background-color: white;
+    border: 1px solid #0EA5E9;
+    color: #0EA5E9;
+    width: 36px;
+    height: 36px;
+    border-radius: 6px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    transition: all 0.3s ease;
+  }
+
+  .search-icon-btn:hover {
+    background-color: #0EA5E9;
+    color: white;
+    box-shadow: 0 2px 6px rgba(14, 165, 233, 0.3);
+  }
+
+  .search-input {
+    padding: 8px 12px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 13px;
+    min-width: 250px;
+    transition: all 0.3s ease;
+  }
+
+  .search-input:focus {
+    outline: none;
+    border-color: #0EA5E9;
+    box-shadow: 0 0 5px rgba(14, 165, 233, 0.3);
+  }
+
+  .search-input.hidden {
+    display: none;
+  }
+
+  .search-input.visible {
+    display: block;
+  }
+
+  .filter-select:focus,
+  .search-input:focus {
+    outline: none;
+    border-color: #0EA5E9;
+    box-shadow: 0 0 5px rgba(14, 165, 233, 0.3);
+  }
+
+  .voice-search-btn {
+    background: linear-gradient(135deg, #0EA5E9 0%, #3B82F6 100%);
+    color: white;
+    border: none;
+    width: 36px;
+    height: 36px;
+    border-radius: 6px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 6px rgba(14, 165, 233, 0.2);
+  }
+
+  .voice-search-btn:hover {
+    box-shadow: 0 4px 12px rgba(14, 165, 233, 0.4);
+    transform: translateY(-1px);
+  }
+
+  .voice-search-btn.listening {
+    background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+    animation: pulse-voice 1s infinite;
+  }
+
+  @keyframes pulse-voice {
+    0%, 100% { box-shadow: 0 2px 6px rgba(239, 68, 68, 0.3); }
+    50% { box-shadow: 0 2px 16px rgba(239, 68, 68, 0.6); }
+  }
+
+  /* Coshin AI Voice Toast */
+  .coshin-ai-toast {
+    position: fixed;
+    bottom: 100px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 16px 24px;
+    border-radius: 12px;
+    box-shadow: 0 8px 24px rgba(102, 126, 234, 0.4);
+    display: none;
+    align-items: center;
+    gap: 12px;
+    z-index: 1000;
+    animation: slideUp 0.3s ease;
+    font-weight: 600;
+    font-size: 15px;
+  }
+
+  .coshin-ai-toast.show {
+    display: flex;
+  }
+
+  .coshin-ai-toast i {
+    font-size: 18px;
+    animation: bounce 1s infinite;
+  }
+
+  @keyframes slideUp {
+    from {
+      opacity: 0;
+      transform: translateX(-50%) translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+  }
+
+  @keyframes bounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-8px); }
+  }
+
+  .products-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 20px;
+  }
+
+  .product-card {
+    background: white;
+    border: 1px solid #eee;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+    cursor: pointer;
+  }
+
+  .product-card:hover {
+    box-shadow: 0 6px 16px rgba(14, 165, 233, 0.3);
+    transform: translateY(-5px);
+  }
+
+  .product-image {
+    width: 100%;
+    height: 200px;
+    background-color: #f0f0f0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    position: relative;
+  }
+
+  .product-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .product-image-placeholder {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #0EA5E9, #FF6B6B);
+    color: white;
+    font-size: 40px;
+  }
+
+  .product-badge {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background-color: #0EA5E9;
+    color: white;
+    padding: 5px 10px;
+    border-radius: 5px;
+    font-size: 12px;
+    font-weight: 600;
+  }
+
+  .product-info {
+    padding: 15px;
+  }
+
+  .product-name {
+    font-size: 16px;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 8px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .product-price {
+    font-size: 20px;
+    font-weight: 700;
+    color: #0EA5E9;
+    margin-bottom: 10px;
+  }
+
+  .product-details {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    font-size: 13px;
+    color: #666;
+  }
+
+  .product-detail-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .product-detail-item i {
+    color: #0EA5E9;
+    width: 16px;
+  }
+
+  .product-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 12px;
+  }
+
+  .contact-btn {
+    flex: 1;
+    background-color: #0EA5E9;
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+  }
+
+  .contact-btn:hover {
+    background: linear-gradient(-75deg, #e43905, #FF6B6B, #241f22, #059a34);
+    animation: gradient 5s ease infinite;
+    background-size: 400% 400%;
+  }
+
+  .no-products {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 60px 20px;
+    color: #999;
+  }
+
+  .no-products i {
+    margin-bottom: 20px;
+    color: #ddd;
+  }
+
+  .no-products p {
+    font-size: 18px;
+  }
+
+  @media (max-width: 768px) {
+    .coshinmarketheader1 {
+      align-items: center;
+      gap: 10px;
+      justify-content: space-evenly;
+    }
+
+    .coshinmarketheader1 .search-container {
+      width: auto;
+      margin-left: 0;
+    }
+
+    .coshinmarketheader1 .search-input {
+      width: 160px;
+      min-width: 120px;
+    }
+
+    .coshinmarketheader1 .mylistingsbtn,
+    .coshinmarketheader1 .coshinmarketbtn {
+      padding: 7px 10px;
+      font-size: 11px;
+      min-height: 34px;
+    }
+
+    .coshinmarketheader1 .coshinmarketbtn {
+      max-width: 110px;
+    }
+
+    .products-grid {
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap: 15px;
+    }
+
+    .filter-section {
+      flex-direction: column;
+    }
+
+    .filter-select,
+    .search-input {
+      width: 100%;
+    }
+
+    .products-header h2 {
+      font-size: 24px;
+    }
+  }
+        body { background-color: #f5f5f5; padding-bottom: 120px; }
+        .products-container { max-width: 600px; margin: 20px auto; padding: 0 15px; }
+          /* Footer Enhancements */
+        .footer {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: white;
+            border-top: 2px solid #f0f0f0;
+            display: flex !important;
+            justify-content: space-around !important;
+            align-items: center;
+            padding: 12px 0 !important;
+            padding-bottom: calc(12px + env(safe-area-inset-bottom));
+            box-shadow: 0 -2px 12px rgba(0, 0, 0, 0.08);
+            z-index: 99;
+            margin: 0 !important;
+            width: 100%;
+            box-sizing: border-box;
+        }
+        .footer a {
+            display: flex !important;
+            flex-direction: column !important;
+            align-items: center !important;
+            justify-content: center !important;
+            padding: 12px 20px !important;
+            text-decoration: none !important;
+            color: #0EA5E9 !important;
+            margin: 0 !important;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+            border-radius: 12px !important;
+            position: relative !important;
+            font-size: 15px !important;
+        }
+        .footer a:hover {
+            background-color: rgba(14, 165, 233, 0.12) !important;
+            transform: translateY(-4px) scale(1.1) !important;
+            color: #FF6B6B !important;
+        }
+        
+        .footer a:active {
+            transform: translateY(-2px) scale(1.08) !important;
+        }
+
+        .footer a.active {
+          background: linear-gradient(135deg, rgba(14, 165, 233, 0.2), rgba(255, 107, 107, 0.15)) !important;
+          color: #FF6B6B !important;
+          box-shadow: 0 4px 12px rgba(14, 165, 233, 0.2) !important;
+        }
+
+        .footer a::before { display: none !important; }
+
+        .footer a.active::before {
+            opacity: 1;
+        }
+
+        .footer a:hover::before {
+            opacity: 0.5;
+        }
+
+        .footer i {
+            transition: all 0.3s ease !important;
+        }
+
+        .footer a:hover i {
+          filter: drop-shadow(0 4px 8px rgba(255, 107, 107, 0.3));
+        }
+
+        .footer-tooltip { position: static; bottom: auto; left: auto; transform: none; background: transparent; color: inherit; padding: 0; margin-top:6px; opacity:1; pointer-events:auto; font-weight:600; font-size:12px; }
+        .footer a .footer-tooltip { display: block !important; }
+
+        .footer-tooltip::after { display: none; }
+
+        .footer a:hover .footer-tooltip { opacity: 1; transform: none; }
+
+        @media (max-width: 768px) {
+            .footer {
+                padding: 10px 0 !important;
+                gap: 0 !important;
+            }
+
+            .footer a {
+                padding: 10px 15px !important;
+                flex-grow: 1;
+            }
+
+            .footer-tooltip {
+                display: none;
+            }
+        }
+
+        /* Menu Button Styling */
+        .post-menu-btn {
+            background: none;
+            border: none;
+            color: #999;
+            font-size: 20px;
+            padding: 0;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .post-menu-btn:hover {
+            color: #0EA5E9;
+        }
+
+        .post-menu-btn:active {
+            transform: scale(0.95);
+        }
+
+        .gift-btn {
+            color: #FF6B6B !important;
+        }
+
+        .gift-btn:hover {
+            background-color: rgba(255, 107, 107, 0.1) !important;
+            color: #FF3B3B !important;
+        }
+
+        @keyframes slideIn {
+          from {
+            opacity: 0;
+            transform: translateX(400px);
+          }
+          to {
+            opacity: 1;
+            transform: translateX(0);
+          }
+        }
+
+        @keyframes slideOut {
+          from {
+            opacity: 1;
+            transform: translateX(0);
+          }
+          to {
+            opacity: 0;
+            transform: translateX(400px);
+          }
+        }
+
+          .gift-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+          }
+
+          .gift-modal.active {
+            display: flex;
+          }
+
+          .gift-modal-content {
+            background: white;
+            border-radius: 12px;
+            padding: 24px;
+            max-width: 400px;
+            width: 90%;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            animation: slideDown 0.3s ease;
+          }
+
+          @keyframes slideDown {
+            from {
+              opacity: 0;
+              transform: translateY(-50px);
+            }
+            to {
+              opacity: 1;
+              transform: translateY(0);
+            }
+          }
+
+          .gift-modal-header {
+            text-align: center;
+            margin-bottom: 20px;
+          }
+
+          .gift-modal-header h2 {
+            margin: 0 0 10px 0;
+            font-size: 24px;
+            color: #FF6B6B;
+          }
+
+          .gift-modal-header p {
+            margin: 0;
+            color: #666;
+            font-size: 14px;
+          }
+
+          .gift-options {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+            gap: 12px;
+            margin-bottom: 20px;
+          }
+
+          .gift-option {
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: white;
+          }
+
+          .gift-option:hover {
+            border-color: #FF6B6B;
+            background: #fff5f5;
+            transform: translateY(-2px);
+          }
+
+          .gift-option.selected {
+            background: #FF6B6B;
+            color: white;
+            border-color: #FF6B6B;
+            font-weight: 600;
+          }
+
+          .gift-option-icon {
+            font-size: 32px;
+            margin-bottom: 6px;
+          }
+
+          .gift-option-name {
+            font-weight: 600;
+            font-size: 13px;
+            margin-bottom: 4px;
+          }
+
+          .gift-option-price {
+            font-size: 12px;
+            opacity: 0.7;
+          }
+
+          .gift-modal-actions {
+            display: flex;
+            gap: 12px;
+            justify-content: flex-end;
+          }
+
+          .gift-close-btn,
+          .gift-confirm-btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+          }
+
+          .gift-close-btn {
+            background: #f0f0f0;
+            color: #333;
+          }
+
+          .gift-close-btn:hover {
+            background: #e0e0e0;
+          }
+
+          .gift-confirm-btn {
+            background: #FF6B6B;
+            color: white;
+          }
+
+          .gift-confirm-btn:hover:not(:disabled) {
+            background: #FF3B3B;
+          }
+
+          .gift-confirm-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+          }
+    </style>
+    <!-- Firebase Libraries -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.2/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.2/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.2/firebase-database-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.2/firebase-storage-compat.js"></script>
+    <!-- Your Firebase Config -->
+    <script src="firebase-config.js"></script>
+        
+</head>
+<body style="background-color: white;">
+
+<div id="main">
+  <!-- Menu removed -->
+  
+  <div class="coshinmarketheader1">
+    <div class="market-menu-dropdown" style="position: relative;">
+      <button class="market-menu-btn" id="marketMenuBtn" style="padding: 8px 12px; font-size: 12px; border-radius: 8px; background: #111827; color: white; border: none; cursor: pointer; display: flex; align-items: center; gap: 6px; height: 36px;">
+        <i class="fa-solid fa-bars"></i> Menu
+      </button>
+      <div class="market-menu-list" id="marketMenuList" style="position: absolute; top: 110%; left: 0; background: white; box-shadow: 0 8px 24px rgba(14,165,233,0.18); border-radius: 10px; min-width: 180px; z-index: 9999; border: 2px solid #0EA5E9;">
+        <a href="coshinmarket.html" style="display: block; padding: 10px 16px; color: #0EA5E9; text-decoration: none; border-bottom: 1px solid #f0f0f0;">Shop Home</a>
+        <a href="mylistings.html" style="display: block; padding: 10px 16px; color: #0EA5E9; text-decoration: none; border-bottom: 1px solid #f0f0f0;">My Listings</a>
+        <a href="upload-photo.html" style="display: block; padding: 10px 16px; color: #0EA5E9; text-decoration: none; border-bottom: 1px solid #f0f0f0;">Upload Photo</a>
+        <a href="upload-video.html" style="display: block; padding: 10px 16px; color: #0EA5E9; text-decoration: none; border-bottom: 1px solid #f0f0f0;">Upload Video</a>
+        <a href="coshinmarketpolicies.html" style="display: block; padding: 10px 16px; color: #0EA5E9; text-decoration: none; border-bottom: 1px solid #f0f0f0;">Market Policies</a>
+        <a href="coshinsellerplan.html" style="display: block; padding: 10px 16px; color: #0EA5E9; text-decoration: none; border-bottom: 1px solid #f0f0f0;">Seller Plan</a>
+        <a href="trackmyorders.html" style="display: block; padding: 10px 16px; color: #0EA5E9; text-decoration: none; border-bottom: 1px solid #f0f0f0;">Track Orders</a>
+        <a href="settings.html" style="display: block; padding: 10px 16px; color: #0EA5E9; text-decoration: none; border-bottom: 1px solid #f0f0f0;">Settings</a>
+        <a href="about.html" style="display: block; padding: 10px 16px; color: #0EA5E9; text-decoration: none; border-bottom: 1px solid #f0f0f0;">About</a>
+        <a href="#" style="display: block; padding: 10px 16px; color: #ef4444; text-decoration: none;">Logout</a>
+      </div>
+    </div>
+    <a href="mylistings.html" class="mylistingsbtn">My Listing</a>
+    <button class="coshinmarketbtn">Coshin Market</button>
+    <div class="search-container">
+      <button class="search-icon-btn" onclick="toggleSearch()" title="Search">
+        <i class="fa-solid fa-magnifying-glass"></i>
+      </button>
+      <button class="voice-search-btn" id="marketVoiceSearchBtn" title="Search with voice">
+        <i class="fas fa-microphone"></i>
+      </button>
+      <input type="text" id="searchInput" class="search-input hidden" placeholder="Search products..." onkeypress="handleSearchKeyPress(event)">
+    </div>
+  </div>
+
+  <!-- Coshin AI Voice Search Toast -->
+  <div class="coshin-ai-toast" id="coshinAIToastMarket">
+    <i class="fas fa-microphone"></i>
+    <span>Search with Coshin AI...</span>
+  </div>
+</div>
+
+<script>
+// Market menu dropdown toggle
+const menuBtn = document.getElementById('marketMenuBtn');
+const menuList = document.getElementById('marketMenuList');
+if (menuBtn && menuList) {
+  menuBtn.addEventListener('click', function(e) {
+    e.stopPropagation();
+    menuList.classList.toggle('show');
+  });
+  menuList.addEventListener('click', function(e) {
+    e.stopPropagation();
+  });
+  document.addEventListener('click', function() {
+    menuList.classList.remove('show');
+  });
+  menuBtn.addEventListener('keydown', function(e) {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      menuList.classList.toggle('show');
+    }
+  });
+}
+
+// Display products from localStorage
+function displayProducts(productsToDisplay = null) {
+  const productsGrid = document.getElementById('productsGrid');
+  const products = productsToDisplay || JSON.parse(localStorage.getItem('userProducts')) || [];
+  // Debugging output
+  console.log('Loaded products from localStorage:', products);
+
+  if (products.length === 0) {
+    productsGrid.innerHTML = `
+      <div class="no-products">
+        <i class="fa-solid fa-box-open fa-3x"></i>
+        <p>No products available yet. Check back soon!</p>
+      </div>
+    `;
+    return;
+  }
+
+  productsGrid.innerHTML = products.map((product, index) => `
+    <div class="product-card">
+      <div class="product-image">
+        <div class="product-image-placeholder">
+          <i class="fa-solid fa-image"></i>
+        </div>
+        <span class="product-badge">${product.condition}</span>
+      </div>
+      <div class="product-info">
+        <div class="product-name">${product.productName}</div>
+        <div class="product-price">ZWL ${parseFloat(product.price).toFixed(2)}</div>
+        <div class="product-details">
+          <div class="product-detail-item">
+            <i class="fa-solid fa-tag"></i>
+            <span>${product.category}</span>
+          </div>
+          <div class="product-detail-item">
+            <i class="fa-solid fa-location-dot"></i>
+            <span>${product.location}</span>
+          </div>
+          <div class="product-detail-item">
+            <i class="fa-solid fa-calendar"></i>
+            <span>${product.uploadDate}</span>
+          </div>
+        </div>
+        <div class="product-actions">
+          <button class="contact-btn" onclick="contactSeller('${product.contact}')">
+            <i class="fa-solid fa-phone"></i> Contact
+          </button>
+        </div>
+      </div>
+    </div>
+  `).join('');
+}
+
+// Contact seller function
+function contactSeller(phoneNumber) {
+  alert(`Contact seller at: ${phoneNumber}`);
+  // In a real app, this could open a messaging system
+}
+
+// Filter products
+function filterProducts() {
+  const categoryFilter = document.getElementById('categoryFilter').value;
+  const searchInput = document.getElementById('searchInput').value.toLowerCase();
+  const allProducts = JSON.parse(localStorage.getItem('userProducts')) || [];
+
+  const filtered = allProducts.filter(product => {
+    const matchesCategory = !categoryFilter || product.category === categoryFilter;
+    const matchesSearch = !searchInput || 
+      product.productName.toLowerCase().includes(searchInput) ||
+      product.description.toLowerCase().includes(searchInput);
+    return matchesCategory && matchesSearch;
+  });
+
+  displayProducts(filtered);
+}
+
+// Event listeners for filtering and search
+document.addEventListener('DOMContentLoaded', () => {
+  displayProducts();
+  
+  document.getElementById('categoryFilter').addEventListener('change', filterProducts);
+  document.getElementById('searchInput').addEventListener('input', filterProducts);
+});
+
+// Toggle search input visibility
+function toggleSearch() {
+  const searchInput = document.getElementById('searchInput');
+  searchInput.classList.toggle('hidden');
+  searchInput.classList.toggle('visible');
+  
+  if (searchInput.classList.contains('visible')) {
+    searchInput.focus();
+  }
+}
+
+// Handle search on Enter key
+function handleSearchKeyPress(event) {
+  if (event.key === 'Escape') {
+    const searchInput = document.getElementById('searchInput');
+    searchInput.classList.add('hidden');
+    searchInput.classList.remove('visible');
+    searchInput.value = '';
+    displayProducts();
+  }
+}
+
+// Voice Search Initialization for Market
+function initializeMarketVoiceSearch() {
+  const voiceButton = document.getElementById('marketVoiceSearchBtn');
+  const searchInput = document.getElementById('searchInput');
+  const coshinToast = document.getElementById('coshinAIToastMarket');
+  const MIC_PERMISSION_KEY = 'zim_voice_mic_permission_granted';
+  
+  // Check if elements exist
+  if (!voiceButton) {
+    console.warn('Market voice search button not found');
+    return;
+  }
+  if (!searchInput) {
+    console.warn('Search input not found');
+    return;
+  }
+
+  const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if (!SpeechRecognition) {
+    console.warn('Voice search not supported in this browser');
+    voiceButton.style.display = 'none';
+    return;
+  }
+
+  const recognition = new SpeechRecognition();
+  recognition.continuous = false;
+  recognition.interimResults = false;
+  recognition.lang = 'en-US';
+
+  async function ensureMicrophonePermission() {
+    if (localStorage.getItem(MIC_PERMISSION_KEY) === 'true') {
+      return true;
+    }
+
+    const continuePrompt = confirm('Voice search needs microphone access. Click OK, then allow mic access in your browser prompt.');
+    if (!continuePrompt) {
+      return false;
+    }
+
+    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+      // Some browsers still show mic prompt when SpeechRecognition starts.
+      return true;
+    }
+
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      stream.getTracks().forEach(track => track.stop());
+      localStorage.setItem(MIC_PERMISSION_KEY, 'true');
+      return true;
+    } catch (error) {
+      console.error('Microphone permission denied:', error);
+      alert('Please allow microphone access to use voice search.');
+      return false;
+    }
+  }
+  
+  let isListening = false;
+
+  recognition.onstart = () => {
+    isListening = true;
+    voiceButton.classList.add('listening');
+    voiceButton.style.opacity = '0.7';
+    localStorage.setItem(MIC_PERMISSION_KEY, 'true');
+    if (coshinToast) {
+      coshinToast.classList.add('show');
+    }
+  };
+
+  recognition.onresult = (event) => {
+    let transcript = '';
+    for (let i = event.resultIndex; i < event.results.length; i++) {
+      transcript += event.results[i][0].transcript;
+    }
+    const cleanedTranscript = transcript
+      .replace(/[.,!?;:]+/g, ' ')
+      .replace(/\s+/g, ' ')
+      .trim();
+    if (event.results[event.results.length - 1].isFinal && transcript.trim()) {
+      searchInput.value = cleanedTranscript;
+      searchInput.classList.add('visible');
+      searchInput.classList.remove('hidden');
+      filterProducts();
+    }
+  };
+
+  recognition.onerror = (event) => {
+    console.error('Voice recognition error:', event.error);
+    isListening = false;
+    voiceButton.classList.remove('listening');
+    voiceButton.style.opacity = '1';
+    if (coshinToast) {
+      coshinToast.classList.remove('show');
+    }
+    alert('Voice recognition error: ' + event.error);
+  };
+
+  recognition.onend = () => {
+    isListening = false;
+    voiceButton.classList.remove('listening');
+    voiceButton.style.opacity = '1';
+    if (coshinToast) {
+      coshinToast.classList.remove('show');
+    }
+  };
+
+  voiceButton.addEventListener('click', async (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (isListening) {
+      recognition.stop();
+    } else {
+      const hasPermission = await ensureMicrophonePermission();
+      if (!hasPermission) {
+        return;
+      }
+      searchInput.value = '';
+      try {
+        recognition.start();
+      } catch (error) {
+        console.error('Failed to start recording:', error);
+      }
+    }
+  });
+}
+
+// Initialize on page load
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', initializeMarketVoiceSearch);
+} else {
+  initializeMarketVoiceSearch();
+}
+
+// Handle search functionality
+function handleSearch() {
+  const searchInput = document.getElementById('searchInput');
+  const query = searchInput.value.toLowerCase().trim();
+  
+  if (query.length === 0) {
+    displayProducts();
+    return;
+  }
+
+  const products = JSON.parse(localStorage.getItem('products') || '[]');
+  const filteredProducts = products.filter(product =>
+    product.title.toLowerCase().includes(query) ||
+    (product.description && product.description.toLowerCase().includes(query)) ||
+    (product.category && product.category.toLowerCase().includes(query))
+  );
+
+  displayProducts(filteredProducts);
+}
+</script>  
+
+
+
+    
+
+
+
+<div class="products-container">
+  <div class="products-header">
+    
+    <p>Browse through available products from sellers</p>
+  </div>
+
+  <div class="filter-section">
+    <select id="categoryFilter" class="filter-select">
+      <option value="">All Categories</option>
+      <option value="electronics">Electronics</option>
+      <option value="clothing">Clothing</option>
+      <option value="furniture">Furniture</option>
+      <option value="books">Books</option>
+      <option value="sports">Sports & Outdoors</option>
+      <option value="home">Home & Garden</option>
+      <option value="other">Other</option>
+    </select>
+  </div>
+
+  <div class="products-grid" id="productsGrid">
+    <div class="no-products">
+      <i class="fa-solid fa-box-open fa-3x"></i>
+      <p>No products available yet. Check back soon!</p>
+    </div>
+  </div>
+</div>
+
+
+<footer>
+    <div class="footer">
+        <a href="index.html" class="footer-link" data-page="home" title="Home">
+            <i class="fa-solid fa-house"></i>
+            <span class="footer-tooltip">Home</span>
+        </a>
+        
+        <a href="messages.html" class="footer-link" data-page="messages" title="Messages">
+            <i class="fa-solid fa-message"></i>
+            <span class="footer-tooltip">Messages</span>
+        </a>
+
+        <a href="coshinmarket.html" class="footer-link active" data-page="coshinmarket" title="Shop">
+            <i class="fa-solid fa-shop"></i>
+            <span class="footer-tooltip">Shop</span>
+        </a>
+        
+        <a href="reels.html" class="footer-link" data-page="reels" title="Reels">
+            <i class="fa-solid fa-tv"></i>
+            <span class="footer-tooltip">Reels</span>
+        </a>
+
+        <a href="account.html" class="footer-link" data-page="account" title="Account">
+            <i class="fa-solid fa-user"></i>
+            <span class="footer-tooltip">Account</span>
+        </a>
+    </div>
+</footer>
+
+<div id="giftModal" class="gift-modal">
+  <div class="gift-modal-content">
+    <div class="gift-modal-header">
+      <h2>Send a Gift 🎁</h2>
+      <p>Choose a gift to support this creator</p>
+    </div>
+    <div class="gift-options" id="giftOptionsContainer">
+      <!-- Gift options will be generated here -->
+    </div>
+    <div class="gift-modal-actions">
+      <button class="gift-close-btn" onclick="closeGiftModal()">Cancel</button>
+      <button class="gift-confirm-btn" id="giftConfirmBtn" onclick="confirmGiftSelection()" disabled>
+        Send Gift
+      </button>
+    </div>
+  </div>
+</div>
+
+<script>
+
+<script>
+  // Ensure visible labels under footer icons (created from title attributes)
+  document.addEventListener('DOMContentLoaded', function () {
+    document.querySelectorAll('.footer-link').forEach(link => {
+      if (!link.querySelector('.footer-label')) {
+        const label = document.createElement('span');
+        label.className = 'footer-label';
+        label.textContent = link.getAttribute('title') || link.dataset.page || '';
+        link.appendChild(label);
+      }
+    });
+  });
+  // Navigate to upload content
+  function navigateToUpload() {
+    window.location.href = 'account.html';
+  }
+
+  // Load and display user content on the feed
+  function loadFeed() {
+    const contentFeed = document.getElementById('contentFeed');
+    const allContent = [];
+
+    // Get photos
+    const photos = JSON.parse(localStorage.getItem('userPhotos')) || [];
+    photos.forEach((photo, idx) => {
+      allContent.push({
+        type: 'photo',
+        title: photo.title || 'Photo',
+        uploadDate: photo.uploadDate || 'Recently',
+        profilePicture: photo.profilePicture || './COSHIN Assets/profile silhouette 2.jpg',
+        userName: photo.userName || 'Your Name',
+        likes: photo.likes || 0,
+        comments: photo.comments || 0,
+        shares: photo.shares || 0,
+        allowGifts: photo.allowGifts !== undefined ? photo.allowGifts : true,
+        index: idx
+      });
+    });
+
+    // Get videos
+    const videos = JSON.parse(localStorage.getItem('userVideos')) || [];
+    videos.forEach((video, idx) => {
+      allContent.push({
+        type: 'video',
+        title: video.title || 'Video',
+        uploadDate: video.uploadDate || 'Recently',
+        profilePicture: video.profilePicture || './COSHIN Assets/profile silhouette 2.jpg',
+        userName: video.userName || 'Your Name',
+        likes: video.likes || 0,
+        comments: video.comments || 0,
+        shares: video.shares || 0,
+        allowGifts: video.allowGifts !== undefined ? video.allowGifts : true,
+        index: idx
+      });
+    });
+
+    // Get posts
+    const posts = JSON.parse(localStorage.getItem('userPosts')) || [];
+    posts.forEach((post, idx) => {
+      allContent.push({
+        type: 'post',
+        title: post.title || 'Post',
+        content: post.content || '',
+        uploadDate: post.uploadDate || 'Recently',
+        profilePicture: post.profilePicture || './COSHIN Assets/profile silhouette 2.jpg',
+        userName: post.userName || 'Your Name',
+        likes: post.likes || 0,
+        comments: post.comments || 0,
+        shares: post.shares || 0,
+        allowGifts: post.allowGifts !== undefined ? post.allowGifts : true,
+        index: idx
+      });
+    });
+
+    // Sort by most recent
+    allContent.sort((a, b) => {
+      const dateA = new Date(a.uploadDate);
+      const dateB = new Date(b.uploadDate);
+      return dateB - dateA;
+    });
+
+    // Display content
+    if (allContent.length === 0) {
+      contentFeed.innerHTML = `
+        <div class="no-feed-content">
+          <i class="fa-solid fa-pen-to-square"></i>
+          <p>No posts yet</p>
+          <p style="font-size: 13px;">Be the first to <span class="cta-link" onclick="navigateToUpload()" style="cursor: pointer;">share something</span></p>
+        </div>
+      `;
+      return;
+    }
+
+    contentFeed.innerHTML = allContent.map((item) => {
+      let contentMedia = '';
+      let icon = '';
+
+      if (item.type === 'photo') {
+        icon = 'fa-image';
+        contentMedia = `
+          <div class="post-media">
+            <div class="media-placeholder">
+              <i class="fa-solid ${icon}"></i>
+              <div class="media-title">Photo</div>
+            </div>
+          </div>
+        `;
+      } else if (item.type === 'video') {
+        icon = 'fa-play';
+        contentMedia = `
+          <div class="post-media">
+            <div class="media-placeholder">
+              <i class="fa-solid ${icon}"></i>
+              <div class="media-title">Video</div>
+            </div>
+          </div>
+        `;
+      }
+
+      const textContent = item.type === 'post' ? `
+        <div class="post-text">
+          ${item.title ? '<strong>' + item.title + '</strong><br>' : ''}
+          ${item.content}
+        </div>
+      ` : '';
+
+      const statsSection = (item.likes || item.comments || item.shares) ? `
+        <div class="post-stats">
+          ${item.likes ? `<span class="post-stats-item"><i class="fa-solid fa-heart"></i> ${item.likes} ${item.likes === 1 ? 'Like' : 'Likes'}</span>` : ''}
+          ${item.comments ? `<span class="post-stats-item"><i class="fa-solid fa-comment"></i> ${item.comments} ${item.comments === 1 ? 'Comment' : 'Comments'}</span>` : ''}
+          ${item.shares ? `<span class="post-stats-item"><i class="fa-solid fa-share"></i> ${item.shares} ${item.shares === 1 ? 'Share' : 'Shares'}</span>` : ''}
+        </div>
+      ` : '';
+
+      return `
+        <div class="feed-post">
+          <div class="post-header">
+            <div class="post-user-info">
+              <a href="account.html" class="post-avatar" style="text-decoration: none; cursor: pointer;" title="View profile">
+                <img src="${item.profilePicture}" alt="${item.userName}" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;">
+              </a>
+              <div class="post-meta">
+                <div class="post-author">${item.userName}</div>
+                <div class="post-time">${item.uploadDate}</div>
+              </div>
+            </div>
+            <button class="post-menu-btn" title="More options">
+              <i class="fa-solid fa-ellipsis"></i>
+            </button>
+          </div>
+          ${contentMedia}
+          ${textContent}
+          ${statsSection}
+          <div class="post-actions">
+            <button class="post-action-btn" onclick="likePost(this)">
+              <i class="fa-solid fa-heart"></i> Like
+            </button>
+            <button class="post-action-btn" onclick="commentPost(this)">
+              <i class="fa-solid fa-comment"></i> Comment
+            </button>
+            <button class="post-action-btn" onclick="sharePost(this)">
+              <i class="fa-solid fa-share"></i> Share
+            </button>
+            ${item.allowGifts ? `
+            <button class="post-action-btn gift-btn" onclick="sendGift(this)">
+              <i class="fa-solid fa-gift"></i> Gift
+            </button>
+            ` : ''}
+          </div>
+        </div>
+      `;
+    }).join('');
+  }
+
+  // Like post function
+  function likePost(btn) {
+    btn.style.color = '#FF6B6B';
+    btn.innerHTML = '<i class="fa-solid fa-heart"></i> Liked';
+    btn.disabled = true;
+  }
+
+  function ensurePostStatsContainer(postElement) {
+    let statsContainer = postElement.querySelector('.post-stats');
+    if (!statsContainer) {
+      const actions = postElement.querySelector('.post-actions');
+      statsContainer = document.createElement('div');
+      statsContainer.className = 'post-stats';
+      postElement.insertBefore(statsContainer, actions);
+    }
+    return statsContainer;
+  }
+
+  function upsertPostStat(postElement, statType, iconClass, singularLabel, pluralLabel) {
+    const statsContainer = ensurePostStatsContainer(postElement);
+    let statElement = statsContainer.querySelector(`.post-stats-item[data-stat="${statType}"]`);
+
+    if (!statElement) {
+      statElement = document.createElement('span');
+      statElement.className = 'post-stats-item';
+      statElement.dataset.stat = statType;
+      statElement.dataset.count = '0';
+      statsContainer.appendChild(statElement);
+    }
+
+    const nextCount = (parseInt(statElement.dataset.count || '0', 10) || 0) + 1;
+    statElement.dataset.count = String(nextCount);
+    statElement.innerHTML = `<i class="fa-solid ${iconClass}"></i> ${nextCount} ${nextCount === 1 ? singularLabel : pluralLabel}`;
+  }
+
+  function commentPost(btn) {
+    const commentText = prompt('Write your comment:');
+    if (!commentText || !commentText.trim()) {
+      return;
+    }
+
+    const postElement = btn.closest('.feed-post');
+    if (!postElement) {
+      return;
+    }
+
+    upsertPostStat(postElement, 'comments', 'fa-comment', 'Comment', 'Comments');
+    alert('Comment added.');
+  }
+
+  function sharePost(btn) {
+    const postElement = btn.closest('.feed-post');
+    if (!postElement) {
+      return;
+    }
+
+    upsertPostStat(postElement, 'shares', 'fa-share', 'Share', 'Shares');
+    alert('Post shared.');
+  }
+
+  // Send gift function
+  // Gift modal functionality
+  const gifts = [
+    { name: 'Heart', icon: '❤️', price: 0 },
+    { name: 'Star', icon: '⭐', price: 1 },
+    { name: 'Flower', icon: '🌸', price: 2 },
+    { name: 'Diamond', icon: '💎', price: 3 },
+    { name: 'Crown', icon: '👑', price: 5 },
+    { name: 'Rocket', icon: '🚀', price: 10 }
+  ];
+
+  let selectedGift = null;
+  let giftButton = null;
+
+  function sendGift(btn) {
+    giftButton = btn;
+    selectedGift = null;
+    openGiftModal();
+  }
+
+  function openGiftModal() {
+    const modal = document.getElementById('giftModal');
+    const container = document.getElementById('giftOptionsContainer');
+    
+    container.innerHTML = gifts.map((gift, idx) => `
+      <div class="gift-option" onclick="selectGift(${idx})" id="gift-${idx}">
+        <div class="gift-option-icon">${gift.icon}</div>
+        <div class="gift-option-name">${gift.name}</div>
+        <div class="gift-option-price">${gift.price === 0 ? 'Free' : '$' + gift.price}</div>
+      </div>
+    `).join('');
+    
+    modal.classList.add('active');
+  }
+
+  function selectGift(idx) {
+    // Remove previous selection
+    document.querySelectorAll('.gift-option').forEach(el => el.classList.remove('selected'));
+    
+    // Add selection to clicked gift
+    document.getElementById('gift-' + idx).classList.add('selected');
+    selectedGift = gifts[idx];
+    
+    // Enable confirm button
+    document.getElementById('giftConfirmBtn').disabled = false;
+  }
+
+  function closeGiftModal() {
+    document.getElementById('giftModal').classList.remove('active');
+    selectedGift = null;
+    giftButton = null;
+  }
+
+  function confirmGiftSelection() {
+    if (!selectedGift || !giftButton) return;
+    
+    // Update button
+    giftButton.style.color = '#FF3B3B';
+    giftButton.innerHTML = '<i class="fa-solid fa-gift"></i> Gift Sent';
+    giftButton.disabled = true;
+    
+    // Close modal
+    closeGiftModal();
+    
+    // Show notification
+    const notification = document.createElement('div');
+    notification.style.cssText = `
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background: linear-gradient(135deg, #FF6B6B, #FF3B3B);
+      color: white;
+      padding: 16px 24px;
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(255, 107, 107, 0.3);
+      z-index: 9999;
+      font-weight: 600;
+      animation: slideIn 0.3s ease;
+    `;
+    const priceText = selectedGift.price === 0 ? 'free' : '$' + selectedGift.price;
+    notification.innerHTML = `${selectedGift.icon} Thank you for the ${selectedGift.name} gift (${priceText})!`;
+    document.body.appendChild(notification);
+    
+    setTimeout(() => {
+      notification.style.animation = 'slideOut 0.3s ease';
+      setTimeout(() => notification.remove(), 300);
+    }, 3000);
+  }
+
+  // Footer Navigation - Set Active Link
+  function updateActiveFooterLink() {
+    // Get current page from URL
+    const currentPage = window.location.pathname.split('/').pop() || 'index.html';
+    
+    // Remove active class from all footer links
+    document.querySelectorAll('.footer-link').forEach(link => {
+      link.classList.remove('active');
+    });
+
+    // Add active class to current page
+    let activeLink;
+    if (currentPage === '' || currentPage === 'index.html') {
+      activeLink = document.querySelector('[data-page="home"]');
+    } else if (currentPage.includes('messages')) {
+      activeLink = document.querySelector('[data-page="messages"]');
+    } else if (currentPage.includes('coshinmarket')) {
+      activeLink = document.querySelector('[data-page="coshinmarket"]');
+    } else if (currentPage.includes('reels')) {
+      activeLink = document.querySelector('[data-page="reels"]');
+    } else if (currentPage.includes('account')) {
+      activeLink = document.querySelector('[data-page="account"]');
+    }
+
+    if (activeLink) {
+      activeLink.classList.add('active');
+    }
+  }
+
+  // Add ripple effect to footer links
+  document.querySelectorAll('.footer-link').forEach(link => {
+    link.addEventListener('click', function(e) {
+      // Create ripple effect
+      const ripple = document.createElement('span');
+      const rect = this.getBoundingClientRect();
+      const size = Math.max(rect.width, rect.height);
+      const x = e.clientX - rect.left - size / 2;
+      const y = e.clientY - rect.top - size / 2;
+
+      ripple.style.width = ripple.style.height = size + 'px';
+      ripple.style.left = x + 'px';
+      ripple.style.top = y + 'px';
+      ripple.classList.add('ripple');
+      
+      // Add ripple styles dynamically
+      if (!document.querySelector('style[data-ripple]')) {
+        const style = document.createElement('style');
+        style.setAttribute('data-ripple', 'true');
+        style.textContent = `
+          .footer a {
+            position: relative;
+            overflow: hidden;
+          }
+          .ripple {
+            position: absolute;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(255, 107, 107, 0.6) 0%, rgba(255, 107, 107, 0) 70%);
+            transform: scale(0);
+            animation: rippleAnimation 0.6s ease-out;
+            pointer-events: none;
+          }
+          @keyframes rippleAnimation {
+            to {
+              transform: scale(4);
+              opacity: 0;
+            }
+          }
+        `;
+        document.head.appendChild(style);
+      }
+      
+      this.appendChild(ripple);
+      setTimeout(() => ripple.remove(), 600);
+    });
+  });
+
+  // Load feed when page loads
+  document.addEventListener('DOMContentLoaded', () => {
+    loadFeed();
+    updateActiveFooterLink();
+  });
+
+  // Add event listener to storage changes (for real-time updates when content is added from account page)
+  window.addEventListener('storage', () => {
+    loadFeed();
+  });
+</script>
+</body>
+</html>

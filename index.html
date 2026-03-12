@@ -1,0 +1,3863 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home</title>
+     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="style.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: white;
+            background: white;
+        }
+
+        .COSHIN-title {
+          font-size: 34px;
+          font-weight: 900;
+          background: linear-gradient(135deg, #0EA5E9 0%, #06B6D4 50%, #FF6B6B 100%);
+          -webkit-background-clip: text;
+          -webkit-text-fill-color: transparent;
+          background-clip: text;
+          letter-spacing: 3px;
+          margin: 0;
+          padding: 10px 0;
+          text-shadow: 0 2px 10px rgba(14, 165, 233, 0.2);
+          position: relative;
+          font-family: 'Arial Black', 'Helvetica', sans-serif;
+          cursor: pointer;
+          transition: all 0.3s ease;
+        }
+
+        .COSHIN-title:hover {
+          letter-spacing: 4px;
+          transform: scale(1.05);
+        }
+
+        @media (max-width: 768px) {
+          .COSHIN-title {
+            font-size: 28px;
+            letter-spacing: 2px;
+          }
+          
+          .COSHIN-title:hover {
+            letter-spacing: 2.5px;
+          }
+        }
+
+        .header {
+            position: sticky;
+            top: 0;
+            background: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0px 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+            z-index: 100;
+            transition: padding 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
+        }
+
+        .header.scrolled {
+          padding: 6px 16px;
+          background: rgba(255, 255, 255, 0.96);
+          box-shadow: 0 8px 20px rgba(15, 23, 42, 0.1);
+          backdrop-filter: blur(6px);
+        }
+
+        .header.scrolled .COSHIN-title {
+          font-size: 28px;
+          letter-spacing: 2px;
+          padding: 4px 0;
+        }
+
+        .header.scrolled .header-icons {
+          gap: 16px;
+        }
+
+        .header-icons {
+            display: flex;
+            gap: 25px;
+            align-items: center;
+        }
+
+        .header-icons a {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .header-icons a:hover {
+          transform: scale(1.15);
+          color: #FF6B6B;
+        }
+
+        .header-icon-btn {
+          background: none;
+          border: none;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          transition: all 0.3s ease;
+          cursor: pointer;
+          position: relative;
+          padding: 0;
+        }
+
+        .header-icon-btn:hover {
+          transform: scale(1.15);
+          color: #FF6B6B;
+        }
+
+        .user-search-modal {
+          display: none;
+          position: fixed;
+          inset: 0;
+          background: rgba(15, 23, 42, 0.55);
+          z-index: 1000;
+          align-items: center;
+          justify-content: center;
+          padding: 20px;
+        }
+
+        .user-search-modal.active {
+          display: flex;
+        }
+
+        .user-search-panel {
+          background: white;
+          width: 100%;
+          max-width: 520px;
+          border-radius: 14px;
+          padding: 20px;
+          box-shadow: 0 20px 50px rgba(15, 23, 42, 0.2);
+          animation: slideDown 0.25s ease;
+        }
+
+        .user-search-header {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          margin-bottom: 12px;
+        }
+
+        .user-search-header h2 {
+          font-size: 18px;
+          margin: 0;
+          color: #111827;
+        }
+
+        .user-search-close {
+          background: none;
+          border: none;
+          font-size: 22px;
+          cursor: pointer;
+          color: #6b7280;
+        }
+
+        .user-search-input {
+          width: 100%;
+          border: 1px solid #e5e7eb;
+          border-radius: 10px;
+          padding: 12px 14px;
+          font-size: 14px;
+          outline: none;
+          transition: all 0.2s ease;
+          margin-bottom: 14px;
+        }
+
+        .user-search-input:focus {
+          border-color: #0EA5E9;
+          box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.15);
+        }
+
+        .user-search-results {
+          display: flex;
+          flex-direction: column;
+          gap: 10px;
+          max-height: 320px;
+          overflow-y: auto;
+        }
+
+        .user-search-item {
+          display: flex;
+          align-items: center;
+          gap: 12px;
+          padding: 10px 12px;
+          border-radius: 10px;
+          background: #f8fafc;
+        }
+
+        .user-search-avatar {
+          width: 42px;
+          height: 42px;
+          border-radius: 50%;
+          background: #e2e8f0;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          overflow: hidden;
+          color: #64748b;
+          font-weight: 700;
+        }
+
+        .user-search-avatar img {
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+        }
+
+        .user-search-meta {
+          display: flex;
+          flex-direction: column;
+          gap: 2px;
+        }
+
+        .user-search-name {
+          font-weight: 600;
+          color: #111827;
+        }
+
+        .user-search-email {
+          font-size: 12px;
+          color: #6b7280;
+        }
+
+        .notification-badge {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+          background: #FF6B6B;
+            color: white;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            font-weight: bold;
+        }
+
+        .feed-container {
+          width: 100%;
+          max-width: none;
+          margin: 20px 0;
+          padding: 0;
+            padding-bottom: 120px;
+        }
+
+        /* Create Post Box */
+        .create-post-box {
+            background: white;
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+            display: flex;
+            gap: 12px;
+            align-items: flex-start;
+        }
+
+        .create-post-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #0EA5E9, #FF6B6B);
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 18px;
+        }
+
+        .create-post-input {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .create-post-textarea {
+            width: 100%;
+            background: #f5f5f5;
+            border: 1px solid #e0e0e0;
+            border-radius: 24px;
+            padding: 12px 16px;
+            font-size: 14px;
+            font-family: inherit;
+            resize: none;
+            transition: all 0.3s ease;
+        }
+
+        .create-post-textarea:focus {
+            outline: none;
+            border-color: #0EA5E9;
+            background: white;
+            box-shadow: 0 0 12px rgba(14, 165, 233, 0.15);
+        }
+
+        .create-post-actions {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .create-post-icon-btn {
+            background: none;
+            border: none;
+            color: #0EA5E9;
+            font-size: 18px;
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 50%;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .create-post-icon-btn:hover {
+          background: rgba(14, 165, 233, 0.1);
+          color: #FF6B6B;
+        }
+
+        .create-post-btn {
+          margin-left: auto;
+          background: linear-gradient(135deg, #0EA5E9, #FF6B6B);
+          color: white;
+          border: none;
+          padding: 10px 24px;
+          border-radius: 24px;
+          font-weight: 600;
+          font-size: 14px;
+          cursor: pointer;
+          transition: all 0.3s ease;
+        }
+
+        .create-post-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(14, 165, 233, 0.3);
+        }
+
+        /* Content Feed */
+        .content-feed {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+          width: 100%;
+          align-items: stretch;
+        }
+
+        .feed-post {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s ease;
+          width: 100%;
+        }
+
+        .feed-post:hover {
+            box-shadow: 0 6px 16px rgba(14, 165, 233, 0.15);
+        }
+
+        .post-header {
+            display: flex;
+            align-items: center;
+            padding: 12px 16px;
+            justify-content: space-between;
+        }
+
+        .post-user-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex: 1;
+        }
+
+        .post-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+          background: linear-gradient(135deg, #0EA5E9, #FF6B6B);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 18px;
+            flex-shrink: 0;
+        }
+
+        .post-meta {
+            flex: 1;
+        }
+
+        .post-author {
+            font-weight: 600;
+            color: #333;
+            font-size: 14px;
+            margin-bottom: 2px;
+        }
+
+        .post-time {
+            font-size: 12px;
+            color: #999;
+        }
+
+        .post-menu-btn {
+            background: none;
+            border: none;
+            color: #999;
+            font-size: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .post-menu-btn:hover {
+            color: #0EA5E9;
+        }
+
+        .post-text {
+            padding: 0 16px 12px 16px;
+            font-size: 14px;
+            color: #333;
+            line-height: 1.5;
+        }
+
+        .post-media {
+          width: 100%;
+          background: linear-gradient(135deg, #0EA5E9, #FF6B6B);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          color: white;
+          min-height: 420px;
+          font-size: 48px;
+          position: relative;
+          overflow: hidden;
+        }
+
+        .media-placeholder {
+            text-align: center;
+        }
+
+        .media-placeholder i {
+            display: block;
+            margin-bottom: 10px;
+            opacity: 0.9;
+        }
+
+        .media-placeholder .media-title {
+            font-size: 13px;
+            color: rgba(255, 255, 255, 0.8);
+            margin-top: 8px;
+        }
+
+        .post-actions {
+            display: flex;
+            flex-wrap: nowrap;
+            justify-content: space-between;
+            gap: 4px;
+            padding: 8px 8px;
+            border-top: 1px solid #f0f0f0;
+            background: #f9f9f9;
+        }
+
+        .post-action-btn {
+            background: none;
+            border: none;
+            color: #0EA5E9;
+            cursor: pointer;
+            font-size: 11px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            transition: all 0.3s ease;
+            padding: 6px 6px;
+            border-radius: 6px;
+            min-width: 60px;
+            max-width: 90px;
+            flex: 1 1 0;
+            justify-content: center;
+        }
+
+        .post-action-btn:hover {
+          background-color: rgba(14, 165, 233, 0.1);
+          color: #FF6B6B;
+        }
+
+        .post-action-btn i {
+            font-size: 11px;
+        }
+
+        .like-count-badge {
+            background-color: #FF6B6B;
+            color: white;
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            font-weight: 700;
+            min-width: 24px;
+        }
+
+          .comment-count-badge {
+            background-color: #0EA5E9;
+            color: white;
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            font-weight: 700;
+            min-width: 24px;
+          }
+
+          .share-count-badge {
+            background-color: #10b981;
+            color: white;
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            font-weight: 700;
+            min-width: 24px;
+          }
+
+          .share-options {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            padding: 16px;
+          }
+
+          .share-option-btn {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 14px 16px;
+            border: 1px solid #e5e7eb;
+            border-radius: 10px;
+            background: white;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-size: 15px;
+            color: #1f2937;
+            text-decoration: none;
+          }
+
+          .share-option-btn:hover {
+            background: #f9fafb;
+            border-color: #0EA5E9;
+            transform: translateX(4px);
+          }
+
+          .share-option-btn i {
+            font-size: 20px;
+            width: 32px;
+            text-align: center;
+          }
+
+          .share-option-whatsapp i { color: #25D366; }
+          .share-option-sms i { color: #0EA5E9; }
+          .share-option-email i { color: #FF6B6B; }
+          .share-option-facebook i { color: #1877f2; }
+          .share-option-twitter i { color: #1DA1F2; }
+          .share-option-copy i { color: #6b7280; }
+
+          .share-option-label {
+            flex: 1;
+            font-weight: 500;
+          }
+
+          .share-link-preview {
+            background: #f9fafb;
+            padding: 12px;
+            border-radius: 8px;
+            font-size: 12px;
+            color: #6b7280;
+            word-break: break-all;
+            margin-bottom: 8px;
+            border: 1px solid #e5e7eb;
+          }
+
+          .copy-success {
+            background: #10b981;
+            color: white;
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 13px;
+            text-align: center;
+            margin-top: 8px;
+            animation: fadeIn 0.3s ease;
+          }
+
+          .comments-list {
+            max-height: 300px;
+            overflow-y: auto;
+            border: 1px solid #e5e7eb;
+            border-radius: 10px;
+            padding: 10px;
+            background: #f9fafb;
+            margin-bottom: 14px;
+          }
+
+          .comment-item {
+            padding: 10px;
+            border-radius: 8px;
+            background: white;
+            margin-bottom: 8px;
+            border: 1px solid #eef2f7;
+            display: flex;
+            gap: 10px;
+          }
+
+          .comment-item:last-child {
+            margin-bottom: 0;
+          }
+
+          .comment-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #0EA5E9, #FF6B6B);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 14px;
+            flex-shrink: 0;
+            cursor: pointer;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            text-decoration: none;
+          }
+
+          .comment-avatar:hover {
+            transform: scale(1.1);
+            box-shadow: 0 2px 8px rgba(14, 165, 233, 0.3);
+          }
+
+          .comment-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 50%;
+          }
+
+          .comment-content {
+            flex: 1;
+            min-width: 0;
+          }
+
+          .comment-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 6px;
+            font-size: 12px;
+            color: #6b7280;
+          }
+
+          .comment-author {
+            font-weight: 700;
+            color: #111827;
+          }
+
+          .comment-body {
+            font-size: 14px;
+            color: #1f2937;
+            white-space: pre-wrap;
+            word-break: break-word;
+          }
+
+          .comment-delete-btn {
+            border: none;
+            background: transparent;
+            color: #ef4444;
+            font-size: 12px;
+            cursor: pointer;
+            font-weight: 600;
+          }
+
+          .comments-empty {
+            text-align: center;
+            color: #6b7280;
+            font-size: 13px;
+            padding: 20px;
+          }
+
+        .gift-btn {
+            color: #FF6B6B !important;
+        }
+
+        .gift-btn:hover {
+            background-color: rgba(255, 107, 107, 0.1) !important;
+            color: #FF3B3B !important;
+        }
+
+        .gift-count-badge {
+          background-color: #FF6B6B;
+          color: white;
+          border-radius: 50%;
+          width: 22px;
+          height: 22px;
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          font-size: 10px;
+          font-weight: 700;
+          min-width: 22px;
+        }
+
+        .gift-modal {
+            display: none;
+            position: fixed;
+            z-index: 2000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.6);
+            animation: fadeIn 0.3s ease;
+        }
+
+        .gift-modal.active {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .gift-modal-content {
+            background-color: white;
+            border-radius: 16px;
+            padding: 30px;
+            max-width: 500px;
+            width: 95%;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            animation: slideDown 0.3s ease;
+        }
+
+        .gift-modal-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .gift-modal-header h2 {
+            font-size: 24px;
+            color: #111827;
+            margin: 0;
+        }
+
+        .gift-modal-header p {
+            color: #6b7280;
+            font-size: 14px;
+            margin-top: 8px;
+        }
+
+        .gift-options {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .gift-option {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 16px;
+            border: 2px solid #e5e7eb;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: white;
+        }
+
+        .gift-option:hover {
+            border-color: #0EA5E9;
+            background-color: rgba(14, 165, 233, 0.05);
+            transform: translateY(-2px);
+        }
+
+        .gift-option.selected {
+            border-color: #FF6B6B;
+            background-color: rgba(255, 107, 107, 0.1);
+        }
+
+        .gift-option-icon {
+            font-size: 32px;
+        }
+
+        .gift-option-name {
+            font-size: 13px;
+            font-weight: 600;
+            color: #111827;
+            text-align: center;
+        }
+
+        .gift-option-price {
+            font-size: 12px;
+            color: #10b981;
+            font-weight: 700;
+        }
+
+        .gift-modal-actions {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+        }
+
+        .gift-close-btn {
+            padding: 10px 20px;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            background: white;
+            color: #333;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .gift-close-btn:hover {
+            background: #f3f4f6;
+            border-color: #d1d5db;
+        }
+
+        .gift-confirm-btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            background: linear-gradient(135deg, #FF6B6B, #FF3B3B);
+            color: white;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            min-width: 120px;
+        }
+
+        .gift-confirm-btn:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(255, 107, 107, 0.3);
+        }
+
+        .gift-confirm-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .no-feed-content {
+            text-align: center;
+            padding: 80px 20px;
+            color: #999;
+        }
+
+        .no-feed-content i {
+            font-size: 64px;
+            margin-bottom: 20px;
+            color: #e0e0e0;
+        }
+
+        .no-feed-content p {
+            font-size: 16px;
+            margin-bottom: 10px;
+        }
+
+        .no-feed-content .cta-link {
+            color: #0EA5E9;
+            text-decoration: none;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .no-feed-content .cta-link:hover {
+            text-decoration: underline;
+        }
+
+        @media (max-width: 768px) {
+            .feed-container {
+              padding: 0;
+            }
+            .post-media {
+              min-height: 320px;
+              font-size: 36px;
+            }
+            .header {
+              padding: 10px 15px;
+            }
+            .COSHIN-title {
+              font-size: 24px;
+            }
+            .post-actions {
+              gap: 2px;
+              padding: 6px 2px;
+            }
+            .post-action-btn {
+              font-size: 10px;
+              padding: 4px 2px;
+              min-width: 40px;
+              max-width: 60px;
+            }
+            .post-action-btn i {
+              font-size: 10px;
+            }
+            .like-count-badge,
+            .comment-count-badge,
+            .share-count-badge,
+            .gift-count-badge {
+              font-size: 9px;
+              width: 18px;
+              height: 18px;
+              min-width: 18px;
+            }
+        }
+
+        /* Footer Enhancements */
+        .footer {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: white;
+            border-top: 2px solid #f0f0f0;
+            display: flex !important;
+            justify-content: space-around !important;
+            align-items: center;
+            padding: 12px 0 !important;
+            padding-bottom: calc(12px + env(safe-area-inset-bottom));
+            box-shadow: 0 -2px 12px rgba(0, 0, 0, 0.08);
+            z-index: 99;
+            margin: 0 !important;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        .footer a {
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            padding: 12px 20px !important;
+            text-decoration: none !important;
+            color: #0EA5E9 !important;
+            margin: 0 !important;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+            border-radius: 12px !important;
+            position: relative !important;
+            font-size: 15px !important;
+        }
+
+        .footer a:hover {
+          background-color: rgba(14, 165, 233, 0.12) !important;
+          transform: translateY(-4px) scale(1.1) !important;
+          color: #FF6B6B !important;
+        }
+
+        .footer a:active {
+            transform: translateY(-2px) scale(1.08) !important;
+        }
+
+        .footer a.active {
+          background: linear-gradient(135deg, rgba(14, 165, 233, 0.2), rgba(255, 107, 107, 0.15)) !important;
+          color: #FF6B6B !important;
+          box-shadow: 0 4px 12px rgba(14, 165, 233, 0.2) !important;
+        }
+
+        .footer a::before { display: none !important; }
+
+        .footer a.active::before {
+            opacity: 1;
+        }
+
+        .footer a:hover::before {
+            opacity: 0.5;
+        }
+
+        .footer i {
+            transition: all 0.3s ease !important;
+        }
+
+        .footer a:hover i {
+          filter: drop-shadow(0 4px 8px rgba(255, 107, 107, 0.3));
+        }
+
+        .footer-tooltip { position: static; bottom: auto; left: auto; transform: none; background: transparent; color: inherit; padding: 0; margin-top:6px; opacity:1; pointer-events:auto; font-weight:600; font-size:12px; }
+
+        .footer-tooltip::after { display: none; }
+
+        .footer a:hover .footer-tooltip { opacity: 1; transform: none; }
+
+        @media (max-width: 768px) {
+            .footer {
+                padding: 10px 0 !important;
+                gap: 0 !important;
+            }
+
+            .footer a {
+                padding: 10px 15px !important;
+                flex-grow: 1;
+            }
+
+            .footer-tooltip {
+                display: none;
+            }
+        }
+
+        /* Upload Modal Styles */
+        .upload-modal {
+          display: none;
+          position: fixed;
+          z-index: 1000;
+          left: 0;
+          top: 0;
+          width: 100%;
+          height: 100%;
+          background-color: rgba(0, 0, 0, 0.6);
+          animation: fadeIn 0.3s ease;
+        }
+
+        .upload-modal.active {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
+
+        .upload-modal-content {
+          background-color: white;
+          margin: auto;
+          padding: 30px;
+          border-radius: 12px;
+          width: 95%;
+          max-width: 600px;
+          max-height: 90vh;
+          overflow-y: auto;
+          animation: slideDown 0.3s ease;
+          box-shadow: 0 18px 48px rgba(16, 24, 40, 0.12);
+        }
+
+        /* Comments Modal - Slide from Bottom */
+        #commentsModal {
+          align-items: flex-end;
+        }
+
+        #commentsModal.active {
+          display: flex;
+          align-items: flex-end;
+        }
+
+        #commentsModal .upload-modal-content {
+          width: 100%;
+          max-width: 100%;
+          margin: 0;
+          border-radius: 20px 20px 0 0;
+          max-height: 85vh;
+          animation: slideUpFromBottom 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+          box-shadow: 0 -4px 24px rgba(0, 0, 0, 0.15);
+        }
+
+        #commentsModal.closing .upload-modal-content {
+          animation: slideDownToBottom 0.25s cubic-bezier(0.4, 0, 1, 1) forwards;
+        }
+
+        @media (min-width: 768px) {
+          #commentsModal .upload-modal-content {
+            max-width: 600px;
+            margin: 0 auto 0 auto;
+            border-radius: 20px 20px 0 0;
+          }
+        }
+
+        /* Share Modal - Slide from Bottom */
+        #shareModal {
+          align-items: flex-end;
+        }
+
+        #shareModal.active {
+          display: flex;
+          align-items: flex-end;
+        }
+
+        #shareModal .upload-modal-content {
+          width: 100%;
+          max-width: 100%;
+          margin: 0;
+          border-radius: 20px 20px 0 0;
+          max-height: 85vh;
+          animation: slideUpFromBottom 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+          box-shadow: 0 -4px 24px rgba(0, 0, 0, 0.15);
+        }
+
+        #shareModal.closing .upload-modal-content {
+          animation: slideDownToBottom 0.25s cubic-bezier(0.4, 0, 1, 1) forwards;
+        }
+
+        @media (min-width: 768px) {
+          #shareModal .upload-modal-content {
+            max-width: 600px;
+            margin: 0 auto 0 auto;
+            border-radius: 20px 20px 0 0;
+          }
+        }
+
+        .upload-modal-header {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          margin-bottom: 20px;
+          border-bottom: 2px solid #0EA5E9;
+          padding-bottom: 15px;
+        }
+
+        .upload-modal-header h2 {
+          margin: 0;
+          color: #333;
+          font-size: 22px;
+        }
+
+        .close-upload-modal {
+          background: none;
+          border: none;
+          font-size: 28px;
+          cursor: pointer;
+          color: #0EA5E9;
+          transition: all 0.3s ease;
+        }
+
+        .close-upload-modal:hover {
+          color: #FF6B6B;
+          transform: rotate(90deg);
+        }
+
+        .upload-form-group {
+          margin-bottom: 20px;
+        }
+
+        .upload-form-group label {
+          display: block;
+          margin-bottom: 8px;
+          font-weight: 600;
+          color: #333;
+          font-size: 14px;
+        }
+
+        .gift-toggle-group {
+          display: flex;
+          align-items: center;
+          gap: 12px;
+          padding: 14px;
+          background: #f9fafb;
+          border-radius: 10px;
+          margin-bottom: 20px;
+          border: 1px solid #e5e7eb;
+        }
+
+        .gift-toggle-group input[type="checkbox"] {
+          width: 20px;
+          height: 20px;
+          cursor: pointer;
+          accent-color: #0EA5E9;
+        }
+
+        .gift-toggle-group label {
+          margin: 0;
+          cursor: pointer;
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          font-size: 14px;
+        }
+
+        .gift-toggle-group i {
+          color: #FF6B6B;
+          font-size: 16px;
+        }
+
+        .photo-preview {
+          width: 100%;
+          height: 250px;
+          background: #f4f6f8;
+          border-radius: 8px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          overflow: hidden;
+          border: 2px dashed #e6e9ee;
+          margin-bottom: 15px;
+          cursor: pointer;
+          transition: all 0.3s ease;
+          position: relative;
+          user-select: none;
+        }
+
+        .photo-preview:hover {
+          background: #f0f2f5;
+          border-color: #0EA5E9;
+        }
+
+        .photo-preview img {
+          width: 100%;
+          border-radius: 20px !important;
+          height: 100%;
+          object-fit: cover;
+        }
+
+        .photo-preview video {
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+          border-radius: 20px !important;
+        }
+
+        .post-media img,
+        .post-media video {
+          border-radius: 20px !important;
+        }
+        }
+
+        .photo-preview.empty {
+                  .photo-preview video {
+                    width: 100%;
+                    height: 100%;
+                    object-fit: cover;
+                    border-radius: 20px !important;
+                  }
+          color: #999;
+          font-size: 48px;
+        }
+
+        .photo-source-actions {
+          display: flex;
+          gap: 10px;
+          margin-bottom: 10px;
+          flex-wrap: wrap;
+        }
+
+        .photo-source-btn {
+          padding: 8px 12px;
+          border: 1px solid #d1d5db;
+          border-radius: 8px;
+          background: #ffffff;
+          color: #374151;
+          cursor: pointer;
+          display: inline-flex;
+          align-items: center;
+          gap: 8px;
+          font-size: 13px;
+          transition: all 0.2s ease;
+        }
+
+        .photo-source-btn:hover {
+          border-color: #0EA5E9;
+          color: #0EA5E9;
+        }
+
+        .photo-text-editor {
+          background: #f9fafb;
+          border: 1px solid #e5e7eb;
+          border-radius: 10px;
+          padding: 14px;
+        }
+
+        .photo-text-grid {
+          display: grid;
+          grid-template-columns: 1fr 1fr;
+          gap: 12px;
+        }
+
+        .photo-text-grid .full-width {
+          grid-column: 1 / -1;
+        }
+
+        .photo-range-wrap {
+          display: flex;
+          align-items: center;
+          gap: 10px;
+        }
+
+        .photo-range-wrap span {
+          min-width: 42px;
+          font-size: 13px;
+          color: #4b5563;
+          font-weight: 600;
+        }
+
+        .photo-clear-btn {
+          border: 1px solid #ef4444;
+          color: #ef4444;
+          background: #fff;
+          border-radius: 8px;
+          padding: 8px 12px;
+          cursor: pointer;
+          font-size: 13px;
+          font-weight: 600;
+          transition: all 0.2s ease;
+        }
+
+        .photo-clear-btn:hover {
+          background: #fef2f2;
+        }
+
+        .photo-overlay-drag {
+          position: absolute;
+          left: 50%;
+          top: 50%;
+          transform: translate(-50%, -50%);
+          z-index: 3;
+          cursor: grab;
+          font-weight: 700;
+          text-shadow: 0 2px 6px rgba(0, 0, 0, 0.6);
+          pointer-events: auto;
+          max-width: 86%;
+          text-align: center;
+          word-break: break-word;
+          padding: 4px 8px;
+          border-radius: 6px;
+          background: rgba(0, 0, 0, 0.15);
+          border: 1px dashed rgba(255, 255, 255, 0.65);
+          display: none;
+          white-space: pre-line;
+          line-height: 1.2;
+          backdrop-filter: none;
+          -webkit-backdrop-filter: none;
+        }
+
+        .photo-overlay-drag.dragging {
+          cursor: grabbing;
+          background: rgba(0, 0, 0, 0.25);
+        }
+
+        .photo-snap-toggle {
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          font-size: 13px;
+          color: #374151;
+          font-weight: 600;
+        }
+
+        .photo-snap-toggle input[type="checkbox"] {
+          accent-color: #0EA5E9;
+          width: 16px;
+          height: 16px;
+          cursor: pointer;
+        }
+
+        .photo-grid-guides {
+          position: absolute;
+          inset: 0;
+          pointer-events: none;
+          z-index: 2;
+          display: none;
+        }
+
+        .photo-grid-guides.active {
+          display: block;
+        }
+
+        .photo-guide-line {
+          position: absolute;
+          background: rgba(255, 255, 255, 0.5);
+          box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.15);
+        }
+
+        .photo-guide-line.v-center {
+          top: 0;
+          bottom: 0;
+          left: 50%;
+          width: 1px;
+          transform: translateX(-50%);
+        }
+
+        .photo-guide-line.h-center {
+          left: 0;
+          right: 0;
+          top: 50%;
+          height: 1px;
+          transform: translateY(-50%);
+        }
+
+        .photo-guide-line.v-third-left {
+          top: 0;
+          bottom: 0;
+          left: 33.3333%;
+          width: 1px;
+        }
+
+        .photo-guide-line.v-third-right {
+          top: 0;
+          bottom: 0;
+          left: 66.6667%;
+          width: 1px;
+        }
+
+        .photo-guide-line.h-third-top {
+          left: 0;
+          right: 0;
+          top: 33.3333%;
+          height: 1px;
+        }
+
+        .photo-guide-line.h-third-bottom {
+          left: 0;
+          right: 0;
+          top: 66.6667%;
+          height: 1px;
+        }
+
+        @media (max-width: 640px) {
+          .photo-text-grid {
+            grid-template-columns: 1fr;
+          }
+        }
+
+        .upload-form-actions {
+          display: flex;
+          gap: 10px;
+          justify-content: flex-end;
+          margin-top: 25px;
+        }
+
+        .upload-cancel-btn {
+          padding: 10px 20px;
+          border: 1px solid #ddd;
+          border-radius: 8px;
+          background: white;
+          color: #666;
+          cursor: pointer;
+          font-weight: 600;
+          transition: all 0.3s ease;
+        }
+
+        .upload-cancel-btn:hover {
+          background: #f5f5f5;
+          border-color: #999;
+        }
+
+        .upload-submit-btn {
+          padding: 10px 20px;
+          border: none;
+          border-radius: 8px;
+          background: linear-gradient(135deg, #0EA5E9, #3b82f6);
+          color: white;
+          cursor: pointer;
+          font-weight: 600;
+          transition: all 0.3s ease;
+          display: flex;
+          gap: 8px;
+          align-items: center;
+        }
+
+        .upload-submit-btn:hover {
+          transform: translateY(-2px);
+          box-shadow: 0 8px 16px rgba(14, 165, 233, 0.3);
+        }
+
+        .upload-input {
+          width: 100%;
+          padding: 10px 12px;
+          border: 1px solid #ddd;
+          border-radius: 8px;
+          font-size: 14px;
+          transition: all 0.3s ease;
+        }
+
+        .upload-input:focus {
+          outline: none;
+          border-color: #0EA5E9;
+          box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.1);
+        }
+
+        .upload-textarea {
+          width: 100%;
+          padding: 10px 12px;
+          border: 1px solid #ddd;
+          border-radius: 8px;
+          font-size: 14px;
+          font-family: inherit;
+          resize: vertical;
+          transition: all 0.3s ease;
+        }
+
+        .upload-textarea:focus {
+          outline: none;
+          border-color: #0EA5E9;
+          box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.1);
+        }
+
+        @keyframes fadeIn {
+          from { opacity: 0; }
+          to { opacity: 1; }
+        }
+
+        @keyframes slideDown {
+          from {
+            opacity: 0;
+            transform: translateY(-50px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+
+        @keyframes slideUpFromBottom {
+          from {
+            transform: translateY(100%);
+          }
+          to {
+            transform: translateY(0);
+          }
+        }
+
+        @keyframes slideDownToBottom {
+          from {
+            transform: translateY(0);
+          }
+          to {
+            transform: translateY(100%);
+          }
+        }
+
+        @keyframes slideInRight {
+          from {
+            opacity: 0;
+            transform: translateX(100px);
+          }
+          to {
+            opacity: 1;
+            transform: translateX(0);
+          }
+        }
+
+        @keyframes slideOutRight {
+          from {
+            opacity: 1;
+            transform: translateX(0);
+          }
+          to {
+            opacity: 0;
+            transform: translateX(100px);
+          }
+        }
+
+        @keyframes slideIn {
+          from {
+            opacity: 0;
+            transform: translateX(400px);
+          }
+          to {
+            opacity: 1;
+            transform: translateX(0);
+          }
+        }
+
+        @keyframes slideOut {
+          from {
+            opacity: 1;
+            transform: translateX(0);
+          }
+          to {
+            opacity: 0;
+            transform: translateX(400px);
+          }
+        }
+
+        /* AI Icon Styles */
+        .ai-icon-wrapper {
+            position: relative;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+            transition: all 0.3s ease;
+            animation: aiPulse 2s ease-in-out infinite;
+        }
+
+        .ai-icon-wrapper:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 25px rgba(102, 126, 234, 0.6);
+            animation: aiGlow 1.5s ease-in-out infinite;
+        }
+
+        .ai-icon-wrapper i {
+            color: white !important;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
+        }
+
+        @keyframes aiPulse {
+            0%, 100% {
+                box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+            }
+            50% {
+                box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+            }
+        }
+
+        @keyframes aiGlow {
+            0%, 100% {
+                box-shadow: 0 6px 25px rgba(102, 126, 234, 0.6),
+                            0 0 30px rgba(118, 75, 162, 0.4);
+            }
+            50% {
+                box-shadow: 0 8px 35px rgba(102, 126, 234, 0.8),
+                            0 0 50px rgba(118, 75, 162, 0.6);
+            }
+        }
+
+    </style>
+    <!-- Firebase Libraries -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.2/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.2/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.2/firebase-database-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.2/firebase-storage-compat.js"></script>
+    <!-- Your Firebase Config -->
+    <script src="firebase-config.js"></script>
+</head>
+<body>
+<div class="header">
+    <div style="display: flex; flex-direction: column; align-items: flex-start; margin-right: 16px;">
+      <img src="./Zim Assets/coshin logo.png" alt="coshin logo" style="height: 84px; width: auto; display: block;">
+    </div>
+    <div class="header-icons">
+    <a href="notification.html" title="Notifications">
+        <i class="fa-solid fa-bell fa-xl" style="color: #0EA5E9;"></i>
+        <span class="notification-badge" id="notificationBadge" style="display: none;">0</span>
+    </a>
+    <div class="ai-dropdown">
+      <div class="ai-icon-wrapper" id="aiDropdownToggle" tabindex="0">
+        <i class="fa-solid fa-wand-magic-sparkles fa-lg"></i>
+      </div>
+      <div class="ai-dropdown-menu" id="aiDropdownMenu">
+        <a href="aigrammarfixer.html" class="ai-dropdown-item">Text Editor</a>
+        <!-- Add more menu items here if needed -->
+      </div>
+    </div>
+    <a href="search.html" class="header-icon-btn" title="Search users" style="text-decoration: none; padding: 0; display: flex; align-items: center; gap: 6px; font-weight: 600;">
+      <i class="fa-solid fa-magnifying-glass fa-xl" style="color: #0EA5E9;"></i>
+    </a>
+  </div>
+</div>
+
+
+<!-- Feed Content -->
+<script>
+// Dropdown toggle logic
+document.addEventListener('DOMContentLoaded', function() {
+  const toggle = document.getElementById('aiDropdownToggle');
+  const menu = document.getElementById('aiDropdownMenu');
+  if (toggle && menu) {
+    toggle.addEventListener('click', function(e) {
+      e.stopPropagation();
+      menu.classList.toggle('show');
+    });
+    document.addEventListener('click', function() {
+      menu.classList.remove('show');
+    });
+    toggle.addEventListener('keydown', function(e) {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        menu.classList.toggle('show');
+      }
+    });
+  }
+});
+</script>
+<div class="feed-container">
+    <!-- Create Post Box -->
+    <div class="create-post-box">
+        <div class="create-post-avatar" id="feedPostAvatar">
+            <i class="fa-solid fa-user"></i>
+        </div>
+        <div class="create-post-input">
+            <textarea class="create-post-textarea" placeholder="What's on your mind?" rows="2"></textarea>
+            <div class="create-post-actions">
+                <button class="create-post-icon-btn" title="Add photo" onclick="openPhotoUploadModal()">
+                    <i class="fa-solid fa-image"></i>
+                </button>
+                <button class="create-post-icon-btn" title="Add video" onclick="openVideoUploadModal()">
+                    <i class="fa-solid fa-video"></i>
+                </button>
+                <button class="create-post-icon-btn" title="Add emoji">
+                    <i class="fa-solid fa-face-smile"></i>
+                </button>
+                <button class="create-post-btn" onclick="submitPostFromFeed()">Share</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Feed Posts -->
+    <div class="content-feed" id="contentFeed">
+        <div class="no-feed-content">
+            <i class="fa-solid fa-inbox"></i>
+            <p>No content yet</p>
+            <p style="font-size: 13px;">Follow users and they'll appear here</p>
+        </div>
+    </div>
+</div>
+
+<!-- Photo Upload Modal -->
+<div id="photoUploadModal" class="upload-modal">
+  <div class="upload-modal-content">
+    <div class="upload-modal-header">
+      <h2>Upload Photo</h2>
+      <button class="close-upload-modal" onclick="closePhotoUploadModal()">&times;</button>
+    </div>
+
+    <div class="upload-form-group">
+      <label>Photo Preview</label>
+      <div class="photo-preview empty" id="photoPreview" onclick="document.getElementById('photoUploadInput').click()">
+        <i class="fa-solid fa-image"></i>
+      </div>
+      <input type="file" id="photoUploadInput" accept="image/*" style="display: none;">
+      <input type="file" id="photoCameraInput" accept="image/*" capture="environment" style="display: none;">
+      <div class="photo-source-actions">
+        <button type="button" class="photo-source-btn" onclick="document.getElementById('photoUploadInput').click()">
+          <i class="fa-solid fa-images"></i> Choose Photo
+        </button>
+        <button type="button" class="photo-source-btn" onclick="document.getElementById('photoCameraInput').click()">
+          <i class="fa-solid fa-camera"></i> Use Camera
+        </button>
+      </div>
+      <small style="color: #999;">Choose from gallery or capture with camera, then add text style below.</small>
+    </div>
+
+    <div class="upload-form-group photo-text-editor">
+      <label for="photoOverlayText">Add Text On Photo</label>
+      <div class="photo-text-grid">
+        <div class="full-width">
+          <textarea id="photoOverlayText" class="upload-textarea" placeholder="Type text to place on your photo (multi-line supported)" rows="3" maxlength="300"></textarea>
+        </div>
+
+        <div>
+          <label for="photoOverlayFont">Font Style</label>
+          <select id="photoOverlayFont" class="upload-input">
+            <option value="Arial, sans-serif">Arial</option>
+            <option value="Verdana, sans-serif">Verdana</option>
+            <option value="Tahoma, sans-serif">Tahoma</option>
+            <option value="Trebuchet MS, sans-serif">Trebuchet MS</option>
+            <option value="Georgia, serif">Georgia</option>
+            <option value="Times New Roman, serif">Times New Roman</option>
+            <option value="Courier New, monospace">Courier New</option>
+            <option value="Impact, sans-serif">Impact</option>
+            <option value="Comic Sans MS, cursive">Comic Sans MS</option>
+            <option value="Lucida Console, monospace">Lucida Console</option>
+            <option value="Brush Script MT, cursive">Brush Script MT</option>
+          </select>
+        </div>
+
+        <div>
+          <label for="photoOverlayPosition">Text Position</label>
+          <select id="photoOverlayPosition" class="upload-input">
+            <option value="top">Top</option>
+            <option value="center" selected>Center</option>
+            <option value="bottom">Bottom</option>
+          </select>
+        </div>
+
+        <div>
+          <label for="photoOverlayColor">Text Color</label>
+          <input type="color" id="photoOverlayColor" class="upload-input" value="#ffffff">
+        </div>
+
+        <div>
+          <label for="photoOverlaySize">Text Size</label>
+          <div class="photo-range-wrap">
+            <input type="range" id="photoOverlaySize" min="20" max="96" value="42" style="width: 100%;">
+            <span id="photoOverlaySizeValue">42px</span>
+          </div>
+        </div>
+
+        <div>
+          <label for="photoOverlayOutline">Outline Strength</label>
+          <div class="photo-range-wrap">
+            <input type="range" id="photoOverlayOutline" min="0" max="10" value="4" style="width: 100%;">
+            <span id="photoOverlayOutlineValue">4</span>
+          </div>
+        </div>
+
+        <div>
+          <label for="photoOverlayBgStyle">Text Background</label>
+          <select id="photoOverlayBgStyle" class="upload-input">
+            <option value="none">None</option>
+            <option value="shadow" selected>Shadow Chip</option>
+            <option value="solid-dark">Solid Dark</option>
+            <option value="solid-light">Solid Light</option>
+            <option value="blur">Glass Blur</option>
+          </select>
+        </div>
+
+        <div>
+          <label for="photoOverlaySnapStrength">Magnet Strength</label>
+          <div class="photo-range-wrap">
+            <input type="range" id="photoOverlaySnapStrength" min="1" max="10" value="4" style="width: 100%;">
+            <span id="photoOverlaySnapStrengthValue">4</span>
+          </div>
+        </div>
+
+        <div class="full-width">
+          <button type="button" class="photo-clear-btn" id="photoClearTextBtn">
+            <i class="fa-solid fa-eraser"></i> Clear Text
+          </button>
+        </div>
+
+        <div class="full-width photo-snap-toggle">
+          <input type="checkbox" id="photoOverlaySnap" checked>
+          <label for="photoOverlaySnap">Snap to grid (center + rule of thirds)</label>
+        </div>
+      </div>
+      <small style="color: #999; display: block; margin-top: 8px;">Tip: drag the text directly on the preview to place it anywhere.</small>
+    </div>
+
+    <div class="upload-form-group">
+      <label for="photoUploadTitle">Title *</label>
+      <input type="text" id="photoUploadTitle" class="upload-input" placeholder="Give your photo a title" maxlength="100">
+    </div>
+
+    <div class="upload-form-group">
+      <label for="photoUploadDesc">Description</label>
+      <textarea id="photoUploadDesc" class="upload-textarea" placeholder="Add a description (optional)" rows="4" maxlength="500"></textarea>
+      <small style="color: #999;"><span id="charCount">0</span>/500 characters</small>
+    </div>
+
+    <div class="gift-toggle-group">
+      <input type="checkbox" id="photoAllowGifts" checked>
+      <label for="photoAllowGifts">
+        <i class="fa-solid fa-gift"></i>
+        Allow viewers to send gifts
+      </label>
+    </div>
+
+    <div class="upload-form-actions">
+      <button class="upload-cancel-btn" onclick="closePhotoUploadModal()">Cancel</button>
+      <button class="upload-submit-btn" onclick="submitPhotoUpload()">
+        <i class="fa-solid fa-check"></i> Upload Photo
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Video Upload Modal -->
+<div id="videoUploadModal" class="upload-modal">
+  <div class="upload-modal-content">
+    <div class="upload-modal-header">
+      <h2>Upload Video</h2>
+      <button class="close-upload-modal" onclick="closeVideoUploadModal()">&times;</button>
+    </div>
+
+    <div class="upload-form-group">
+      <label>Video Preview</label>
+      <div class="photo-preview empty" id="videoPreview" onclick="document.getElementById('videoUploadInput').click()" style="cursor: pointer;">
+        <i class="fa-solid fa-video"></i>
+      </div>
+      <input type="file" id="videoUploadInput" accept="video/*" capture="user" style="display: none;">
+      <input type="file" id="videoCameraInput" accept="video/*" capture="user" style="display: none;">
+      <div class="photo-source-actions">
+        <button type="button" class="photo-source-btn" onclick="document.getElementById('videoUploadInput').click()">
+          <i class="fa-solid fa-film"></i> Choose Video
+        </button>
+        <button type="button" class="photo-source-btn" onclick="document.getElementById('videoCameraInput').click()">
+          <i class="fa-solid fa-video"></i> Record with Camera
+        </button>
+      </div>
+      <small style="color: #999;">Select a file or record directly from camera.</small>
+    </div>
+
+    <div class="upload-form-group">
+      <label for="videoUploadTitle">Title *</label>
+      <input type="text" id="videoUploadTitle" class="upload-input" placeholder="Give your video a title" maxlength="100">
+    </div>
+
+    <div class="upload-form-group">
+      <label for="videoUploadDesc">Description</label>
+      <textarea id="videoUploadDesc" class="upload-textarea" placeholder="Add a description (optional)" rows="4" maxlength="500"></textarea>
+      <small style="color: #999;"><span id="videoCharCount">0</span>/500 characters</small>
+    </div>
+
+    <div class="gift-toggle-group">
+      <input type="checkbox" id="videoAllowGifts" checked>
+      <label for="videoAllowGifts">
+        <i class="fa-solid fa-gift"></i>
+        Allow viewers to send gifts
+      </label>
+    </div>
+
+    <div class="upload-form-actions">
+      <button class="upload-cancel-btn" onclick="closeVideoUploadModal()">Cancel</button>
+      <button class="upload-submit-btn" onclick="submitVideoUpload()">
+        <i class="fa-solid fa-check"></i> Upload Video
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Post Create Modal (for sharing text posts from home feed) -->
+<div id="postFromFeedModal" class="upload-modal">
+  <div class="upload-modal-content">
+    <div class="upload-modal-header">
+      <h2>Create Post</h2>
+      <button class="close-upload-modal" onclick="closePostFromFeedModal()">&times;</button>
+    </div>
+
+    <div class="upload-form-group">
+      <label for="postFromFeedTitle">Title *</label>
+      <input type="text" id="postFromFeedTitle" class="upload-input" placeholder="Give your post a title" maxlength="100">
+    </div>
+
+    <div class="upload-form-group">
+      <label for="postFromFeedContent">Content *</label>
+      <textarea id="postFromFeedContent" class="upload-textarea" placeholder="What's on your mind?" rows="6" maxlength="1000"></textarea>
+      <small style="color: #999;"><span id="postFromFeedCharCount">0</span>/1000 characters</small>
+    </div>
+
+    <div class="gift-toggle-group">
+      <input type="checkbox" id="postAllowGifts" checked>
+      <label for="postAllowGifts">
+        <i class="fa-solid fa-gift"></i>
+        Allow viewers to send gifts
+      </label>
+    </div>
+
+    <div class="upload-form-actions">
+      <button class="upload-cancel-btn" onclick="closePostFromFeedModal()">Cancel</button>
+      <button class="upload-submit-btn" onclick="submitPostFromFeedModal()">
+        <i class="fa-solid fa-share"></i> Share Post
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Gift Selection Modal -->
+<div id="giftModal" class="gift-modal">
+  <div class="gift-modal-content">
+    <div class="gift-modal-header">
+      <h2>Send a Gift 🎁</h2>
+      <p>Choose a gift to support this creator</p>
+    </div>
+    <div class="gift-options" id="giftOptionsContainer">
+      <!-- Gift options will be generated here -->
+    </div>
+    <div class="gift-modal-actions">
+      <button class="gift-close-btn" onclick="closeGiftModal()">Cancel</button>
+      <button class="gift-confirm-btn" id="giftConfirmBtn" onclick="confirmGiftSelection()" disabled>
+        Send Gift
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Comments Modal -->
+<div id="commentsModal" class="upload-modal">
+  <div class="upload-modal-content">
+    <div class="upload-modal-header">
+      <h2>Comments</h2>
+      <button class="close-upload-modal" onclick="closeCommentsModal()">&times;</button>
+    </div>
+
+    <div id="commentsList" class="comments-list">
+      <div class="comments-empty">Loading comments...</div>
+    </div>
+
+    <div class="upload-form-group" style="margin-bottom: 10px;">
+      <label for="commentInput">Add Comment</label>
+      <textarea id="commentInput" class="upload-textarea" rows="3" maxlength="500" placeholder="Write a comment..."></textarea>
+      <small style="color: #999;"><span id="commentCharCount">0</span>/500 characters</small>
+    </div>
+
+    <div class="upload-form-actions">
+      <button class="upload-cancel-btn" onclick="closeCommentsModal()">Close</button>
+      <button class="upload-submit-btn" onclick="submitComment()">
+        <i class="fa-solid fa-paper-plane"></i> Post Comment
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Share Modal -->
+<div id="shareModal" class="upload-modal">
+  <div class="upload-modal-content">
+    <div class="upload-modal-header">
+      <h2>Share Content</h2>
+      <button class="close-upload-modal" onclick="closeShareModal()">&times;</button>
+    </div>
+
+    <div class="share-link-preview" id="shareLinkPreview"></div>
+
+    <div class="share-options">
+      <button class="share-option-btn share-option-whatsapp" onclick="shareVia('whatsapp')">
+        <i class="fa-brands fa-whatsapp"></i>
+        <span class="share-option-label">Share on WhatsApp</span>
+        <i class="fa-solid fa-chevron-right" style="font-size: 14px; color: #9ca3af;"></i>
+      </button>
+
+      <button class="share-option-btn share-option-sms" onclick="shareVia('sms')">
+        <i class="fa-solid fa-sms"></i>
+        <span class="share-option-label">Share via SMS</span>
+        <i class="fa-solid fa-chevron-right" style="font-size: 14px; color: #9ca3af;"></i>
+      </button>
+
+      <button class="share-option-btn share-option-email" onclick="shareVia('email')">
+        <i class="fa-solid fa-envelope"></i>
+        <span class="share-option-label">Share via Email</span>
+        <i class="fa-solid fa-chevron-right" style="font-size: 14px; color: #9ca3af;"></i>
+      </button>
+
+      <button class="share-option-btn share-option-facebook" onclick="shareVia('facebook')">
+        <i class="fa-brands fa-facebook"></i>
+        <span class="share-option-label">Share on Facebook</span>
+        <i class="fa-solid fa-chevron-right" style="font-size: 14px; color: #9ca3af;"></i>
+      </button>
+
+      <button class="share-option-btn share-option-twitter" onclick="shareVia('twitter')">
+        <i class="fa-brands fa-twitter"></i>
+        <span class="share-option-label">Share on Twitter</span>
+        <i class="fa-solid fa-chevron-right" style="font-size: 14px; color: #9ca3af;"></i>
+      </button>
+
+      <button class="share-option-btn share-option-copy" onclick="copyShareLink()">
+        <i class="fa-solid fa-copy"></i>
+        <span class="share-option-label">Copy Link</span>
+        <i class="fa-solid fa-chevron-right" style="font-size: 14px; color: #9ca3af;"></i>
+      </button>
+    </div>
+
+    <div id="copySuccessMessage" style="display: none;" class="copy-success">
+      <i class="fa-solid fa-check"></i> Link copied to clipboard!
+    </div>
+  </div>
+</div>
+   
+<footer>
+    <div class="footer">
+      <a href="index.html" class="footer-link active" data-page="home" title="Home">
+        <i class="fa-solid fa-house"></i>
+        <span class="footer-tooltip">Home</span>
+      </a>
+      <a href="messages.html" class="footer-link" data-page="messages" title="Messages">
+        <i class="fa-solid fa-message"></i>
+        <span class="footer-tooltip">Messages</span>
+      </a>
+      <a href="coshinmarket.html" class="footer-link" data-page="coshinmarket" title="Shop">
+        <i class="fa-solid fa-shop"></i>
+        <span class="footer-tooltip">Shop</span>
+      </a>
+      <a href="reels.html" class="footer-link" data-page="reels" title="Reels">
+        <i class="fa-solid fa-tv"></i>
+        <span class="footer-tooltip">Reels</span>
+      </a>
+      <a href="account.html" class="footer-link" data-page="account" title="Account">
+        <i class="fa-solid fa-user"></i>
+        <span class="footer-tooltip">Account</span>
+      </a>
+    </div>
+</footer>
+
+<script src="coshin-api.js"></script>
+<script>
+  // Notification System - Connected to Database
+  async function createNotification(type, data) {
+    try {
+      const currentUser = coshinAPI.getCurrentUser();
+      if (!currentUser) return;
+      
+      // Don't notify yourself
+      if (data.toUserId == currentUser.id) return;
+      
+      await coshinAPI.createNotification(data.toUserId, type, {
+        contentType: data.contentType || '',
+        contentId: data.contentId || 0,
+        actionData: {
+          commentText: data.commentText || '',
+          platform: data.platform || '',
+          messagePreview: data.messagePreview || ''
+        }
+      });
+      
+      // Update badge after creating notification
+      updateNotificationBadge();
+    } catch (error) {
+      console.error('Failed to create notification:', error);
+      // Silently fail - notifications shouldn't break core functionality
+    }
+  }
+  
+  async function updateNotificationBadge() {
+    try {
+      const currentUser = coshinAPI.getCurrentUser();
+      if (!currentUser) {
+        const badge = document.getElementById('notificationBadge');
+        if (badge) badge.style.display = 'none';
+        return;
+      }
+      
+      const result = await coshinAPI.getUnreadNotificationsCount();
+      const count = result?.count || 0;
+      
+      const badge = document.getElementById('notificationBadge');
+      if (badge) {
+        if (count > 0) {
+          badge.textContent = count > 99 ? '99+' : count;
+          badge.style.display = 'flex';
+        } else {
+          badge.style.display = 'none';
+        }
+      }
+    } catch (error) {
+      console.error('Failed to update notification badge:', error);
+      // Silently fail
+    }
+  }
+  // Navigate to upload content
+  function navigateToUpload() {
+    window.location.href = 'account.html';
+  }
+
+  function navigateToProfile(userId) {
+    if (userId) {
+      console.log('🔗 Navigating to user profile:', userId);
+      window.location.href = `account.html?userId=${userId}`;
+    }
+  }
+
+  function getFeedFocusTarget() {
+    const params = new URLSearchParams(window.location.search);
+    const contentId = Number(params.get('contentId') || 0);
+    const contentType = (params.get('contentType') || '').toLowerCase();
+    if (!contentId) return null;
+    return {
+      contentId,
+      contentType: contentType || 'post'
+    };
+  }
+
+  function clearFeedFocusParams() {
+    const url = new URL(window.location.href);
+    url.searchParams.delete('contentId');
+    url.searchParams.delete('contentType');
+    history.replaceState({}, '', url.toString());
+  }
+
+  function focusFeedTargetFromUrl() {
+    const target = getFeedFocusTarget();
+    if (!target) return;
+
+    const exact = `.feed-post[data-content-type="${target.contentType}"][data-content-id="${target.contentId}"]`;
+    const fallback = `.feed-post[data-content-id="${target.contentId}"]`;
+    const targetEl = document.querySelector(exact) || document.querySelector(fallback);
+    if (!targetEl) return;
+
+    targetEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    const oldTransition = targetEl.style.transition;
+    const oldBoxShadow = targetEl.style.boxShadow;
+    targetEl.style.transition = 'box-shadow 0.25s ease';
+    targetEl.style.boxShadow = '0 0 0 3px rgba(14, 165, 233, 0.45)';
+
+    setTimeout(() => {
+      targetEl.style.boxShadow = oldBoxShadow;
+      targetEl.style.transition = oldTransition;
+    }, 1800);
+
+    clearFeedFocusParams();
+  }
+
+  // Load and display user content on the feed
+  async function loadFeed() {
+    const contentFeed = document.getElementById('contentFeed');
+    const allContent = [];
+
+    try {
+      const apiBaseUrl = getApiBaseUrl();
+      // Fetch posts
+      const postsRes = await fetch(`${apiBaseUrl}/posts?_t=${Date.now()}`, {
+        headers: {
+          'Cache-Control': 'no-cache',
+          'Pragma': 'no-cache'
+        }
+      });
+      const posts = postsRes.ok ? await postsRes.json() : [];
+      posts.forEach((post, idx) => {
+        const profilePic = post.profile_picture || './COSHIN Assets/profile silhouette 2.jpg';
+        allContent.push({
+          type: 'post',
+          id: post.id,
+          title: post.title || 'Post',
+          content: post.content || '',
+          uploadDate: post.created_at || new Date().toISOString(),
+          profilePicture: profilePic,
+          userName: post.username || 'User',
+          userId: post.user_id,
+          likes: post.likes_count || 0,
+          comments: post.comments_count || 0,
+          shares: post.shares || 0,
+          allowGifts: post.allow_gifts !== undefined ? Boolean(post.allow_gifts) : true,
+          giftsCount: Number(post.gifts_count || 0),
+          index: idx
+        });
+      });
+
+      // Fetch photos
+        const photos = await coshinAPI.getPhotos();
+        photos.forEach((photo, idx) => {
+          const profilePic = photo.profile_picture || './COSHIN Assets/profile silhouette 2.jpg';
+          let imageUrl = '';
+          if (photo.photo_url) {
+            imageUrl = photo.photo_url;
+          } else if (photo.photo_data) {
+            imageUrl = `data:image/jpeg;base64,${photo.photo_data}`;
+          }
+          allContent.push({
+            type: 'photo',
+            id: photo.id,
+            title: photo.title || 'Photo',
+            content: photo.description || '',
+            uploadDate: photo.created_at || new Date().toISOString(),
+            profilePicture: profilePic,
+            userName: photo.username || 'User',
+            userId: photo.user_id,
+            likes: photo.likes_count || 0,
+            comments: photo.comments_count || 0,
+            shares: photo.shares || 0,
+            allowGifts: photo.allow_gifts !== undefined ? Boolean(photo.allow_gifts) : true,
+            giftsCount: Number(photo.gifts_count || 0),
+            imageUrl: imageUrl,
+            index: idx
+          });
+        });
+
+      // Fetch videos
+      const videos = await coshinAPI.getVideos();
+      videos.forEach((video, idx) => {
+        const profilePic = video.profile_picture || './COSHIN Assets/profile silhouette 2.jpg';
+        allContent.push({
+          type: 'video',
+          id: video.id,
+          title: video.title || 'Video',
+          content: video.description || '',
+          uploadDate: video.created_at || new Date().toISOString(),
+          profilePicture: profilePic,
+          userName: video.username || 'User',
+          userId: video.user_id,
+          likes: video.likes_count || 0,
+          comments: video.comments_count || 0,
+          shares: video.shares || 0,
+          allowGifts: video.allow_gifts !== undefined ? Boolean(video.allow_gifts) : true,
+          giftsCount: Number(video.gifts_count || 0),
+          videoUrl: video.video_url || '',
+          index: idx
+        });
+      });
+
+    } catch (error) {
+      console.error('Error loading feed:', error);
+    }
+
+    // Sort by most recent
+    allContent.sort((a, b) => {
+      const dateA = new Date(a.uploadDate);
+      const dateB = new Date(b.uploadDate);
+      return dateB - dateA;
+    });
+
+    contentFeed.innerHTML = allContent.map((item) => {
+      let contentMedia = '';
+      let icon = '';
+
+      if (item.type === 'photo') {
+        icon = 'fa-image';
+          contentMedia = item.imageUrl
+            ? `<div class="post-media"><img src="${item.imageUrl}" alt="Photo" style="width:100%;height:auto;object-fit:cover;border-radius:32px;box-shadow:0 4px 16px rgba(14,165,233,0.18);transition:box-shadow 0.3s;" class="feed-photo-img"></div>`
+            : `<div class="post-media"><div class="media-placeholder"><i class="fa-solid ${icon}"></i><div class="media-title">Photo</div></div></div>`;
+      } else if (item.type === 'video') {
+        icon = 'fa-play';
+          contentMedia = item.videoUrl
+            ? `<div class="post-media"><video controls src="${item.videoUrl}" style="width:100%;height:auto;"></video></div>`
+            : `<div class="post-media"><div class="media-placeholder"><i class="fa-solid ${icon}"></i><div class="media-title">Video</div></div></div>`;
+      }
+
+        // Title and description for photo/video at top
+        let desc = item.content || '';
+        let showMore = desc.length > 120;
+        let descShort = showMore ? desc.slice(0, 120) : desc;
+        let descHtml = `<span class="post-desc-short">${descShort.replace(/\n/g, '<br>')}</span>`;
+        if (showMore) {
+          descHtml += `<span class="post-desc-more" style="display:none;">${desc.replace(/\n/g, '<br>')}</span> <a href="#" class="see-more-link" onclick="event.preventDefault();this.previousElementSibling.style.display='inline';this.style.display='none';">See more</a>`;
+        }
+        const textContent = item.type === 'post' ? `
+          <div class="post-text">
+            ${item.title ? '<strong>' + item.title + '</strong><br>' : ''}
+            ${item.content}
+          </div>
+        ` : item.type === 'photo' || item.type === 'video' ? `
+          <div class="post-top-text" style="padding: 12px 16px 0 16px;">
+            ${item.title ? '<strong style="font-size:16px;">' + item.title + '</strong><br>' : ''}
+            <div class="post-description" style="font-size:14px;color:#555;margin-top:2px;">${descHtml}</div>
+          </div>
+        ` : '';
+
+      return `
+        <div class="feed-post" data-content-type="${item.type}" data-content-id="${item.id}">
+          <div class="post-header">
+            <div class="post-user-info" style="cursor: pointer;" onclick="navigateToProfile(${item.userId})">
+              <div class="post-avatar" style="cursor: pointer;">
+                <img src="${item.profilePicture || './COSHIN Assets/profile silhouette 2.jpg'}" alt="${item.userName}" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;" onerror="this.src='./COSHIN Assets/profile silhouette 2.jpg'" data-user-id="${item.userId}" data-username="${item.userName}">
+              </div>
+              <div class="post-meta">
+                <div class="post-author" style="cursor: pointer;">${item.userName}</div>
+                <div class="post-time">${new Date(item.uploadDate).toLocaleDateString()}</div>
+              </div>
+            </div>
+            <button class="post-menu-btn" title="More options">
+              <i class="fa-solid fa-ellipsis"></i>
+            </button>
+          </div>
+            ${item.type === 'photo' || item.type === 'video' ? textContent : ''}
+          ${contentMedia}
+            ${item.type === 'post' ? textContent : ''}
+          <div class="post-actions">
+            <button class="post-action-btn" onclick="likePost(this)">
+              <i class="fa-solid fa-heart"></i> <span class="like-text">Like</span> <span class="like-count-badge">${item.likes || 0}</span>
+            </button>
+            <button class="post-action-btn" onclick="openCommentsModal(this)">
+              <i class="fa-solid fa-comment"></i> Comment <span class="comment-count-badge">${item.comments || 0}</span>
+            </button>
+            <button class="post-action-btn" onclick="openShareModal(this)">
+              <i class="fa-solid fa-share"></i> Share <span class="share-count-badge">${item.shares || 0}</span>
+            </button>
+            ${item.allowGifts ? `
+            <button class="post-action-btn gift-btn" onclick="sendGift(this)">
+              <i class="fa-solid fa-gift"></i> Gift <span class="gift-count-badge">${item.giftsCount || 0}</span>
+            </button>
+            ` : ''}
+          </div>
+        </div>
+      `;
+    }).join('');
+
+    // Sync likes from API after rendering
+    syncFeedLikesFromApi();
+    trackProfilePictureLoads();
+    focusFeedTargetFromUrl();
+  }
+
+  function setLikeButtonState(likeBtn, liked) {
+    if (!likeBtn) return;
+    likeBtn.style.color = liked ? '#FF6B6B' : '';
+    const likeText = likeBtn.querySelector('.like-text');
+    if (likeText) {
+      likeText.textContent = liked ? 'Liked' : 'Like';
+    }
+  }
+
+  async function syncFeedLikesFromApi() {
+    const postElements = document.querySelectorAll('.feed-post');
+
+    await Promise.all(Array.from(postElements).map(async (postElement) => {
+      const contentType = postElement.dataset.contentType || 'post';
+      const contentId = parseInt(postElement.dataset.contentId || '0', 10);
+      if (!contentId) return;
+
+      const likeBtn = postElement.querySelector('.post-action-btn');
+      const likeCountBadge = likeBtn?.querySelector('.like-count-badge');
+
+      try {
+        const [countData, likedData] = await Promise.all([
+          coshinAPI.getLikesCount(contentType, contentId),
+          coshinAPI.checkLike(contentType, contentId)
+        ]);
+
+        if (likeCountBadge) {
+          likeCountBadge.textContent = countData?.likes ?? 0;
+        }
+
+        setLikeButtonState(likeBtn, Boolean(likedData?.liked));
+      } catch (error) {
+        console.warn('Like sync failed for content', contentType, contentId, error.message);
+      }
+    }));
+  }
+
+  // Track profile picture loading in feed for debugging
+  function trackProfilePictureLoads() {
+    const profileImages = document.querySelectorAll('.post-avatar img');
+    profileImages.forEach(img => {
+      const username = img.getAttribute('data-username') || 'Unknown';
+      const userId = img.getAttribute('data-user-id') || '?';
+
+      if (img.complete) {
+        console.log(`Profile picture already loaded for ${username} (user ${userId})`);
+      } else {
+        img.addEventListener('load', function() {
+          console.log(`Profile picture loaded for ${username} (user ${userId})`);
+        });
+        img.addEventListener('error', function() {
+          console.error(`Failed to load profile picture for ${username} (user ${userId}), using fallback`);
+        });
+      }
+    });
+  }
+
+  // Like post function
+  async function likePost(btn) {
+    const postElement = btn.closest('.feed-post');
+    if (!postElement) return;
+
+    // Get content type and ID
+    const contentType = postElement.dataset.contentType || 'post';
+    const contentId = parseInt(postElement.dataset.contentId || '0', 10);
+    if (!contentId) return;
+
+    try {
+      btn.disabled = true;
+      const likedData = await coshinAPI.checkLike(contentType, contentId);
+      const alreadyLiked = Boolean(likedData?.liked);
+
+      if (alreadyLiked) {
+        await coshinAPI.removeLike(contentType, contentId);
+      } else {
+        await coshinAPI.addLike(contentType, contentId);
+        // Create notification for the post owner
+        const postUserIdAttr = postElement.querySelector('[data-user-id]');
+        const postUserId = postUserIdAttr ? postUserIdAttr.getAttribute('data-user-id') : null;
+        const currentUser = coshinAPI.getCurrentUser();
+        if (postUserId && currentUser && postUserId != currentUser.id) {
+          createNotification('like', {
+            fromUserId: currentUser.id,
+            fromUsername: currentUser.username || currentUser.name,
+            toUserId: postUserId,
+            contentType: contentType,
+            contentId: contentId
+          });
+        }
+      }
+
+      const countData = await coshinAPI.getLikesCount(contentType, contentId);
+      const likeCountBadge = btn.querySelector('.like-count-badge');
+      if (likeCountBadge) {
+        likeCountBadge.textContent = countData?.likes ?? 0;
+      }
+
+      setLikeButtonState(btn, !alreadyLiked);
+    } catch (error) {
+      console.error('Error liking post:', error);
+      alert('Failed to like post. Please try again.');
+    } finally {
+      btn.disabled = false;
+    }
+  }
+
+  const commentsModal = document.getElementById('commentsModal');
+  const commentsList = document.getElementById('commentsList');
+  const commentInput = document.getElementById('commentInput');
+  const commentCharCount = document.getElementById('commentCharCount');
+  let activeCommentsContext = null;
+
+  function updateCommentButtonCount(postElement, count) {
+    const commentBadge = postElement.querySelector('.comment-count-badge');
+    if (commentBadge) {
+      commentBadge.textContent = count;
+    }
+  }
+
+  function openCommentsModal(btn) {
+    const postElement = btn.closest('.feed-post');
+    if (!postElement) return;
+
+    const contentType = postElement.dataset.contentType || 'post';
+    const contentId = parseInt(postElement.dataset.contentId || '0', 10);
+    if (!contentId) return;
+
+    activeCommentsContext = { contentType, contentId, postElement };
+    commentInput.value = '';
+    commentCharCount.textContent = '0';
+    commentsModal.classList.add('active');
+    loadCommentsForActiveContent();
+  }
+
+  function closeCommentsModal() {
+    const modal = commentsModal;
+    modal.classList.add('closing');
+    
+    setTimeout(() => {
+      modal.classList.remove('active');
+      modal.classList.remove('closing');
+      activeCommentsContext = null;
+      commentInput.value = '';
+      commentCharCount.textContent = '0';
+    }, 250);
+  }
+
+  function formatCommentDate(isoDate) {
+    if (!isoDate) return '';
+    const dt = new Date(isoDate);
+    if (Number.isNaN(dt.getTime())) return '';
+    return dt.toLocaleString();
+  }
+
+  async function loadCommentsForActiveContent() {
+    if (!activeCommentsContext) return;
+
+    commentsList.innerHTML = '<div class="comments-empty">Loading comments...</div>';
+
+    try {
+      const comments = await coshinAPI.getComments(activeCommentsContext.contentType, activeCommentsContext.contentId);
+      const currentUserId = coshinAPI.getCurrentUser()?.id;
+
+      if (!comments.length) {
+        commentsList.innerHTML = '<div class="comments-empty">No comments yet. Be the first to comment.</div>';
+        updateCommentButtonCount(activeCommentsContext.postElement, 0);
+        return;
+      }
+
+      commentsList.innerHTML = comments.map((entry) => {
+        const canDelete = currentUserId && Number(currentUserId) === Number(entry.user_id);
+        const username = escapeHtml(entry.username || 'User');
+        const userInitial = username.charAt(0).toUpperCase();
+        const userId = entry.user_id || '';
+        
+        // Create avatar HTML with profile picture or initials
+        let avatarHTML = '';
+        if (entry.profile_picture) {
+          avatarHTML = `<a href="account.html?userId=${userId}" class="comment-avatar" title="View ${username}'s profile">
+            <img src="${entry.profile_picture}" alt="${username}">
+          </a>`;
+        } else {
+          avatarHTML = `<a href="account.html?userId=${userId}" class="comment-avatar" title="View ${username}'s profile">
+            ${userInitial}
+          </a>`;
+        }
+        
+        return `
+          <div class="comment-item" data-comment-id="${entry.id}">
+            ${avatarHTML}
+            <div class="comment-content">
+              <div class="comment-meta">
+                <span class="comment-author">${username}</span>
+                <span>
+                  ${formatCommentDate(entry.created_at)}
+                  ${canDelete ? `<button class="comment-delete-btn" onclick="deleteComment(${entry.id})">Delete</button>` : ''}
+                </span>
+              </div>
+              <div class="comment-body">${escapeHtml(entry.comment || '')}</div>
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      updateCommentButtonCount(activeCommentsContext.postElement, comments.length);
+    } catch (error) {
+      commentsList.innerHTML = `<div class="comments-empty">Failed to load comments: ${error.message}</div>`;
+    }
+  }
+
+  async function submitComment() {
+    if (!activeCommentsContext) return;
+    const comment = commentInput.value.trim();
+    if (!comment) {
+      alert('Please write a comment first');
+      return;
+    }
+
+    try {
+      await coshinAPI.addComment(activeCommentsContext.contentType, activeCommentsContext.contentId, comment);
+      commentInput.value = '';
+      commentCharCount.textContent = '0';
+      
+      // Create notification for the post owner
+      const postUserIdAttr = activeCommentsContext.postElement.querySelector('[data-user-id]');
+      const postUserId = postUserIdAttr ? postUserIdAttr.getAttribute('data-user-id') : null;
+      const currentUser = coshinAPI.getCurrentUser();
+      if (postUserId && currentUser && postUserId != currentUser.id) {
+        createNotification('comment', {
+          fromUserId: currentUser.id,
+          fromUsername: currentUser.username || currentUser.name,
+          toUserId: postUserId,
+          contentType: activeCommentsContext.contentType,
+          contentId: activeCommentsContext.contentId,
+          commentText: comment.substring(0, 50)
+        });
+      }
+      
+      await loadCommentsForActiveContent();
+    } catch (error) {
+      alert('Failed to post comment: ' + error.message);
+    }
+  }
+
+  async function deleteComment(commentId) {
+    if (!activeCommentsContext) return;
+
+    if (!confirm('Delete this comment?')) {
+      return;
+    }
+
+    try {
+      await coshinAPI.deleteComment(commentId);
+      await loadCommentsForActiveContent();
+    } catch (error) {
+      alert('Failed to delete comment: ' + error.message);
+    }
+  }
+
+  commentInput.addEventListener('input', () => {
+    commentCharCount.textContent = commentInput.value.length;
+  });
+
+  commentsModal.addEventListener('click', (event) => {
+    if (event.target.id === 'commentsModal') {
+      closeCommentsModal();
+    }
+  });
+
+  // Share modal functionality
+  const shareModal = document.getElementById('shareModal');
+  const shareLinkPreview = document.getElementById('shareLinkPreview');
+  const copySuccessMessage = document.getElementById('copySuccessMessage');
+  let activeShareContext = null;
+
+  function openShareModal(btn) {
+    const postElement = btn.closest('.feed-post');
+    if (!postElement) return;
+
+    const contentType = postElement.dataset.contentType || 'post';
+    const contentId = parseInt(postElement.dataset.contentId || '0', 10);
+    if (!contentId) return;
+
+    // Generate shareable link
+    const shareUrl = `${window.location.origin}${window.location.pathname}?contentType=${contentType}&contentId=${contentId}`;
+    
+    activeShareContext = { 
+      contentType, 
+      contentId, 
+      postElement,
+      shareUrl,
+      title: 'Check out this content on Zim.com!'
+    };
+
+    shareLinkPreview.textContent = shareUrl;
+    copySuccessMessage.style.display = 'none';
+    shareModal.classList.add('active');
+  }
+
+  function closeShareModal() {
+    shareModal.classList.add('closing');
+    
+    setTimeout(() => {
+      shareModal.classList.remove('active');
+      shareModal.classList.remove('closing');
+      activeShareContext = null;
+      copySuccessMessage.style.display = 'none';
+    }, 250);
+  }
+
+  function shareVia(platform) {
+    if (!activeShareContext) return;
+
+    const { shareUrl, title } = activeShareContext;
+    const encodedUrl = encodeURIComponent(shareUrl);
+    const encodedTitle = encodeURIComponent(title);
+
+    let targetUrl = '';
+
+    switch (platform) {
+      case 'whatsapp':
+        targetUrl = `https://wa.me/?text=${encodedTitle}%20${encodedUrl}`;
+        break;
+      case 'sms':
+        targetUrl = `sms:?body=${encodedTitle}%20${encodedUrl}`;
+        break;
+      case 'email':
+        targetUrl = `mailto:?subject=${encodedTitle}&body=${encodedUrl}`;
+        break;
+      case 'facebook':
+        targetUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodedUrl}`;
+        break;
+      case 'twitter':
+        targetUrl = `https://twitter.com/intent/tweet?text=${encodedTitle}&url=${encodedUrl}`;
+        break;
+    }
+
+    if (targetUrl) {
+      window.open(targetUrl, '_blank', 'width=600,height=400');
+      
+      // Create notification for the post owner about the share
+      const postUserIdAttr = activeShareContext.postElement.querySelector('[data-user-id]');
+      const postUserId = postUserIdAttr ? postUserIdAttr.getAttribute('data-user-id') : null;
+      const currentUser = coshinAPI.getCurrentUser();
+      if (postUserId && currentUser && postUserId != currentUser.id) {
+        createNotification('share', {
+          fromUserId: currentUser.id,
+          fromUsername: currentUser.username || currentUser.name,
+          toUserId: postUserId,
+          contentType: activeShareContext.contentType,
+          contentId: activeShareContext.contentId,
+          platform: platform
+        });
+      }
+    }
+  }
+
+  async function copyShareLink() {
+    if (!activeShareContext) return;
+
+    try {
+      await navigator.clipboard.writeText(activeShareContext.shareUrl);
+      copySuccessMessage.style.display = 'block';
+      
+      setTimeout(() => {
+        copySuccessMessage.style.display = 'none';
+      }, 3000);
+    } catch (error) {
+      // Fallback for older browsers
+      const textArea = document.createElement('textarea');
+      textArea.value = activeShareContext.shareUrl;
+      textArea.style.position = 'fixed';
+      textArea.style.left = '-999999px';
+      document.body.appendChild(textArea);
+      textArea.select();
+      
+      try {
+        document.execCommand('copy');
+        copySuccessMessage.style.display = 'block';
+        setTimeout(() => {
+          copySuccessMessage.style.display = 'none';
+        }, 3000);
+      } catch (err) {
+        alert('Failed to copy link. Please copy manually: ' + activeShareContext.shareUrl);
+      }
+      
+      document.body.removeChild(textArea);
+    }
+  }
+
+  shareModal.addEventListener('click', (event) => {
+    if (event.target.id === 'shareModal') {
+      closeShareModal();
+    }
+  });
+
+  // Send gift function
+  // Gift modal functionality
+  const gifts = [
+    { name: 'Heart', icon: '❤️', price: 0 },
+    { name: 'Star', icon: '⭐', price: 1 },
+    { name: 'Flower', icon: '🌸', price: 2 },
+    { name: 'Diamond', icon: '💎', price: 3 },
+    { name: 'Crown', icon: '👑', price: 5 },
+    { name: 'Rocket', icon: '🚀', price: 10 }
+  ];
+
+  let selectedGift = null;
+  let giftButton = null;
+  let activeGiftContext = null;
+
+  function sendGift(btn) {
+    const postElement = btn.closest('.feed-post');
+    if (!postElement) return;
+
+    const contentType = postElement.dataset.contentType || 'post';
+    const contentId = parseInt(postElement.dataset.contentId || '0', 10);
+    if (!contentId) return;
+
+    const postUserIdAttr = postElement.querySelector('[data-user-id]');
+    const receiverUserId = postUserIdAttr ? parseInt(postUserIdAttr.getAttribute('data-user-id') || '0', 10) : 0;
+
+    activeGiftContext = {
+      postElement,
+      contentType,
+      contentId,
+      receiverUserId
+    };
+
+    giftButton = btn;
+    selectedGift = null;
+    document.getElementById('giftConfirmBtn').disabled = true;
+    openGiftModal();
+  }
+
+  function openGiftModal() {
+    const modal = document.getElementById('giftModal');
+    const container = document.getElementById('giftOptionsContainer');
+    
+    container.innerHTML = gifts.map((gift, idx) => `
+      <div class="gift-option" onclick="selectGift(${idx})" id="gift-${idx}">
+        <div class="gift-option-icon">${gift.icon}</div>
+        <div class="gift-option-name">${gift.name}</div>
+        <div class="gift-option-price">${gift.price === 0 ? 'Free' : '$' + gift.price}</div>
+      </div>
+    `).join('');
+    
+    modal.classList.add('active');
+  }
+
+  function selectGift(idx) {
+    // Remove previous selection
+    document.querySelectorAll('.gift-option').forEach(el => el.classList.remove('selected'));
+    
+    // Add selection to clicked gift
+    document.getElementById('gift-' + idx).classList.add('selected');
+    selectedGift = gifts[idx];
+    
+    // Enable confirm button
+    document.getElementById('giftConfirmBtn').disabled = false;
+  }
+
+  function closeGiftModal() {
+    document.getElementById('giftModal').classList.remove('active');
+    selectedGift = null;
+    giftButton = null;
+    activeGiftContext = null;
+    document.getElementById('giftConfirmBtn').disabled = true;
+  }
+
+  async function confirmGiftSelection() {
+    if (!selectedGift || !giftButton) return;
+
+    try {
+      const result = await coshinAPI.sendGift(
+        activeGiftContext.contentType,
+        activeGiftContext.contentId,
+        selectedGift.name,
+        selectedGift.icon,
+        selectedGift.price
+      );
+
+      const countBadge = giftButton.querySelector('.gift-count-badge');
+      if (countBadge && result && typeof result.gifts_count !== 'undefined') {
+        countBadge.textContent = result.gifts_count;
+      }
+
+      const currentUser = coshinAPI.getCurrentUser();
+      if (currentUser && activeGiftContext.receiverUserId && activeGiftContext.receiverUserId !== currentUser.id) {
+        createNotification('gift', {
+          fromUserId: currentUser.id,
+          fromUsername: currentUser.username || currentUser.name,
+          toUserId: activeGiftContext.receiverUserId,
+          contentType: activeGiftContext.contentType,
+          contentId: activeGiftContext.contentId,
+          giftName: selectedGift.name,
+          giftIcon: selectedGift.icon,
+          giftPrice: selectedGift.price
+        });
+      }
+
+      closeGiftModal();
+
+      const notification = document.createElement('div');
+      notification.style.cssText = `
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        background: linear-gradient(135deg, #FF6B6B, #FF3B3B);
+        color: white;
+        padding: 16px 24px;
+        border-radius: 8px;
+        box-shadow: 0 4px 12px rgba(255, 107, 107, 0.3);
+        z-index: 9999;
+        font-weight: 600;
+        animation: slideIn 0.3s ease;
+      `;
+      const priceText = selectedGift.price === 0 ? 'free' : '$' + selectedGift.price;
+      notification.innerHTML = `${selectedGift.icon} Gift sent: ${selectedGift.name} (${priceText})`;
+      document.body.appendChild(notification);
+
+      setTimeout(() => {
+        notification.style.animation = 'slideOut 0.3s ease';
+        setTimeout(() => notification.remove(), 300);
+      }, 3000);
+    } catch (error) {
+      alert('Failed to send gift: ' + error.message);
+    }
+  }
+
+  // Footer Navigation - Set Active Link
+  function updateActiveFooterLink() {
+    // Get current page from URL
+    const currentPage = window.location.pathname.split('/').pop() || 'index.html';
+    
+    // Remove active class from all footer links
+    document.querySelectorAll('.footer-link').forEach(link => {
+      link.classList.remove('active');
+    });
+
+    // Add active class to current page
+    let activeLink;
+    if (currentPage === '' || currentPage === 'index.html') {
+      activeLink = document.querySelector('[data-page="home"]');
+    } else if (currentPage.includes('messages')) {
+      activeLink = document.querySelector('[data-page="messages"]');
+    } else if (currentPage.includes('coshinmarket')) {
+      activeLink = document.querySelector('[data-page="coshinmarket"]');
+    } else if (currentPage.includes('reels')) {
+      activeLink = document.querySelector('[data-page="reels"]');
+    } else if (currentPage.includes('account')) {
+      activeLink = document.querySelector('[data-page="account"]');
+    }
+
+    if (activeLink) {
+      activeLink.classList.add('active');
+    }
+  }
+
+  // Add ripple effect to footer links
+  document.querySelectorAll('.footer-link').forEach(link => {
+    link.addEventListener('click', function(e) {
+      // Create ripple effect
+      const ripple = document.createElement('span');
+      const rect = this.getBoundingClientRect();
+      const size = Math.max(rect.width, rect.height);
+      const x = e.clientX - rect.left - size / 2;
+      const y = e.clientY - rect.top - size / 2;
+
+      ripple.style.width = ripple.style.height = size + 'px';
+      ripple.style.left = x + 'px';
+      ripple.style.top = y + 'px';
+      ripple.classList.add('ripple');
+      
+      // Add ripple styles dynamically
+      if (!document.querySelector('style[data-ripple]')) {
+        const style = document.createElement('style');
+        style.setAttribute('data-ripple', 'true');
+        style.textContent = `
+          .footer a {
+            position: relative;
+            overflow: hidden;
+          }
+          .ripple {
+            position: absolute;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(255, 107, 107, 0.6) 0%, rgba(255, 107, 107, 0) 70%);
+            transform: scale(0);
+            animation: rippleAnimation 0.6s ease-out;
+            pointer-events: none;
+          }
+          @keyframes rippleAnimation {
+            to {
+              transform: scale(4);
+              opacity: 0;
+            }
+          }
+        `;
+        document.head.appendChild(style);
+      }
+      
+      this.appendChild(ripple);
+      setTimeout(() => ripple.remove(), 600);
+    });
+  });
+
+  // Load feed when page loads
+  document.addEventListener('DOMContentLoaded', () => {
+    loadFeed();
+    updateActiveFooterLink();
+    loadProfileAvatarInFeed();
+    updateNotificationBadge();
+
+    const header = document.querySelector('.header');
+    const syncHeaderState = () => {
+      if (!header) return;
+      header.classList.toggle('scrolled', window.scrollY > 18);
+    };
+    syncHeaderState();
+    window.addEventListener('scroll', syncHeaderState, { passive: true });
+  });
+
+  // Add event listener to storage changes (for real-time updates when content is added from account page)
+  window.addEventListener('storage', () => {
+    loadFeed();
+    loadProfileAvatarInFeed();
+  });
+
+  function openUserSearch() {
+    const modal = document.getElementById('userSearchModal');
+    modal.classList.add('active');
+    const input = document.getElementById('userSearchInput');
+    input.value = '';
+    filterUserSearch();
+    setTimeout(() => input.focus(), 50);
+  }
+
+  function closeUserSearch() {
+    document.getElementById('userSearchModal').classList.remove('active');
+  }
+
+  function getApiBaseUrl() {
+    // Reuse the resolved URL from coshin-api.js whenever possible.
+    if (window.COSHIN_API_BASE_URL) {
+      return window.COSHIN_API_BASE_URL;
+    }
+
+    const rawCustomUrl = localStorage.getItem('customApiUrl') || '';
+    const customUrl = rawCustomUrl.trim();
+    if (customUrl) {
+      try {
+        let normalized = customUrl;
+        if (!/^https?:\/\//i.test(normalized)) {
+          normalized = normalized.startsWith('/')
+            ? `${window.location.origin}${normalized}`
+            : `https://${normalized}`;
+        }
+        const parsed = new URL(normalized);
+        const pathname = parsed.pathname.replace(/\/$/, '');
+        parsed.pathname = pathname.toLowerCase().endsWith('/api') ? pathname : `${pathname}/api`;
+        return parsed.toString().replace(/\/$/, '');
+      } catch {
+        // Ignore malformed custom URL and continue with safe fallback.
+      }
+    }
+
+    // Safe fallback for phones/hosted usage: same-origin /api.
+    return `${window.location.origin}/api`;
+  }
+
+  function getLocalUserDirectory() {
+    const directory = JSON.parse(localStorage.getItem('userDirectory') || '[]');
+    const profile = JSON.parse(localStorage.getItem('userProfile') || '{}');
+    const profilePicture = localStorage.getItem('profilePicture') || '';
+    const localUsers = Array.isArray(directory) ? [...directory] : [];
+
+    if (profile.name || profile.email) {
+      const exists = localUsers.some(user => user.email && profile.email && user.email === profile.email);
+      if (!exists) {
+        localUsers.unshift({
+          id: profile.id || null,
+          name: profile.name || 'Your Name',
+          email: profile.email || 'your@email.com',
+          profilePicture: profilePicture
+        });
+      }
+    }
+
+    return localUsers;
+  }
+
+  async function getRemoteUsers(query) {
+    const apiBaseUrl = getApiBaseUrl();
+    const url = query
+      ? `${apiBaseUrl}/users/discover?q=${encodeURIComponent(query)}`
+      : `${apiBaseUrl}/users/discover`;
+
+    const response = await fetch(url);
+    if (!response.ok) {
+      throw new Error(`Failed to fetch users (${response.status})`);
+    }
+
+    const payload = await response.json();
+    const users = Array.isArray(payload) ? payload : (payload.users || []);
+
+    return users.map(user => ({
+      id: user.id || user.user_id || user.userId || null,
+      name: user.name || user.username || user.full_name || 'Unknown User',
+      email: user.email || '',
+      profilePicture: user.profile_picture || user.profilePicture || ''
+    }));
+  }
+
+  function mergeUsers(remoteUsers, localUsers) {
+    const merged = [];
+    const seen = new Set();
+
+    [...remoteUsers, ...localUsers].forEach(user => {
+      const key = (user.email || '').toLowerCase() || `id:${user.id || ''}:${(user.name || '').toLowerCase()}`;
+      if (!seen.has(key)) {
+        seen.add(key);
+        merged.push(user);
+      }
+    });
+
+    return merged;
+  }
+
+  function escapeHtml(value) {
+    return String(value)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#39;');
+  }
+
+  let userSearchRequestCounter = 0;
+
+  async function filterUserSearch() {
+    const requestId = ++userSearchRequestCounter;
+    const query = document.getElementById('userSearchInput').value.trim().toLowerCase();
+    const localUsers = getLocalUserDirectory();
+    let remoteUsers = [];
+
+    try {
+      remoteUsers = await getRemoteUsers(query);
+    } catch (error) {
+      console.warn('Remote user search failed, using local directory only:', error.message);
+    }
+
+    if (requestId !== userSearchRequestCounter) {
+      return;
+    }
+
+    const users = mergeUsers(remoteUsers, localUsers);
+    const results = users.filter(user => {
+        const name = (user.name || '').toLowerCase();
+        const email = (user.email || '').toLowerCase();
+        return !query || name.includes(query) || email.includes(query);
+    });
+
+    renderUserSearchResults(results, query);
+  }
+
+  function renderUserSearchResults(results, query) {
+    const container = document.getElementById('userSearchResults');
+
+    if (!results.length) {
+        container.innerHTML = `
+            <div class="user-search-item">
+                <div class="user-search-meta">
+                    <div class="user-search-name">No users found</div>
+                    <div class="user-search-email">Try another name or email</div>
+                </div>
+            </div>
+        `;
+        return;
+    }
+
+    container.innerHTML = results.map(user => {
+        const initials = (user.name || 'U').split(' ').map(part => part[0]).join('').slice(0, 2).toUpperCase();
+        const avatar = user.profilePicture
+        ? `<img src="${escapeHtml(user.profilePicture)}" alt="${escapeHtml(user.name || 'User')}">`
+            : initials;
+
+        return `
+            <div class="user-search-item">
+                <div class="user-search-avatar">${avatar}</div>
+                <div class="user-search-meta">
+            <div class="user-search-name">${escapeHtml(user.name || 'Unknown User')}</div>
+            <div class="user-search-email">${escapeHtml(user.email || '')}</div>
+                </div>
+            </div>
+        `;
+    }).join('');
+  }
+
+  document.getElementById('userSearchModal').addEventListener('click', (event) => {
+    if (event.target.id === 'userSearchModal') {
+        closeUserSearch();
+    }
+  });
+
+  // Load profile picture in feed post avatar
+  function loadProfileAvatarInFeed() {
+    const avatarDiv = document.getElementById('feedPostAvatar');
+    const profilePicture = localStorage.getItem('profilePicture');
+
+    if (profilePicture) {
+      avatarDiv.innerHTML = `<img src="${profilePicture}" alt="Profile Picture" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;">`;
+    } else {
+      avatarDiv.innerHTML = '<i class="fa-solid fa-user"></i>';
+    }
+  }
+
+  // ===== PHOTO UPLOAD FUNCTIONS =====
+  const photoUploadInput = document.getElementById('photoUploadInput');
+  const photoCameraInput = document.getElementById('photoCameraInput');
+  const photoPreview = document.getElementById('photoPreview');
+  const photoUploadDesc = document.getElementById('photoUploadDesc');
+  const photoOverlayText = document.getElementById('photoOverlayText');
+  const photoOverlayFont = document.getElementById('photoOverlayFont');
+  const photoOverlayColor = document.getElementById('photoOverlayColor');
+  const photoOverlaySize = document.getElementById('photoOverlaySize');
+  const photoOverlaySizeValue = document.getElementById('photoOverlaySizeValue');
+  const photoOverlayOutline = document.getElementById('photoOverlayOutline');
+  const photoOverlayOutlineValue = document.getElementById('photoOverlayOutlineValue');
+  const photoOverlayBgStyle = document.getElementById('photoOverlayBgStyle');
+  const photoOverlaySnapStrength = document.getElementById('photoOverlaySnapStrength');
+  const photoOverlaySnapStrengthValue = document.getElementById('photoOverlaySnapStrengthValue');
+  const photoOverlayPosition = document.getElementById('photoOverlayPosition');
+  const photoClearTextBtn = document.getElementById('photoClearTextBtn');
+  const photoOverlaySnapToggle = document.getElementById('photoOverlaySnap');
+  let originalPhotoSrc = '';
+  let photoOverlayX = 50;
+  let photoOverlayY = 50;
+  let isPhotoOverlayDragging = false;
+  let photoOverlayHandle = null;
+  let photoGridGuides = null;
+
+  function renderPhotoPreview(src) {
+    photoPreview.innerHTML = `<img src="${src}" alt="Preview">`;
+    photoPreview.classList.remove('empty');
+    photoPreview.dataset.src = src;
+    ensurePhotoOverlayHandle();
+    updatePhotoOverlayHandle();
+  }
+
+  function ensurePhotoOverlayHandle() {
+    if (photoOverlayHandle && photoOverlayHandle.parentElement === photoPreview) return;
+    photoOverlayHandle = document.createElement('div');
+    photoOverlayHandle.id = 'photoOverlayHandle';
+    photoOverlayHandle.className = 'photo-overlay-drag';
+    photoPreview.appendChild(photoOverlayHandle);
+  }
+
+  function ensurePhotoGridGuides() {
+    if (photoGridGuides && photoGridGuides.parentElement === photoPreview) return;
+    photoGridGuides = document.createElement('div');
+    photoGridGuides.className = 'photo-grid-guides';
+    photoGridGuides.innerHTML = `
+      <span class="photo-guide-line v-center"></span>
+      <span class="photo-guide-line h-center"></span>
+      <span class="photo-guide-line v-third-left"></span>
+      <span class="photo-guide-line v-third-right"></span>
+      <span class="photo-guide-line h-third-top"></span>
+      <span class="photo-guide-line h-third-bottom"></span>
+    `;
+    photoPreview.appendChild(photoGridGuides);
+  }
+
+  function updatePhotoGuidesVisibility() {
+    ensurePhotoGridGuides();
+    const hasImage = Boolean(photoPreview.dataset.src);
+    const showGuides = hasImage && photoOverlaySnapToggle.checked;
+    photoGridGuides.classList.toggle('active', showGuides);
+  }
+
+  function snapPhotoAxis(value) {
+    if (!photoOverlaySnapToggle.checked) return value;
+    const snapPoints = [16.6667, 33.3333, 50, 66.6667, 83.3333];
+    const threshold = parseInt(photoOverlaySnapStrength.value, 10) || 4;
+    let snapped = value;
+    let nearestDiff = threshold + 1;
+    snapPoints.forEach((point) => {
+      const diff = Math.abs(value - point);
+      if (diff < nearestDiff && diff <= threshold) {
+        snapped = point;
+        nearestDiff = diff;
+      }
+    });
+    return snapped;
+  }
+
+  function setPhotoOverlayPreset(position) {
+    photoOverlayX = 50;
+    if (position === 'top') {
+      photoOverlayY = 16;
+    } else if (position === 'bottom') {
+      photoOverlayY = 84;
+    } else {
+      photoOverlayY = 50;
+    }
+  }
+
+  function updatePhotoOverlayHandle() {
+    ensurePhotoOverlayHandle();
+    const text = (photoOverlayText.value || '').trim();
+    if (!text || !photoPreview.dataset.src) {
+      photoOverlayHandle.style.display = 'none';
+      return;
+    }
+
+    photoOverlayHandle.style.display = 'block';
+    photoOverlayHandle.innerText = text;
+    photoOverlayHandle.style.fontFamily = photoOverlayFont.value;
+    photoOverlayHandle.style.fontSize = `${photoOverlaySize.value}px`;
+    photoOverlayHandle.style.color = photoOverlayColor.value || '#ffffff';
+    photoOverlayHandle.style.webkitTextStroke = `${photoOverlayOutline.value}px rgba(0, 0, 0, 0.65)`;
+    photoOverlayHandle.style.left = `${photoOverlayX}%`;
+    photoOverlayHandle.style.top = `${photoOverlayY}%`;
+    photoOverlayHandle.style.border = '1px dashed rgba(255, 255, 255, 0.65)';
+    photoOverlayHandle.style.background = 'rgba(0, 0, 0, 0.15)';
+    photoOverlayHandle.style.backdropFilter = 'none';
+    photoOverlayHandle.style.webkitBackdropFilter = 'none';
+
+    if (photoOverlayBgStyle.value === 'none') {
+      photoOverlayHandle.style.background = 'transparent';
+      photoOverlayHandle.style.border = '1px dashed rgba(255, 255, 255, 0.65)';
+    } else if (photoOverlayBgStyle.value === 'shadow') {
+      photoOverlayHandle.style.background = 'rgba(0, 0, 0, 0.28)';
+      photoOverlayHandle.style.border = '1px dashed rgba(255, 255, 255, 0.65)';
+    } else if (photoOverlayBgStyle.value === 'solid-dark') {
+      photoOverlayHandle.style.background = 'rgba(17, 24, 39, 0.72)';
+      photoOverlayHandle.style.border = '1px solid rgba(255, 255, 255, 0.2)';
+    } else if (photoOverlayBgStyle.value === 'solid-light') {
+      photoOverlayHandle.style.background = 'rgba(255, 255, 255, 0.75)';
+      photoOverlayHandle.style.border = '1px solid rgba(17, 24, 39, 0.12)';
+    } else if (photoOverlayBgStyle.value === 'blur') {
+      photoOverlayHandle.style.background = 'rgba(255, 255, 255, 0.18)';
+      photoOverlayHandle.style.border = '1px solid rgba(255, 255, 255, 0.28)';
+      photoOverlayHandle.style.backdropFilter = 'blur(5px)';
+      photoOverlayHandle.style.webkitBackdropFilter = 'blur(5px)';
+    }
+
+    updatePhotoGuidesVisibility();
+  }
+
+  function getPhotoPointerClientPos(event) {
+    if (event.touches && event.touches.length > 0) {
+      return { x: event.touches[0].clientX, y: event.touches[0].clientY };
+    }
+    if (event.changedTouches && event.changedTouches.length > 0) {
+      return { x: event.changedTouches[0].clientX, y: event.changedTouches[0].clientY };
+    }
+    return { x: event.clientX, y: event.clientY };
+  }
+
+  function movePhotoOverlayFromEvent(event) {
+    if (!photoOverlayHandle || photoOverlayHandle.style.display === 'none') return;
+    const rect = photoPreview.getBoundingClientRect();
+    const point = getPhotoPointerClientPos(event);
+    const x = ((point.x - rect.left) / rect.width) * 100;
+    const y = ((point.y - rect.top) / rect.height) * 100;
+    const boundedX = Math.max(8, Math.min(92, x));
+    const boundedY = Math.max(10, Math.min(90, y));
+    photoOverlayX = snapPhotoAxis(boundedX);
+    photoOverlayY = snapPhotoAxis(boundedY);
+    updatePhotoOverlayHandle();
+  }
+
+  function applyPhotoTextOverlay() {
+    if (!originalPhotoSrc) return;
+
+    const img = new Image();
+    img.onload = () => {
+      const canvas = document.createElement('canvas');
+      canvas.width = img.naturalWidth;
+      canvas.height = img.naturalHeight;
+      const ctx = canvas.getContext('2d');
+
+      ctx.drawImage(img, 0, 0);
+
+      const text = (photoOverlayText.value || '').trim();
+      if (text) {
+        const fontSize = parseInt(photoOverlaySize.value, 10) || 42;
+        const fontFamily = photoOverlayFont.value;
+        const textColor = photoOverlayColor.value || '#ffffff';
+        const bgStyle = photoOverlayBgStyle.value;
+
+        ctx.font = `700 ${fontSize}px ${fontFamily}`;
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'top';
+        ctx.fillStyle = textColor;
+        ctx.strokeStyle = 'rgba(0, 0, 0, 0.55)';
+        ctx.lineWidth = parseInt(photoOverlayOutline.value, 10) || 0;
+
+        const x = (photoOverlayX / 100) * canvas.width;
+        const y = (photoOverlayY / 100) * canvas.height;
+        const maxWidth = canvas.width * 0.88;
+        const lineHeight = Math.round(fontSize * 1.2);
+
+        function wrapParagraph(paragraph) {
+          const words = paragraph.split(/\s+/).filter(Boolean);
+          if (!words.length) return [''];
+          const lines = [];
+          let current = words[0];
+          for (let i = 1; i < words.length; i += 1) {
+            const testLine = `${current} ${words[i]}`;
+            if (ctx.measureText(testLine).width <= maxWidth) {
+              current = testLine;
+            } else {
+              lines.push(current);
+              current = words[i];
+            }
+          }
+          lines.push(current);
+          return lines;
+        }
+
+        const lines = [];
+        text.split('\n').forEach((paragraph) => {
+          if (!paragraph.trim()) {
+            lines.push('');
+          } else {
+            wrapParagraph(paragraph).forEach((line) => lines.push(line));
+          }
+        });
+
+        const maxLines = 8;
+        const clippedLines = lines.slice(0, maxLines);
+        if (lines.length > maxLines && clippedLines.length) {
+          clippedLines[maxLines - 1] = `${clippedLines[maxLines - 1]}...`;
+        }
+
+        const lineWidths = clippedLines.map((line) => ctx.measureText(line || ' ').width);
+        const blockWidth = Math.min(maxWidth, Math.max(...lineWidths, 0));
+        const blockHeight = clippedLines.length * lineHeight;
+        const startY = y - (blockHeight / 2);
+
+        if (bgStyle !== 'none') {
+          const padX = Math.round(fontSize * 0.35);
+          const padY = Math.round(fontSize * 0.22);
+          const left = x - (blockWidth / 2) - padX;
+          const top = startY - padY;
+          const width = blockWidth + (padX * 2);
+          const height = blockHeight + (padY * 2);
+          const radius = Math.max(10, Math.round(fontSize * 0.3));
+
+          function drawRoundedRect() {
+            ctx.beginPath();
+            ctx.moveTo(left + radius, top);
+            ctx.lineTo(left + width - radius, top);
+            ctx.quadraticCurveTo(left + width, top, left + width, top + radius);
+            ctx.lineTo(left + width, top + height - radius);
+            ctx.quadraticCurveTo(left + width, top + height, left + width - radius, top + height);
+            ctx.lineTo(left + radius, top + height);
+            ctx.quadraticCurveTo(left, top + height, left, top + height - radius);
+            ctx.lineTo(left, top + radius);
+            ctx.quadraticCurveTo(left, top, left + radius, top);
+            ctx.closePath();
+          }
+
+          if (bgStyle === 'shadow') {
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.32)';
+            drawRoundedRect();
+            ctx.fill();
+          } else if (bgStyle === 'solid-dark') {
+            ctx.fillStyle = 'rgba(17, 24, 39, 0.72)';
+            drawRoundedRect();
+            ctx.fill();
+          } else if (bgStyle === 'solid-light') {
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.8)';
+            drawRoundedRect();
+            ctx.fill();
+          } else if (bgStyle === 'blur') {
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.25)';
+            drawRoundedRect();
+            ctx.fill();
+          }
+
+          ctx.fillStyle = textColor;
+        }
+
+        clippedLines.forEach((line, index) => {
+          const lineY = startY + (index * lineHeight);
+          const content = line || ' ';
+          if (bgStyle === 'none' || bgStyle === 'shadow') {
+            ctx.strokeText(content, x, lineY, maxWidth);
+          }
+          ctx.fillText(content, x, lineY, maxWidth);
+        });
+      }
+
+      renderPhotoPreview(canvas.toDataURL('image/jpeg', 0.92));
+    };
+
+    img.src = originalPhotoSrc;
+  }
+
+  function handleSelectedPhoto(file) {
+    if (!file || !file.type.startsWith('image/')) {
+      alert('Please select a valid image file');
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      originalPhotoSrc = e.target.result;
+      setPhotoOverlayPreset(photoOverlayPosition.value);
+      applyPhotoTextOverlay();
+    };
+    reader.readAsDataURL(file);
+  }
+
+  function openPhotoUploadModal() {
+    document.getElementById('photoUploadModal').classList.add('active');
+  }
+
+  function closePhotoUploadModal() {
+    document.getElementById('photoUploadModal').classList.remove('active');
+    // Reset form
+    document.getElementById('photoUploadTitle').value = '';
+    document.getElementById('photoUploadDesc').value = '';
+    photoPreview.innerHTML = '<i class="fa-solid fa-image"></i>';
+    photoPreview.classList.add('empty');
+    photoUploadInput.value = '';
+    photoCameraInput.value = '';
+    photoPreview.dataset.src = '';
+    originalPhotoSrc = '';
+    photoOverlayText.value = '';
+    photoOverlayFont.value = 'Arial, sans-serif';
+    photoOverlayColor.value = '#ffffff';
+    photoOverlaySize.value = '42';
+    photoOverlaySizeValue.textContent = '42px';
+    photoOverlayOutline.value = '4';
+    photoOverlayOutlineValue.textContent = '4';
+    photoOverlayBgStyle.value = 'shadow';
+    photoOverlaySnapStrength.value = '4';
+    photoOverlaySnapStrengthValue.textContent = '4';
+    photoOverlayPosition.value = 'center';
+    photoOverlaySnapToggle.checked = true;
+    photoOverlayX = 50;
+    photoOverlayY = 50;
+    if (photoOverlayHandle) {
+      photoOverlayHandle.style.display = 'none';
+      photoOverlayHandle.classList.remove('dragging');
+    }
+    if (photoGridGuides) {
+      photoGridGuides.classList.remove('active');
+    }
+    document.getElementById('charCount').textContent = '0';
+  }
+
+  // Handle photo file selection
+  photoUploadInput.addEventListener('change', (event) => {
+    handleSelectedPhoto(event.target.files[0]);
+  });
+
+  photoCameraInput.addEventListener('change', (event) => {
+    handleSelectedPhoto(event.target.files[0]);
+  });
+
+  photoOverlaySize.addEventListener('input', () => {
+    photoOverlaySizeValue.textContent = `${photoOverlaySize.value}px`;
+    updatePhotoOverlayHandle();
+    applyPhotoTextOverlay();
+  });
+
+  photoOverlayOutline.addEventListener('input', () => {
+    photoOverlayOutlineValue.textContent = photoOverlayOutline.value;
+    updatePhotoOverlayHandle();
+    applyPhotoTextOverlay();
+  });
+
+  photoOverlayText.addEventListener('input', () => {
+    updatePhotoOverlayHandle();
+    applyPhotoTextOverlay();
+  });
+
+  photoOverlayFont.addEventListener('change', () => {
+    updatePhotoOverlayHandle();
+    applyPhotoTextOverlay();
+  });
+
+  photoOverlayBgStyle.addEventListener('change', () => {
+    updatePhotoOverlayHandle();
+    applyPhotoTextOverlay();
+  });
+
+  photoOverlayColor.addEventListener('input', () => {
+    updatePhotoOverlayHandle();
+    applyPhotoTextOverlay();
+  });
+
+  photoOverlayPosition.addEventListener('change', () => {
+    setPhotoOverlayPreset(photoOverlayPosition.value);
+    updatePhotoOverlayHandle();
+    applyPhotoTextOverlay();
+  });
+
+  photoClearTextBtn.addEventListener('click', () => {
+    photoOverlayText.value = '';
+    setPhotoOverlayPreset(photoOverlayPosition.value);
+    updatePhotoOverlayHandle();
+    applyPhotoTextOverlay();
+  });
+
+  photoOverlaySnapToggle.addEventListener('change', () => {
+    updatePhotoGuidesVisibility();
+    applyPhotoTextOverlay();
+  });
+
+  photoOverlaySnapStrength.addEventListener('input', () => {
+    photoOverlaySnapStrengthValue.textContent = photoOverlaySnapStrength.value;
+    applyPhotoTextOverlay();
+  });
+
+  photoPreview.addEventListener('mousedown', (event) => {
+    if (!photoOverlayHandle || event.target !== photoOverlayHandle) return;
+    isPhotoOverlayDragging = true;
+    photoOverlayHandle.classList.add('dragging');
+    event.preventDefault();
+  });
+
+  photoPreview.addEventListener('touchstart', (event) => {
+    if (!photoOverlayHandle || event.target !== photoOverlayHandle) return;
+    isPhotoOverlayDragging = true;
+    photoOverlayHandle.classList.add('dragging');
+    event.preventDefault();
+  }, { passive: false });
+
+  document.addEventListener('mousemove', (event) => {
+    if (!isPhotoOverlayDragging) return;
+    movePhotoOverlayFromEvent(event);
+  });
+
+  document.addEventListener('touchmove', (event) => {
+    if (!isPhotoOverlayDragging) return;
+    movePhotoOverlayFromEvent(event);
+    event.preventDefault();
+  }, { passive: false });
+
+  function stopPhotoOverlayDragging() {
+    if (!isPhotoOverlayDragging) return;
+    isPhotoOverlayDragging = false;
+    if (photoOverlayHandle) {
+      photoOverlayHandle.classList.remove('dragging');
+    }
+    applyPhotoTextOverlay();
+  }
+
+  document.addEventListener('mouseup', stopPhotoOverlayDragging);
+  document.addEventListener('touchend', stopPhotoOverlayDragging);
+
+  // Close photo modal when clicking outside
+  document.getElementById('photoUploadModal').addEventListener('click', (e) => {
+    if (e.target.id === 'photoUploadModal') {
+      closePhotoUploadModal();
+    }
+  });
+
+  // Character count for photo description
+  photoUploadDesc.addEventListener('input', () => {
+    document.getElementById('charCount').textContent = photoUploadDesc.value.length;
+  });
+
+  // Submit photo upload
+  async function submitPhotoUpload() {
+    const title = document.getElementById('photoUploadTitle').value.trim();
+    const description = document.getElementById('photoUploadDesc').value.trim();
+    const allowGifts = document.getElementById('photoAllowGifts').checked;
+    const src = photoPreview.dataset.src;
+
+    if (!title) {
+      alert('Please enter a title for your photo');
+      return;
+    }
+
+    if (!src) {
+      alert('Please select a photo');
+      return;
+    }
+
+    try {
+      await coshinAPI.uploadPhoto(title, description, src);
+      showUploadNotification('Photo uploaded successfully!', 'success');
+
+      setTimeout(() => {
+        closePhotoUploadModal();
+        loadFeed();
+        loadProfileAvatarInFeed();
+      }, 500);
+    } catch (error) {
+      showUploadNotification(error.message || 'Photo upload failed', 'error');
+    }
+  }
+
+  // ===== VIDEO UPLOAD FUNCTIONS =====
+  const videoUploadInput = document.getElementById('videoUploadInput');
+  const videoCameraInput = document.getElementById('videoCameraInput');
+  const videoPreview = document.getElementById('videoPreview');
+  const videoUploadDesc = document.getElementById('videoUploadDesc');
+
+  function openVideoUploadModal() {
+    document.getElementById('videoUploadModal').classList.add('active');
+  }
+
+  function closeVideoUploadModal() {
+    document.getElementById('videoUploadModal').classList.remove('active');
+    document.getElementById('videoUploadTitle').value = '';
+    document.getElementById('videoUploadDesc').value = '';
+    videoPreview.innerHTML = '<i class="fa-solid fa-video"></i>';
+    videoPreview.classList.add('empty');
+    videoUploadInput.value = '';
+    videoCameraInput.value = '';
+    videoPreview.dataset.src = '';
+    document.getElementById('videoCharCount').textContent = '0';
+  }
+
+  function handleSelectedVideo(file) {
+    if (file && file.type.startsWith('video/')) {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        videoPreview.innerHTML = `<video style="width: 100%; height: 100%; object-fit: cover;" controls><source src="${e.target.result}" type="${file.type}">Your browser does not support the video tag.</video>`;
+        videoPreview.classList.remove('empty');
+        videoPreview.dataset.src = e.target.result;
+      };
+      reader.readAsDataURL(file);
+    } else {
+      alert('Please select a valid video file');
+    }
+  }
+
+  // Handle video file selection
+  videoUploadInput.addEventListener('change', (event) => {
+    handleSelectedVideo(event.target.files[0]);
+  });
+
+  videoCameraInput.addEventListener('change', (event) => {
+    handleSelectedVideo(event.target.files[0]);
+  });
+
+  // Close video modal when clicking outside
+  document.getElementById('videoUploadModal').addEventListener('click', (e) => {
+    if (e.target.id === 'videoUploadModal') {
+      closeVideoUploadModal();
+    }
+  });
+
+  // Character count for video description
+  videoUploadDesc.addEventListener('input', () => {
+    document.getElementById('videoCharCount').textContent = videoUploadDesc.value.length;
+  });
+
+  // Submit video upload
+  async function submitVideoUpload() {
+    const title = document.getElementById('videoUploadTitle').value.trim();
+    const description = document.getElementById('videoUploadDesc').value.trim();
+    const allowGifts = document.getElementById('videoAllowGifts').checked;
+    const videoData = videoPreview.dataset.src;
+
+    if (!title) {
+      alert('Please enter a title for your video');
+      return;
+    }
+
+    if (!videoData) {
+      alert('Please select a video file');
+      return;
+    }
+
+    try {
+      await coshinAPI.uploadVideo(title, description, videoData);
+      showUploadNotification('Video uploaded successfully!', 'success');
+
+      setTimeout(() => {
+        closeVideoUploadModal();
+        loadFeed();
+        loadProfileAvatarInFeed();
+      }, 500);
+    } catch (error) {
+      showUploadNotification(error.message || 'Video upload failed', 'error');
+    }
+  }
+
+  // ===== POST FROM FEED FUNCTIONS =====
+  const postFromFeedContent = document.getElementById('postFromFeedContent');
+
+  async function submitPostFromFeed() {
+    const textarea = document.querySelector('.create-post-textarea');
+    const content = textarea.value.trim();
+
+    if (!content) {
+      alert('Please write something before sharing');
+      return;
+    }
+
+    try {
+      await coshinAPI.createPost('Post', content);
+      showUploadNotification('Post shared successfully!', 'success');
+
+      textarea.value = '';
+      setTimeout(() => {
+        loadFeed();
+        loadProfileAvatarInFeed();
+      }, 500);
+    } catch (error) {
+      showUploadNotification(error.message || 'Post upload failed', 'error');
+    }
+  }
+
+  function openPostFromFeedModal() {
+    document.getElementById('postFromFeedModal').classList.add('active');
+  }
+
+  function closePostFromFeedModal() {
+    document.getElementById('postFromFeedModal').classList.remove('active');
+    document.getElementById('postFromFeedTitle').value = '';
+    document.getElementById('postFromFeedContent').value = '';
+    document.getElementById('postFromFeedCharCount').textContent = '0';
+  }
+
+  // Close post modal when clicking outside
+  document.getElementById('postFromFeedModal').addEventListener('click', (e) => {
+    if (e.target.id === 'postFromFeedModal') {
+      closePostFromFeedModal();
+    }
+  });
+
+  // Character count for post content
+  postFromFeedContent.addEventListener('input', () => {
+    document.getElementById('postFromFeedCharCount').textContent = postFromFeedContent.value.length;
+  });
+
+  // Submit post from modal
+  async function submitPostFromFeedModal() {
+    const title = document.getElementById('postFromFeedTitle').value.trim();
+    const content = document.getElementById('postFromFeedContent').value.trim();
+    const allowGifts = document.getElementById('postAllowGifts').checked;
+
+    if (!title) {
+      alert('Please enter a title for your post');
+      return;
+    }
+
+    if (!content) {
+      alert('Please write some content for your post');
+      return;
+    }
+
+    try {
+      await coshinAPI.createPost(title, content);
+      showUploadNotification('Post shared successfully!', 'success');
+
+      setTimeout(() => {
+        closePostFromFeedModal();
+        loadFeed();
+        loadProfileAvatarInFeed();
+      }, 500);
+    } catch (error) {
+      showUploadNotification(error.message || 'Post upload failed', 'error');
+    }
+  }
+
+  // ===== UTILITY FUNCTIONS =====
+  // Notification for uploads
+  function showUploadNotification(message, type = 'success') {
+    const notification = document.createElement('div');
+    notification.style.cssText = `
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      padding: 14px 20px;
+      background: ${type === 'success' ? '#10b981' : '#ef4444'};
+      color: white;
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+      z-index: 9999;
+      animation: slideInRight 0.3s ease;
+      font-weight: 500;
+      max-width: 300px;
+    `;
+    notification.textContent = message;
+    document.body.appendChild(notification);
+
+    setTimeout(() => {
+      notification.style.animation = 'slideOutRight 0.3s ease';
+      setTimeout(() => notification.remove(), 300);
+    }, 3000);
+  }
+
+</script>
+<script src="title-fixer.js"></script>
+
+
+</body>
+</html>

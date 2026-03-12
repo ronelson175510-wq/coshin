@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Coshin Seller Plans</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+    body {
+        font-family: Helvetica, Arial, sans-serif;
+         background: linear-gradient(135deg, #1a1a1a 0%, #2d1b69 100%);
+        margin: 0;
+        padding: 20px;
+    }
+    h1 {
+        color: #333;
+        text-align: center;
+         font-size: 32px;
+          font-weight: 900;
+          background: linear-gradient(135deg, #0EA5E9, #FF6B6B);
+          -webkit-background-clip: text;
+          -webkit-text-fill-color: transparent;
+          background-clip: text;
+          letter-spacing: 2px;
+          margin: 0;
+          padding: 10px 0;
+    }
+
+    .plans {
+        display: flex;
+        justify-content: center;
+        gap: 20px;
+        margin-top: 30px;
+    }
+
+    .plan {
+        background-color: #fff;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        padding: 20px;
+        width: 300px;
+        text-align: center;
+    }
+    .plan h2 {
+        color: #007BFF;
+    }
+    .plan p {
+        font-size: 1.5em;
+        color: #333;
+    }
+    .plan ul {
+        list-style-type: none;
+        padding: 0;
+    }
+    .plan ul li {
+        margin: 10px 0;
+    }
+    .plan button {
+         background: linear-gradient(135deg, #1a1a1a 0%, #2d1b69 100%, #ce0d0d 100%);
+         animation: pulse 5s infinite;
+         background-size: 400% 400%;
+        color: #fff;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 5px;
+        cursor: pointer;
+    }   
+
+
+
+
+        @keyframes pulse {            0% {
+                background-position: 0% 50%;
+            }
+            50% {
+                background-position: 100% 50%;
+            }
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+
+    </style>
+    <!-- Firebase Libraries -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.2/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.2/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.2/firebase-database-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.2/firebase-storage-compat.js"></script>
+    <!-- Your Firebase Config -->
+    <script src="firebase-config.js"></script>
+</head>
+<body>
+   <h1> Pick Your Coshin Seller Plan</h1>
+   <div class="plans">
+       <div class="plan">
+           <h2>Basic Plan</h2>
+           <p>$9.99/month</p>
+           <ul>
+               <li>Access to basic features</li>
+               <li>Email support</li>
+               <li>1 GB storage</li>
+           </ul>
+           <button>Choose Basic</button>
+       </div>
+       <div class="plan">
+           <h2>Pro Plan</h2>
+           <p>$19.99/month</p>
+           <ul>
+               <li>Access to all features</li>
+               <li>Priority email support</li>
+               <li>10 GB storage</li>
+           </ul>
+           <button>Choose Pro</button>
+       </div>
+       <div class="plan">
+           <h2>Enterprise Plan</h2>
+           <p>$49.99/month</p>
+           <ul>
+               <li>Custom features</li>
+               <li>24/7 support</li>
+               <li>Unlimited storage</li>
+           </ul>
+           <button>Choose Enterprise</button>
+       </div>   
+
+    </div>
+
+</body>
+</html>

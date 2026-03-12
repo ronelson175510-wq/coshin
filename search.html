@@ -1,0 +1,1369 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Search Users - Coshin</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="style.css">
+    <script src="coshin-api.js"></script>
+    <style>
+        body { 
+            background-color: #f5f5f5; 
+            padding-top: 20px;
+            padding-bottom: 120px; 
+        }
+        
+        .search-page-container { 
+            max-width: 600px; 
+            margin: 0 auto; 
+            padding: 0 15px; 
+        }
+
+        .search-page-header {
+            margin-bottom: 30px;
+        }
+
+        .search-page-header h1 {
+            font-size: 28px;
+            color: #111827;
+            margin: 0 0 15px 0;
+            text-align: left;
+        }
+
+        .search-page-input-wrapper {
+            position: relative;
+            margin-bottom: 20px;
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .search-page-input {
+            width: 100%;
+            padding: 14px 46px 14px 16px;
+            border: 1px solid #e5e7eb;
+            border-radius: 12px;
+            font-size: 16px;
+            transition: all 0.2s ease;
+        }
+
+        .search-page-ai-icon {
+            position: absolute;
+            right: 60px;
+            top: 50%;
+            transform: translateY(-50%);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            line-height: 1;
+            color: #a855f7;
+            filter: drop-shadow(0 0 8px rgba(168, 85, 247, 0.8)) drop-shadow(0 0 12px rgba(168, 85, 247, 0.5));
+            animation: ai-icon-shine 2s ease-in-out infinite;
+            pointer-events: none;
+            user-select: none;
+        }
+
+        @keyframes ai-icon-shine {
+            0%, 100% {
+                filter: drop-shadow(0 0 8px rgba(168, 85, 247, 0.8)) drop-shadow(0 0 12px rgba(168, 85, 247, 0.5));
+                transform: translateY(-50%) scale(1);
+            }
+            50% {
+                filter: drop-shadow(0 0 12px rgba(168, 85, 247, 1)) drop-shadow(0 0 20px rgba(168, 85, 247, 0.7));
+                transform: translateY(-50%) scale(1.1);
+            }
+        }
+
+        .search-page-input:focus {
+            outline: none;
+            border-color: #0EA5E9;
+            box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.1);
+        }
+
+        .voice-search-button {
+            background: linear-gradient(135deg, #0EA5E9 0%, #3B82F6 100%);
+            color: white;
+            border: none;
+            width: 44px;
+            height: 44px;
+            border-radius: 8px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 8px rgba(14, 165, 233, 0.3);
+            flex-shrink: 0;
+        }
+
+        .voice-search-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(14, 165, 233, 0.4);
+        }
+
+        .voice-search-button:active {
+            transform: translateY(0);
+        }
+
+        .voice-search-button.listening {
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+            animation: pulse-voice 1s infinite;
+        }
+
+        @keyframes pulse-voice {
+            0%, 100% { box-shadow: 0 2px 8px rgba(239, 68, 68, 0.3); }
+            50% { box-shadow: 0 2px 20px rgba(239, 68, 68, 0.6); }
+        }
+
+        /* Coshin AI Voice Toast */
+        .coshin-ai-toast {
+            position: fixed;
+            bottom: 100px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 16px 24px;
+            border-radius: 12px;
+            box-shadow: 0 8px 24px rgba(102, 126, 234, 0.4);
+            display: none;
+            align-items: center;
+            gap: 12px;
+            z-index: 1000;
+            animation: slideUp 0.3s ease;
+            font-weight: 600;
+            font-size: 15px;
+        }
+
+        .coshin-ai-toast.show {
+            display: flex;
+        }
+
+        .coshin-ai-toast i {
+            font-size: 18px;
+            animation: bounce 1s infinite;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateX(-50%) translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(-50%) translateY(0);
+            }
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-8px); }
+        }
+
+        .search-results-container {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .search-result-item {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 14px;
+            background: white;
+            border-radius: 12px;
+            border: 1px solid #f3f4f6;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .search-result-item:hover {
+            background: #f9fafb;
+            border-color: #e5e7eb;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+        }
+
+        .search-result-avatar {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #0EA5E9, #3B82F6);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            font-size: 16px;
+            flex-shrink: 0;
+            overflow: hidden;
+            position: relative;
+            border: 2px solid #fff;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            transition: transform 0.2s ease;
+        }
+
+        .search-result-item:hover .search-result-avatar {
+            transform: scale(1.05);
+        }
+
+        .search-result-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+            position: absolute;
+            top: 0;
+            left: 0;
+            background: #f3f4f6;
+        }
+        
+        .search-result-avatar.has-image {
+            background: #f3f4f6;
+        }
+        
+        .search-result-avatar.loading::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.5), transparent);
+            animation: shimmer 1.5s infinite;
+        }
+
+        @keyframes shimmer {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+
+        .search-result-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .search-result-name {
+            font-size: 15px;
+            font-weight: 600;
+            color: #111827;
+            margin-bottom: 4px;
+        }
+
+        .search-result-email {
+            font-size: 13px;
+            color: #6b7280;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .search-empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: #6b7280;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .search-empty-state i {
+            font-size: 48px;
+            color: #d1d5db;
+            margin-bottom: 16px;
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        .search-empty-state p {
+            font-size: 16px;
+            margin: 0;
+        }
+
+        /* Loading State */
+        .search-loading {
+            text-align: center;
+            padding: 40px 20px;
+            color: #6b7280;
+        }
+
+        .search-loading-spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid #f3f4f6;
+            border-top-color: #0EA5E9;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            margin: 0 auto 16px;
+        }
+
+        .search-loading p {
+            font-size: 14px;
+            margin: 0;
+        }
+
+        /* Keyboard Navigation */
+        .search-result-item.keyboard-focused {
+            background: #f0f9ff;
+            border-color: #0EA5E9;
+            box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.1);
+        }
+
+        /* Search History */
+        .search-history {
+            margin-bottom: 20px;
+        }
+
+        .search-history-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: #6b7280;
+            margin-bottom: 10px;
+        }
+
+        .search-history-chips {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .search-history-chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 12px;
+            background: #f3f4f6;
+            border-radius: 20px;
+            font-size: 13px;
+            color: #374151;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .search-history-chip:hover {
+            background: #e5e7eb;
+            transform: translateY(-1px);
+        }
+
+        .search-history-chip i {
+            font-size: 10px;
+            color: #9ca3af;
+            transition: color 0.2s ease;
+        }
+
+        .search-history-chip i:hover {
+            color: #ef4444;
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                opacity: 0.4;
+                transform: scale(1);
+            }
+            50% {
+                opacity: 1;
+                transform: scale(1.05);
+            }
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .search-result-item {
+            animation: fadeIn 0.3s ease;
+        }
+
+        /* Backend Status Indicator */
+        .backend-status {
+            display: none;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 14px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        .backend-status.connected {
+            background: #d1fae5;
+            color: #065f46;
+            border: 1px solid #a7f3d0;
+        }
+
+        .backend-status.disconnected {
+            background: #fee2e2;
+            color: #991b1b;
+            border: 1px solid #fecaca;
+        }
+
+        .backend-status.checking {
+            background: #fef3c7;
+            color: #92400e;
+            border: 1px solid #fde68a;
+        }
+
+        .backend-status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        .backend-status.connected .backend-status-dot {
+            background: #10b981;
+        }
+
+        .backend-status.disconnected .backend-status-dot {
+            background: #dc2626;
+        }
+
+        .backend-status.checking .backend-status-dot {
+            background: #f59e0b;
+        }
+
+        /* Footer Enhancements */
+        .footer {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: white;
+            border-top: 2px solid #f0f0f0;
+            display: flex !important;
+            justify-content: space-around !important;
+            align-items: center;
+            padding: 12px 0 !important;
+            padding-bottom: calc(12px + env(safe-area-inset-bottom));
+            box-shadow: 0 -2px 12px rgba(0, 0, 0, 0.08);
+            z-index: 99;
+            margin: 0 !important;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        /* Voice Search Styles */
+        .voice-search-button {
+            background: linear-gradient(135deg, #0EA5E9 0%, #3B82F6 100%);
+            color: white;
+            border: none;
+            width: 44px;
+            height: 44px;
+            border-radius: 8px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 8px rgba(14, 165, 233, 0.3);
+        }
+
+        .voice-search-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(14, 165, 233, 0.4);
+        }
+
+        .voice-search-button:active {
+            transform: translateY(0);
+        }
+
+        .voice-search-button.listening {
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+            animation: pulse-voice 1s infinite;
+        }
+
+        @keyframes pulse-voice {
+            0%, 100% { box-shadow: 0 2px 8px rgba(239, 68, 68, 0.3); }
+            50% { box-shadow: 0 2px 20px rgba(239, 68, 68, 0.6); }
+        }
+
+        .search-page-input-wrapper {
+            position: relative;
+            margin-bottom: 20px;
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+
+        /* Footer Enhancements */
+            align-items: center !important;
+            justify-content: center !important;
+            padding: 12px 20px !important;
+            text-decoration: none !important;
+            color: #0EA5E9 !important;
+            margin: 0 !important;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+            border-radius: 12px !important;
+            position: relative !important;
+            font-size: 15px !important;
+        }
+        
+        .footer a:hover {
+            background-color: rgba(14, 165, 233, 0.12) !important;
+            transform: translateY(-4px) scale(1.1) !important;
+            color: #FF6B6B !important;
+        }
+        
+        .footer a:active {
+            transform: translateY(-2px) scale(1.08) !important;
+        }
+        
+        .footer a.active {
+            background: linear-gradient(135deg, rgba(14, 165, 233, 0.2), rgba(255, 107, 107, 0.15)) !important;
+            color: #FF6B6B !important;
+            box-shadow: 0 4px 12px rgba(14, 165, 233, 0.2) !important;
+        }
+        
+        .footer a::before { 
+            display: none !important; 
+        }
+
+        .footer a.active::before {
+            opacity: 1;
+        }
+
+        .footer a:hover::before {
+            opacity: 0.5;
+        }
+        
+        .footer-tooltip { 
+            display: block;
+            font-size: 12px; 
+            font-weight: 600; 
+            margin-top: 6px; 
+            color: inherit; 
+            text-align: center;
+            width: 100%;
+        }
+
+        .footer-tooltip::after { display: none; }
+
+        .footer a:hover .footer-tooltip { opacity: 1; transform: none; }
+
+        .footer i {
+            transition: all 0.3s ease !important;
+        }
+
+        .footer a:hover i {
+            filter: drop-shadow(0 4px 8px rgba(255, 107, 107, 0.3));
+        }
+
+        .footer-label { 
+            display: block; 
+            font-size: 12px; 
+            font-weight: 600; 
+            margin-top: 6px; 
+            color: inherit; 
+            text-align: center; 
+        }
+
+        @media (max-width: 768px) {
+            .footer {
+                padding: 10px 0 !important;
+                gap: 0 !important;
+            }
+
+            .footer a {
+                padding: 10px 15px !important;
+                flex-grow: 1;
+            }
+
+            .footer-tooltip {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="search-page-container">
+        <div class="search-page-header">
+            <h1>Search Users</h1>
+            <button id="backButton" style="margin-top:8px; margin-bottom:16px; padding:6px 16px; font-size:14px; border-radius:8px; border:none; background:#e5e7eb; color:#374151; cursor:pointer; transition:background 0.2s;">← Back</button>
+            <div id="backendStatus" class="backend-status checking">
+                <div class="backend-status-dot"></div>
+                <span>Checking backend...</span>
+            </div>
+            <div class="search-page-input-wrapper">
+                <input
+                    type="text"
+                    id="searchPageInput"
+                    class="search-page-input"
+                    placeholder="Search by name"
+                    autofocus
+                >
+                <span class="search-page-ai-icon" aria-hidden="true">✨</span>
+                <button class="voice-search-button" id="voiceSearchButton" title="Search with voice">
+                    <i class="fas fa-microphone"></i>
+                </button>
+            </div>
+        </div>
+        <div id="searchHistorySection" class="search-history" style="display: none;">
+            <div class="search-history-title">Recent Searches</div>
+            <div class="search-history-chips" id="searchHistoryChips"></div>
+        </div>
+        <div class="search-results-container" id="searchResultsContainer"></div>
+
+        <!-- Coshin AI Voice Search Toast -->
+        <div class="coshin-ai-toast" id="coshinAIToast">
+            <i class="fas fa-microphone"></i>
+            <span>Search with Coshin AI...</span>
+        </div>
+    </div>
+    
+    <script>
+                // Back button navigation
+                document.addEventListener('DOMContentLoaded', function () {
+                    const backBtn = document.getElementById('backButton');
+                    if (backBtn) {
+                        backBtn.addEventListener('click', function() {
+                            if (window.history.length > 1) {
+                                window.history.back();
+                            } else {
+                                window.location.href = 'index.html';
+                            }
+                        });
+                        backBtn.addEventListener('mouseover', function() {
+                            backBtn.style.background = '#d1d5db';
+                        });
+                        backBtn.addEventListener('mouseout', function() {
+                            backBtn.style.background = '#e5e7eb';
+                        });
+                    }
+                });
+        // Ensure visible labels under footer icons (created from title attributes)
+        document.addEventListener('DOMContentLoaded', function () {
+            document.querySelectorAll('.footer-link').forEach(link => {
+                if (!link.querySelector('.footer-label')) {
+                    const label = document.createElement('span');
+                    label.className = 'footer-label';
+                    label.textContent = link.getAttribute('title') || link.dataset.page || '';
+                    link.appendChild(label);
+                }
+            });
+        });
+
+        function updateActiveFooterLink() {
+            const currentPage = window.location.pathname.split('/').pop() || 'index.html';
+            
+            document.querySelectorAll('.footer-link').forEach(link => {
+                link.classList.remove('active');
+            });
+
+            let activeLink;
+            if (currentPage === '' || currentPage === 'index.html') {
+                activeLink = document.querySelector('[data-page="home"]');
+            } else if (currentPage.includes('search')) {
+                activeLink = document.querySelector('[data-page="search"]');
+            } else if (currentPage.includes('messages')) {
+                activeLink = document.querySelector('[data-page="messages"]');
+            } else if (currentPage.includes('coshinmarket')) {
+                activeLink = document.querySelector('[data-page="coshinmarket"]');
+            } else if (currentPage.includes('reels')) {
+                activeLink = document.querySelector('[data-page="reels"]');
+            } else if (currentPage.includes('account')) {
+                activeLink = document.querySelector('[data-page="account"]');
+            }
+
+            if (activeLink) {
+                activeLink.classList.add('active');
+            }
+        }
+
+        function getApiBaseUrl() {
+            const customUrl = localStorage.getItem('customApiUrl');
+            if (customUrl) {
+                return customUrl.replace(/\/$/, '');
+            }
+
+            const hostname = window.location.hostname;
+            if (hostname.includes('vercel') || hostname.includes('netlify') || hostname.includes('render') || hostname.includes('herokuapp')) {
+                return 'https://your-backend-url.com/api';
+            }
+            // Use port 8080 for localhost
+            if (hostname === 'localhost' || hostname === '127.0.0.1') {
+                return 'http://localhost:8080/api';
+            }
+            if (hostname.startsWith('192.') || hostname.startsWith('10.')) {
+                return `http://${hostname}:8080/api`;
+            }
+            return 'http://localhost:8080/api';
+        }
+
+        function getLocalUserDirectory() {
+            const directory = JSON.parse(localStorage.getItem('userDirectory') || '[]');
+            const profile = JSON.parse(localStorage.getItem('userProfile') || '{}');
+            const profilePicture = localStorage.getItem('profilePicture') || '';
+
+            if (profile.name || profile.email) {
+                const exists = directory.some(user => user.email === profile.email && profile.email);
+                if (!exists) {
+                    directory.unshift({
+                        name: profile.name || 'Your Name',
+                        email: profile.email || 'your@email.com',
+                        profilePicture
+                    });
+                }
+            }
+
+            return directory;
+        }
+
+        let discoverUsersCache = {
+            users: [],
+            fetchedAt: 0
+        };
+
+        async function fetchDiscoverUsers(query, limit = 100) {
+            const apiBaseUrl = getApiBaseUrl();
+            const url = `${apiBaseUrl}/users/discover?q=${encodeURIComponent(query)}&limit=${limit}`;
+            console.log('=== GET REMOTE USERS ===');
+            console.log('API Base URL:', apiBaseUrl);
+            console.log('Fetching users from:', url);
+            
+            try {
+                const response = await fetch(url);
+                console.log('Response status:', response.status);
+                console.log('Response ok:', response.ok);
+                
+                if (!response.ok) {
+                    console.error('API returned error status:', response.status);
+                    throw new Error(`HTTP ${response.status}`);
+                }
+
+                const users = await response.json();
+                console.log('✓ Remote users received:', users);
+                console.log('✓ Number of users:', users.length);
+                console.log('✓ Is Array:', Array.isArray(users));
+                
+                if (users.length > 0) {
+                    console.log('✓ First user sample:', users[0]);
+                }
+                
+                return Array.isArray(users) ? users : [];
+            } catch (error) {
+                console.error('✗ Failed to fetch remote users:', error);
+                console.error('Error details:', error.message);
+                throw error;
+            }
+        }
+
+        async function getRemoteUsers(query) {
+            const strictResults = await fetchDiscoverUsers(query, 100);
+
+            // If strict search already has enough candidates, return immediately.
+            if (!query || strictResults.length >= 25) {
+                return strictResults;
+            }
+
+            // Fallback: include a broader candidate pool so fuzzy ranking can find misspellings.
+            const now = Date.now();
+            const cacheFresh = now - discoverUsersCache.fetchedAt < 60000;
+
+            if (!cacheFresh || !discoverUsersCache.users.length) {
+                discoverUsersCache.users = await fetchDiscoverUsers('', 100);
+                discoverUsersCache.fetchedAt = now;
+            }
+
+            return mergeUsers(strictResults, discoverUsersCache.users);
+        }
+
+        function normalizeUser(user) {
+            const normalized = {
+                id: user.id || null,
+                name: user.name || user.username || 'User',
+                email: user.email || '',
+                profilePicture: user.profilePicture || user.profile_picture || ''
+            };
+            
+            // Debug logging
+            if (normalized.profilePicture) {
+                console.log('✓ User has profile picture:', {
+                    name: normalized.name,
+                    picture: normalized.profilePicture
+                });
+            }
+            
+            return normalized;
+        }
+
+        function mergeUsers(primaryUsers, secondaryUsers) {
+            const merged = [];
+            const seen = new Set();
+
+            [...primaryUsers, ...secondaryUsers].forEach(user => {
+                const normalized = normalizeUser(user);
+                const key = (normalized.email || normalized.name || '').toLowerCase();
+                if (!key || seen.has(key)) {
+                    return;
+                }
+
+                seen.add(key);
+                merged.push(normalized);
+            });
+
+            return merged;
+        }
+
+        function escapeHtml(value) {
+            return String(value)
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#39;');
+        }
+
+        // Search History Management - DISABLED (using database only)
+        function getSearchHistory() {
+            try {
+                return JSON.parse(localStorage.getItem('searchHistory') || '[]');
+            } catch {
+                return [];
+            }
+        }
+
+        function saveSearchHistory(query) {
+            if (!query) return;
+            let history = getSearchHistory();
+            query = query.trim();
+            history = history.filter(q => q.toLowerCase() !== query.toLowerCase());
+            history.unshift(query);
+            if (history.length > 10) history = history.slice(0, 10);
+            localStorage.setItem('searchHistory', JSON.stringify(history));
+        }
+
+        function removeFromSearchHistory(query) {
+            let history = getSearchHistory();
+            history = history.filter(q => q.toLowerCase() !== query.toLowerCase());
+            localStorage.setItem('searchHistory', JSON.stringify(history));
+            displaySearchHistory();
+        }
+
+        function displaySearchHistory() {
+            const section = document.getElementById('searchHistorySection');
+            const chips = document.getElementById('searchHistoryChips');
+            const history = getSearchHistory();
+            if (!section || !chips) return;
+            if (history.length === 0) {
+                section.style.display = 'none';
+                return;
+            }
+            section.style.display = 'block';
+            chips.innerHTML = '';
+            history.forEach(query => {
+                const chip = document.createElement('div');
+                chip.className = 'search-history-chip';
+                chip.innerHTML = `<span>${query}</span> <i class="fa fa-times" title="Remove"></i>`;
+                chip.querySelector('span').addEventListener('click', () => {
+                    document.getElementById('searchPageInput').value = query;
+                    filterUserSearch();
+                });
+                chip.querySelector('i').addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    removeFromSearchHistory(query);
+                });
+                chips.appendChild(chip);
+            });
+        }
+
+        // Debouncing
+        let searchTimeout = null;
+        let searchRequestCounter = 0;
+        let currentKeyboardIndex = -1;
+
+        function showLoading() {
+            const container = document.getElementById('searchResultsContainer');
+            container.innerHTML = `
+                <div class="search-loading">
+                    <div class="search-loading-spinner"></div>
+                    <p>Searching for users...</p>
+                </div>
+            `;
+        }
+
+        async function filterUserSearch() {
+            const requestId = ++searchRequestCounter;
+            const query = document.getElementById('searchPageInput').value.trim().toLowerCase();
+
+            console.log('=== FILTER USER SEARCH ===');
+            console.log('Query:', query);
+            console.log('SearchPageInput element:', document.getElementById('searchPageInput'));
+
+            // Reset keyboard navigation
+            currentKeyboardIndex = -1;
+
+            // Show loading state
+            if (query) {
+                showLoading();
+            }
+
+            let remoteUsers = [];
+
+            try {
+                remoteUsers = await getRemoteUsers(query);
+                console.log('✓ Remote users received from database:', remoteUsers);
+                console.log('Number of users:', remoteUsers?.length || 0);
+            } catch (error) {
+                console.error('✗ Failed to fetch users from database:', error.message);
+                remoteUsers = [];
+            }
+
+            if (requestId !== searchRequestCounter) {
+                return;
+            }
+
+            // Save search history if query is not empty
+            if (query) {
+                saveSearchHistory(query);
+                displaySearchHistory();
+            }
+
+            function normalize(text) {
+                return (text || '')
+                    .toLowerCase()
+                    .replace(/[^a-z0-9\s]/g, ' ')
+                    .replace(/\s+/g, ' ')
+                    .trim();
+            }
+
+            function levenshtein(a, b) {
+                if (a === b) return 0;
+                if (!a.length) return b.length;
+                if (!b.length) return a.length;
+
+                const prev = new Array(b.length + 1);
+                const curr = new Array(b.length + 1);
+
+                for (let j = 0; j <= b.length; j++) {
+                    prev[j] = j;
+                }
+
+                for (let i = 1; i <= a.length; i++) {
+                    curr[0] = i;
+                    for (let j = 1; j <= b.length; j++) {
+                        const cost = a[i - 1] === b[j - 1] ? 0 : 1;
+                        curr[j] = Math.min(
+                            prev[j] + 1,
+                            curr[j - 1] + 1,
+                            prev[j - 1] + cost
+                        );
+                    }
+                    for (let j = 0; j <= b.length; j++) {
+                        prev[j] = curr[j];
+                    }
+                }
+
+                return prev[b.length];
+            }
+
+            function fuzzyTokenScore(queryToken, nameToken) {
+                if (!queryToken || !nameToken) return 0;
+                if (queryToken === nameToken) return 180;
+                if (nameToken.startsWith(queryToken)) return 120;
+                if (nameToken.includes(queryToken)) return 70;
+
+                const distance = levenshtein(queryToken, nameToken);
+                const longest = Math.max(queryToken.length, nameToken.length);
+                const similarity = 1 - (distance / Math.max(1, longest));
+
+                if (distance <= 1 && similarity >= 0.7) return 130;
+                if (distance <= 2 && similarity >= 0.6) return 95;
+                if (distance <= 3 && similarity >= 0.5) return 55;
+                return 0;
+            }
+
+            function getMatchScore(user, rawQuery) {
+                if (!rawQuery) return 0;
+
+                const q = normalize(rawQuery);
+                const name = normalize(user.name || '');
+                const email = normalize(user.email || '');
+                const nameTokens = name.split(' ').filter(Boolean);
+                const queryTokens = q.split(' ').filter(Boolean);
+                const compactQ = q.replace(/\s+/g, '');
+                const compactName = name.replace(/\s+/g, '');
+
+                if (!q) return 0;
+
+                let score = 0;
+
+                if (name === q) score += 1000;
+                if (name.startsWith(q)) score += 700;
+                if (name.includes(q)) score += 400;
+                if (email.startsWith(q)) score += 220;
+                if (email.includes(q)) score += 120;
+
+                // Full-name typo tolerance (e.g. "john michel" -> "jhon michelle").
+                if (compactQ && compactName) {
+                    const fullDistance = levenshtein(compactQ, compactName);
+                    const fullLongest = Math.max(compactQ.length, compactName.length);
+                    const fullSimilarity = 1 - (fullDistance / Math.max(1, fullLongest));
+                    if (fullDistance <= 2 && fullSimilarity >= 0.65) score += 260;
+                    else if (fullDistance <= 4 && fullSimilarity >= 0.55) score += 170;
+                }
+
+                for (const token of queryTokens) {
+                    if (!token) continue;
+                    let bestTokenScore = 0;
+                    for (const nameToken of nameTokens) {
+                        bestTokenScore = Math.max(bestTokenScore, fuzzyTokenScore(token, nameToken));
+                    }
+                    score += bestTokenScore;
+                }
+
+                // Slight bonus for shorter names when scores are similar.
+                score += Math.max(0, 20 - name.length);
+                return score;
+            }
+
+            // Use ONLY database users - no localStorage fallback.
+            const rankedUsers = remoteUsers
+                .map(user => ({ user, score: getMatchScore(user, query) }))
+                .filter(item => !query || item.score > 0)
+                .sort((a, b) => b.score - a.score);
+
+            const results = rankedUsers.map(item => item.user);
+
+            console.log('✓ Filtered results from database:', results);
+            console.log('Results count:', results.length);
+            renderSearchResults(results, query);
+        }
+
+        function debouncedSearch() {
+            clearTimeout(searchTimeout);
+            searchTimeout = setTimeout(filterUserSearch, 300);
+        }
+
+        // Convert base64 to blob URL (much more efficient than inline base64)
+        function getImageUrl(base64String) {
+            if (!base64String) {
+                return null;
+            }
+            
+            try {
+                // If it's already a data URL, just return it
+                if (base64String.startsWith('data:')) {
+                    return base64String;
+                }
+                
+                // If it's just base64 without data: prefix, add it
+                if (!base64String.includes(',')) {
+                    return `data:image/jpeg;base64,${base64String}`;
+                }
+                
+                return base64String;
+            } catch (error) {
+                console.error('Error processing image URL:', error);
+                return null;
+            }
+        }
+
+        function renderSearchResults(results, query) {
+            console.log('=== RENDER SEARCH RESULTS CALLED ===');
+            console.log('Results:', results);
+            console.log('Results length:', results?.length);
+            console.log('Query:', query);
+            
+            const container = document.getElementById('searchResultsContainer');
+            console.log('Container element:', container);
+
+            if (!results.length) {
+                console.log('No results - showing empty state');
+                container.innerHTML = `
+                    <div class="search-empty-state">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                        <p>${query ? 'No users found matching your search' : 'Start typing to search users'}</p>
+                    </div>
+                `;
+                return;
+            }
+
+            console.log('=== RENDERING', results.length, 'USERS ===');
+
+            const htmlParts = results.map((user, index) => {
+                const initials = (user.name || 'U').split(' ').map(part => part[0]).join('').slice(0, 2).toUpperCase();
+                const hasImage = user.profilePicture && user.profilePicture.trim() !== '';
+                const imageUrl = hasImage ? getImageUrl(user.profilePicture) : null;
+                
+                console.log(`Rendering user ${index + 1}: ${user.name}, hasImage: ${!!imageUrl}`);
+                
+                const avatarClass = imageUrl ? 'search-result-avatar has-image loading' : 'search-result-avatar';
+                const avatar = imageUrl
+                    ? `<img src="${imageUrl}" alt="${escapeHtml(user.name)}" data-initials="${escapeHtml(initials)}" style="width:100%; height:100%; object-fit:cover; border-radius:50%;" onload="this.parentElement.classList.remove('loading');" onerror="this.style.display='none'; this.parentElement.classList.remove('loading', 'has-image'); this.parentElement.textContent=this.dataset.initials;">`
+                    : initials;
+
+                return `
+                    <div class="search-result-item" data-index="${index}" data-user-id="${user.id || ''}" data-user-email="${escapeHtml(user.email)}" data-user-name="${escapeHtml(user.name)}">
+                        <div class="${avatarClass}">${avatar}</div>
+                        <div class="search-result-info">
+                            <div class="search-result-name">${escapeHtml(user.name || 'Unnamed User')}</div>
+                            <div class="search-result-email">${escapeHtml(user.email || 'No email')}</div>
+                        </div>
+                    </div>
+                `;
+            });
+
+            container.innerHTML = htmlParts.join('');
+            console.log('✓ HTML injected into container');
+            console.log('Container innerHTML length:', container.innerHTML.length);
+
+            // Add click handlers to navigate to user profiles
+            container.querySelectorAll('.search-result-item').forEach(item => {
+                item.addEventListener('click', function() {
+                    const userId = this.dataset.userId;
+                    const userName = this.dataset.userName;
+                    
+                    if (userId && userId !== '' && userId !== 'null') {
+                        window.location.href = `account.html?userId=${userId}`;
+                    } else {
+                        alert(`Cannot view profile for ${userName}`);
+                    }
+                });
+            });
+            
+            console.log('✓ Click handlers added');
+            console.log('=== RENDERING COMPLETE ===');
+        }
+
+        // Keyboard Navigation
+        function updateKeyboardFocus() {
+            const items = document.querySelectorAll('.search-result-item');
+            items.forEach((item, index) => {
+                item.classList.toggle('keyboard-focused', index === currentKeyboardIndex);
+            });
+
+            if (currentKeyboardIndex >= 0 && currentKeyboardIndex < items.length) {
+                items[currentKeyboardIndex].scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+            }
+        }
+
+        function handleKeyboardNavigation(e) {
+            const items = document.querySelectorAll('.search-result-item');
+            if (items.length === 0) return;
+
+            switch(e.key) {
+                case 'ArrowDown':
+                    e.preventDefault();
+                    currentKeyboardIndex = Math.min(currentKeyboardIndex + 1, items.length - 1);
+                    updateKeyboardFocus();
+                    break;
+                case 'ArrowUp':
+                    e.preventDefault();
+                    currentKeyboardIndex = Math.max(currentKeyboardIndex - 1, -1);
+                    updateKeyboardFocus();
+                    break;
+                case 'Enter':
+                    e.preventDefault();
+                    if (currentKeyboardIndex >= 0 && currentKeyboardIndex < items.length) {
+                        items[currentKeyboardIndex].click();
+                    }
+                    break;
+                case 'Escape':
+                    e.preventDefault();
+                    currentKeyboardIndex = -1;
+                    updateKeyboardFocus();
+                    document.getElementById('searchPageInput').blur();
+                    break;
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('=== PAGE LOADED ===');
+            console.log('Search input element:', document.getElementById('searchPageInput'));
+            console.log('Results container:', document.getElementById('searchResultsContainer'));
+            
+            updateActiveFooterLink();
+            displaySearchHistory();
+            checkBackendConnection();
+
+            const input = document.getElementById('searchPageInput');
+
+            // Use debounced search for better performance
+            input.addEventListener('input', debouncedSearch);
+
+            // Add keyboard navigation
+            input.addEventListener('keydown', handleKeyboardNavigation);
+
+            // Show all users on load
+            console.log('=== Calling filterUserSearch on page load ===');
+            filterUserSearch();
+        });
+
+        // Check if backend is reachable
+        async function checkBackendConnection() {
+            const statusElement = document.getElementById('backendStatus');
+            const apiBaseUrl = getApiBaseUrl();
+            
+            try {
+                const controller = new AbortController();
+                const timeoutId = setTimeout(() => controller.abort(), 5000);
+                
+                const response = await fetch(`${apiBaseUrl}/users/discover?limit=1`, {
+                    method: 'GET',
+                    signal: controller.signal
+                });
+                
+                clearTimeout(timeoutId);
+                
+                if (response.ok) {
+                    statusElement.className = 'backend-status connected';
+                    statusElement.querySelector('span').textContent = 'Backend connected';
+                    console.log('✓ Backend is online and ready');
+                } else {
+                    throw new Error('Backend returned error');
+                }
+            } catch (error) {
+                console.error('✗ Backend connection failed:', error);
+                statusElement.className = 'backend-status disconnected';
+                statusElement.querySelector('span').textContent = 'Backend offline';
+            }
+        }
+
+        // Voice Search Initialization
+        function initializeVoiceSearch() {
+            const voiceButton = document.getElementById('voiceSearchButton');
+            const searchInput = document.getElementById('searchPageInput');
+            const coshinToast = document.getElementById('coshinAIToast');
+            const MIC_PERMISSION_KEY = 'zim_voice_mic_permission_granted';
+            
+            // Check if elements exist
+            if (!voiceButton) {
+                console.warn('Voice search button not found');
+                return;
+            }
+            if (!searchInput) {
+                console.warn('Search input not found');
+                return;
+            }
+
+            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+            if (!SpeechRecognition) {
+                console.warn('Voice search not supported in this browser');
+                voiceButton.style.display = 'none';
+                return;
+            }
+
+            const recognition = new SpeechRecognition();
+            recognition.continuous = false;
+            recognition.interimResults = false;
+            recognition.lang = 'en-US';
+
+            async function ensureMicrophonePermission() {
+                if (localStorage.getItem(MIC_PERMISSION_KEY) === 'true') {
+                    return true;
+                }
+
+                const continuePrompt = confirm('Voice search needs microphone access. Click OK, then allow mic access in your browser prompt.');
+                if (!continuePrompt) {
+                    return false;
+                }
+
+                if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+                    // Some browsers still show mic prompt when SpeechRecognition starts.
+                    return true;
+                }
+
+                try {
+                    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                    stream.getTracks().forEach(track => track.stop());
+                    localStorage.setItem(MIC_PERMISSION_KEY, 'true');
+                    return true;
+                } catch (error) {
+                    console.error('Microphone permission denied:', error);
+                    alert('Please allow microphone access to use voice search.');
+                    return false;
+                }
+            }
+            
+            let isListening = false;
+
+            recognition.onstart = () => {
+                isListening = true;
+                voiceButton.classList.add('listening');
+                voiceButton.style.opacity = '0.7';
+                localStorage.setItem(MIC_PERMISSION_KEY, 'true');
+                if (coshinToast) {
+                    coshinToast.classList.add('show');
+                }
+            };
+
+            recognition.onresult = (event) => {
+                let transcript = '';
+                for (let i = event.resultIndex; i < event.results.length; i++) {
+                    transcript += event.results[i][0].transcript;
+                }
+                const cleanedTranscript = transcript
+                    .replace(/[.,!?;:]+/g, ' ')
+                    .replace(/\s+/g, ' ')
+                    .trim();
+                if (event.results[event.results.length - 1].isFinal && transcript.trim()) {
+                    searchInput.value = cleanedTranscript;
+                    filterUserSearch();
+                }
+            };
+
+            recognition.onerror = (event) => {
+                console.error('Voice recognition error:', event.error);
+                isListening = false;
+                voiceButton.classList.remove('listening');
+                voiceButton.style.opacity = '1';
+                if (coshinToast) {
+                    coshinToast.classList.remove('show');
+                }
+                alert('Voice recognition error: ' + event.error);
+            };
+
+            recognition.onend = () => {
+                isListening = false;
+                voiceButton.classList.remove('listening');
+                voiceButton.style.opacity = '1';
+                if (coshinToast) {
+                    coshinToast.classList.remove('show');
+                }
+            };
+
+            voiceButton.addEventListener('click', async (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                if (isListening) {
+                    recognition.stop();
+                } else {
+                    const hasPermission = await ensureMicrophonePermission();
+                    if (!hasPermission) {
+                        return;
+                    }
+                    searchInput.value = '';
+                    try {
+                        recognition.start();
+                    } catch (error) {
+                        console.error('Failed to start recording:', error);
+                    }
+                }
+            });
+        }
+
+        // Initialize voice search on page load
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initializeVoiceSearch);
+        } else {
+            initializeVoiceSearch();
+        }
+    </script>
+</body>
+</html>

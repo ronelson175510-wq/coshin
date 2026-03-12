@@ -1,0 +1,4074 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Account</title>
+     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="style.css">
+    <style>
+      * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        .content-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(108px,1fr));gap:8px}
+        .content-item{background:var(--card,#fff);border-radius:10px;overflow:hidden;box-shadow:0 1px 2px rgba(0,0,0,0.04);position:relative;cursor:pointer}
+        .content-item img{width:100%;height:90px;object-fit:cover;display:block}
+        .content-item-body{padding:7px}
+        .video-placeholder,.post-placeholder{height:90px;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,0.04);color:var(--muted,#666)}
+        .content-overlay{position:absolute;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.7);color:#fff;padding:12px;display:flex;flex-direction:column;justify-content:flex-end;opacity:0;transition:opacity 0.2s}
+        .content-item:hover .content-overlay{opacity:1}
+        .content-overlay h4{font-size:12px;margin:0 0 4px 0;font-weight:600}
+        .content-overlay p{font-size:10px;margin:0 0 6px 0;opacity:0.9;overflow:hidden;text-overflow:ellipsis;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
+        .content-stats{display:flex;gap:8px;font-size:10px;align-items:center}
+        .content-stats span{display:flex;align-items:center;gap:3px}
+        .post-content{padding:12px;min-height:90px;display:flex;align-items:center;justify-content:center;background:#f9fafb}
+        .post-content p{font-size:13px;line-height:1.4;color:#374151;overflow:hidden;text-overflow:ellipsis;display:-webkit-box;-webkit-line-clamp:4;-webkit-box-orient:vertical}
+        .post-item .content-stats{padding:8px 12px;background:#fff;border-top:1px solid #f0f0f0}
+        .small-link{display:inline-block;margin-top:6px;color:var(--primary);font-size:0.9rem}
+        .upload-item-actions{position:absolute;top:6px;right:6px;z-index:3}
+        .upload-menu-btn{width:28px;height:28px;border:none;border-radius:999px;background:rgba(17,24,39,0.75);color:#fff;display:inline-flex;align-items:center;justify-content:center;cursor:pointer}
+        .upload-item-menu{position:absolute;top:34px;right:0;background:#fff;border:1px solid #e5e7eb;border-radius:8px;box-shadow:0 10px 24px rgba(0,0,0,0.12);display:none;min-width:120px;overflow:hidden}
+        .upload-item-menu.active{display:block}
+        .upload-item-menu button{width:100%;border:none;background:#fff;padding:10px 12px;text-align:left;font-size:13px;cursor:pointer}
+        .upload-item-menu button:hover{background:#f5f6f8}
+        .upload-item-menu button.danger{color:#dc2626}
+        .content-item-title{font-size:11px;font-weight:600;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin:0}
+        .content-item-date{display:block;margin-top:3px;font-size:9px;color:#6b7280}
+      :root{ --primary: #0EA5E9; --accent: #FF6B6B; --bg: #ffffff; --muted: #f5f6f8; --text: #222; --card-radius: 12px; --container-width: 980px; --fw-semibold: 600; }
+      html, body { max-width: 100%; overflow-x: hidden; }
+      body { font-family: Helvetica, Arial, sans-serif; color:var(--text); background:#fafafa; -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale; }
+      /* Ensure content doesn't get hidden behind fixed footer */
+      .page-content { max-width: var(--container-width); margin: 20px auto; padding: 0 16px 110px; box-sizing: border-box; }
+      .container { max-width: var(--container-width); margin: 28px auto; padding: 0 16px; box-sizing: border-box; }
+      .profile-section { display:flex; gap:20px; align-items:flex-start; background:transparent; padding:18px 6px; border-radius:var(--card-radius); box-shadow:none; flex-wrap:wrap; }
+      .usericon { flex: 0 0 auto; }
+      .profile-upload-btn { position: relative; background: linear-gradient(180deg,#fff,#fff); border-radius:50%; width:clamp(76px,16vw,120px); height:clamp(76px,16vw,120px); padding:4px; display:flex; align-items:center; justify-content:center; overflow:hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.06); }
+      .profile-upload-btn img { width:100%; height:100%; object-fit:cover; display:block; border-radius:50%; border:4px solid #fff; }
+      .profile-camera-icon{ position:absolute; right:8px; bottom:8px; background:var(--bg); color:var(--primary); padding:8px; border-radius:50%; box-shadow:0 4px 12px rgba(16,24,40,0.08); }
+      .profile-info { flex:1; min-width:0; }
+      .profile-name { margin:0; font-size:18px; font-weight:700; letter-spacing:0.2px; }
+      .profile-bio { margin:6px 0 12px 0; color:#666; font-size:14px; max-width:100%; }
+      .email-privacy-row { display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:12px; }
+      .email-privacy-main { min-width:0; }
+      .profile-email { margin:0; font-size:13px; color:#4b5563; word-break:break-all; }
+      .email-privacy-hint { display:block; margin-top:3px; font-size:11px; color:#6b7280; }
+      .toggle-switch { position:relative; width:46px; height:26px; display:inline-flex; align-items:center; }
+      .toggle-switch input { opacity:0; width:0; height:0; }
+      .toggle-slider { position:absolute; inset:0; cursor:pointer; background:#cbd5e1; border-radius:999px; transition:0.2s ease; }
+      .toggle-slider::before { content:''; position:absolute; width:20px; height:20px; left:3px; top:3px; background:#fff; border-radius:50%; transition:0.2s ease; box-shadow:0 1px 3px rgba(0,0,0,0.2); }
+      .toggle-switch input:checked + .toggle-slider { background:#0EA5E9; }
+      .toggle-switch input:checked + .toggle-slider::before { transform:translateX(20px); }
+      .profile-stats { display:flex; gap:20px; margin-bottom:12px; color:#111; align-items:center; }
+      .profile-stats > div { text-align:center; }
+      .profile-stats strong{ display:block; font-size:16px; color:var(--text); }
+      .profile-actions { display:flex; gap:8px; align-items:center; margin-top:8px; flex-wrap:nowrap; justify-content:center; margin-left:auto; margin-right:auto; width:fit-content; }
+
+      /* Unified action button sizing and alignment */
+      .profile-actions .action-btn, .profile-actions button, .profile-actions a { height:40px; display: inline-flex; align-items:center; justify-content:center; gap:8px; padding:0 14px; border-radius:999px; font-weight:600; cursor:pointer; font-size:14px; box-sizing:border-box; vertical-align:middle; line-height:1; }
+
+      .subscribebtn { background: var(--primary); color: #fff; border: none; display: inline-flex; }
+      .product-btn { background: transparent; color: var(--primary); border: 1px solid rgba(14,165,233,0.12); padding: 0 12px; }
+
+      /* Buttons visible by default to other users */
+      #subscribeBtn { display: inline-flex; }
+      #dmBtn { display: inline-flex; }
+      
+      /* Ensure icons inside buttons align nicely */
+      .profile-actions i { display:inline-flex; align-items:center; justify-content:center; line-height:1; }
+
+      /* Force consistent baseline across buttons (some buttons contain only icons) */
+      .profile-actions .product-btn, .profile-actions .subscribebtn, .profile-actions .dm-btn { min-height:40px; min-width:40px; margin-top: 0; margin-right: 0; justify-content: center;}
+      .product-btn i { font-size:16px; }
+      .subscribebtn { background: #0095f6; color:white; box-shadow: none; transition: all 0.3s ease; }
+      .subscribebtn.subscribed { background: #e4e6eb; color: #111; }
+      .subscribebtn.subscribed:hover { background: #d0d2d7; }
+      .subscribebtn:hover { background: #0084d9; }
+      .dm-btn { background: transparent; color: #111; border: 1px solid #dbdbdb; transition: all 0.3s ease; }
+      .dm-btn:hover { background: #f0f2f5; border-color: #0095f6; color: #0095f6; box-shadow: 0 4px 12px rgba(0, 149, 246, 0.15); transform: translateY(-2px); }
+      .dm-btn:active { transform: translateY(0); }
+      .upload-section { background:var(--bg); border-radius:var(--card-radius); padding:18px; margin-top:18px; box-shadow: 0 6px 18px rgba(16,24,40,0.04); border:1px solid rgba(16,24,40,0.03); width:100%; }
+      .upload-title { font-size:16px; margin:0 0 12px 0; font-weight:var(--fw-semibold); }
+      input.upload-input, textarea.upload-textarea { width:100%; padding:10px 12px; border-radius:8px; border:1px solid #e6e9ee; font-size:14px; resize:vertical; }
+      input.upload-input:focus, textarea.upload-textarea:focus{ outline:none; box-shadow:0 6px 20px rgba(14,165,233,0.08); border-color:var(--primary); }
+      .upload-btn { display:inline-flex; gap:8px; align-items:center; padding:10px 16px; border-radius:10px; background:var(--primary); color:white; border:none; font-weight:600; cursor:pointer; }
+
+      /* Top Header Menu */
+      .top-header {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        background: #ffffff;
+        z-index: 999;
+        padding: 6px 20px;
+        display: flex;
+        justify-content: flex-end;
+        align-items: center;
+      }
+
+      .menu-container {
+        position: relative;
+      }
+
+      .menu-btn {
+        background: transparent;
+        border: 2px solid #e5e7eb;
+        border-radius: 50%;
+        width: 42px;
+        height: 42px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        color: #374151;
+      }
+
+      .menu-btn:hover {
+        border-color: var(--primary);
+        color: var(--primary);
+        background: rgba(14, 165, 233, 0.05);
+      }
+
+      .menu-btn i {
+        font-size: 18px;
+      }
+
+      .menu-dropdown {
+        position: absolute;
+        top: 52px;
+        right: 0;
+        background: #ffffff;
+        border-radius: 12px;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+        min-width: 200px;
+        opacity: 0;
+        visibility: hidden;
+        transform: translateY(-10px);
+        transition: all 0.3s ease;
+        overflow: hidden;
+        z-index: 1001;
+      }
+
+      .menu-dropdown.active {
+        opacity: 1;
+        visibility: visible;
+        transform: translateY(0);
+      }
+
+      .menu-item {
+        padding: 14px 18px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        color: #374151;
+        text-decoration: none;
+        border: none;
+        background: transparent;
+        width: 100%;
+        box-sizing: border-box;
+        text-align: left;
+        font-size: 15px;
+        font-family: Helvetica, Arial, sans-serif;
+        font-weight: 400;
+        letter-spacing: 0;
+        justify-content: flex-start;
+        min-height: 44px;
+      }
+
+      .menu-item i {
+        width: 18px;
+        height: 18px;
+        flex-shrink: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 16px;
+        line-height: 1;
+      }
+
+      .menu-item:hover {
+        background: #f9fafb;
+      }
+
+      .menu-item.sign-out {
+        color: #dc2626;
+        border-top: 1px solid #e5e7eb;
+      }
+
+      .menu-item.sign-out:hover {
+        background: #fef2f2;
+      }
+
+      .menu-item i {
+        font-size: 16px;
+        width: 20px;
+        text-align: center;
+      }
+
+      .menu-backdrop {
+        position: fixed;
+        inset: 0;
+        background: rgba(15, 23, 42, 0.35);
+        opacity: 0;
+        visibility: hidden;
+        transition: opacity 0.25s ease;
+        z-index: 1000;
+      }
+
+      .menu-backdrop.active {
+        opacity: 1;
+        visibility: visible;
+      }
+
+      body.menu-open {
+        overflow: hidden;
+      }
+
+      .menu-toggle-item {
+        justify-content: space-between;
+        gap: 10px;
+      }
+
+      .menu-toggle-item .menu-toggle-label {
+        display: inline-flex;
+        align-items: center;
+        gap: 12px;
+      }
+
+      /* Adjust page-content to account for fixed header */
+      .page-content {
+        margin-top: 56px;
+      }
+
+
+      /* Upload Photo Modal Styles */
+      .upload-modal {
+        display: none;
+        position: fixed;
+        z-index: 1000;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.6);
+        animation: fadeIn 0.3s ease;
+      }
+
+      .upload-modal.active {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .upload-modal-content {
+        background-color: white;
+        margin: auto;
+        padding: 30px;
+        border-radius: 12px;
+        width: 95%;
+        max-width: 600px;
+        max-height: 90vh;
+        overflow-y: auto;
+        animation: slideDown 0.3s ease;
+        box-shadow: 0 18px 48px rgba(16, 24, 40, 0.12);
+      }
+
+      .upload-modal-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+        border-bottom: 2px solid #0EA5E9;
+        padding-bottom: 15px;
+      }
+
+      .upload-modal-header h2 {
+        margin: 0;
+        color: #333;
+        font-size: 22px;
+      }
+
+      .close-upload-modal {
+        background: none;
+        border: none;
+        font-size: 28px;
+        cursor: pointer;
+        color: #0EA5E9;
+        transition: all 0.3s ease;
+      }
+
+      .close-upload-modal:hover {
+        color: #FF6B6B;
+        transform: rotate(90deg);
+      }
+
+      .upload-form-group {
+        margin-bottom: 20px;
+      }
+
+      .upload-form-group label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: 600;
+        color: #333;
+        font-size: 14px;
+      }
+
+      .gift-toggle-group {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 14px;
+        background: #f9fafb;
+        border-radius: 10px;
+        margin-bottom: 20px;
+        border: 1px solid #e5e7eb;
+      }
+
+      .gift-toggle-group input[type="checkbox"] {
+        width: 20px;
+        height: 20px;
+        cursor: pointer;
+        accent-color: #0EA5E9;
+      }
+
+      .gift-toggle-group label {
+        margin: 0;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 14px;
+      }
+
+      .gift-toggle-group i {
+        color: #FF6B6B;
+        font-size: 16px;
+      }
+
+      .photo-preview {
+        width: 100%;
+        height: 250px;
+        background: #f4f6f8;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+        border: 2px dashed #e6e9ee;
+        margin-bottom: 15px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+      }
+
+      .photo-preview:hover {
+        background: #f0f2f5;
+        border-color: #0EA5E9;
+      }
+
+      .photo-preview img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+
+      .photo-preview.empty {
+        color: #999;
+        font-size: 48px;
+      }
+
+      .upload-form-actions {
+        display: flex;
+        gap: 10px;
+        justify-content: flex-end;
+        margin-top: 25px;
+      }
+
+      .upload-form-actions button {
+        padding: 10px 20px;
+        border-radius: 8px;
+        border: none;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-size: 14px;
+      }
+
+      .upload-cancel-btn {
+        background: transparent;
+        color: #333;
+        border: 1px solid #dbdbdb;
+      }
+
+      .upload-cancel-btn:hover {
+        background: #f0f2f5;
+      }
+
+      .upload-submit-btn {
+        background: var(--primary);
+        color: white;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .upload-submit-btn:hover {
+        background: #0084d9;
+      }
+      .content-grid { display:grid; grid-template-columns: repeat(auto-fill,minmax(160px,1fr)); gap:14px; margin-top:18px; }
+      .content-item { background:var(--bg); border-radius:10px; overflow:hidden; border:1px solid #f0f2f5; box-shadow:0 6px 18px rgba(16,24,40,0.03); }
+      .content-item-image{ height:clamp(90px,16vw,140px); display:flex; align-items:center; justify-content:center; background: linear-gradient(90deg,var(--primary), var(--accent)); color:white; font-size:clamp(18px,2.4vw,28px); }
+      .content-item-info{ padding:12px; }
+      .content-item-title{ font-weight:600; margin:0 0 6px 0; font-size:14px; }
+      .content-item-meta{ color:#6b7280; font-size:12px; }
+      .content-modal-content, .products-modal-content { border-radius:12px; box-shadow: 0 18px 48px rgba(16,24,40,0.12); }
+      @media (max-width: 800px){ .profile-section{ flex-direction:column; align-items:center; text-align:center; gap:12px; } .profile-bio{ max-width:100%; } .profile-stats{ justify-content:center; } }
+
+      /* Smaller phones */
+      @media (max-width: 420px) {
+        :root { --container-width: 100%; }
+        .profile-upload-btn { width: 86px; height: 86px; }
+        .profile-upload-btn { width: 72px; height: 72px; }
+        .profile-name { font-size: 16px; }
+        .profile-bio { font-size: 13px; }
+        .profile-section { padding: 12px; gap:12px; }
+        .upload-btn { padding: 8px 12px; font-size:14px; }
+        .upload-tab-btn { padding: 6px 8px; font-size: 13px; }
+        .content-grid { grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap:10px; }
+        .profile-actions { width:fit-content; margin:0 auto; justify-content:center; gap:6px; flex-wrap:nowrap; }
+        .subscribebtn, .product-btn, .dm-btn { flex: 0 0 auto; display: inline-flex; align-items: center; justify-content: center; min-width: 32px; height: 32px; padding:0 8px; font-size:11px; white-space:nowrap; }
+        #subscribeBtn, #dmBtn { display: inline-flex; }
+        #myProductsBtn, .product-btn { width:32px; min-width:32px; padding:0; display: inline-flex; }
+        .profile-stats { gap:10px; font-size:13px; }
+        .upload-card-icon { width:44px; height:44px; }
+        .upload-menu-tooltip { font-size:10px; bottom:-20px; }
+      }
+
+      /* Upload cards for dedicated pages (Instagram-like) */
+      .upload-grid { display:flex; gap:0; margin-top:4px; padding-bottom:26px; width:100%; }
+      .upload-card { height:52px; background:transparent; border:none; border-radius:12px; display:inline-flex; align-items:center; justify-content:center; text-decoration:none; color:inherit; cursor:pointer; position:relative; flex:1 1 0; transition:all 0.25s ease; }
+      .upload-card:hover { transform:translateY(-3px); }
+      .upload-card-icon { width:52px; height:52px; border-radius:12px; background: linear-gradient(135deg,var(--primary),var(--accent)); display:flex; align-items:center; justify-content:center; color:#fff; font-size:18px; box-shadow:0 4px 12px rgba(14,165,233,0.25); }
+      .upload-card:hover .upload-card-icon { box-shadow:0 8px 18px rgba(14,165,233,0.35); }
+      .upload-card.active .upload-card-icon, .upload-card:active .upload-card-icon { box-shadow:0 8px 20px rgba(14,165,233,0.45); transform:scale(1.03); }
+      .upload-menu-tooltip { position:absolute; bottom:-22px; left:50%; transform:translateX(-50%); font-size:11px; font-weight:600; color:#4b5563; white-space:nowrap; opacity:0; transition:opacity 0.2s ease; pointer-events:none; }
+      .upload-card:hover .upload-menu-tooltip { opacity:1; }
+      .upload-card.active .upload-menu-tooltip { opacity:1; color:var(--primary); }
+
+      @media (hover: none), (pointer: coarse) {
+        .upload-menu-tooltip { opacity:1; }
+      }
+
+      /* Payment Methods Styles */
+      .payment-methods-section { background:var(--bg); border-radius:var(--card-radius); padding:18px; margin-top:18px; box-shadow: 0 6px 18px rgba(16,24,40,0.04); border:1px solid rgba(16,24,40,0.03); }
+      .payment-card { background:#fff; border:1px solid #e6e6e6; padding:16px; border-radius:12px; margin-bottom:12px; display:flex; justify-content:space-between; align-items:center; box-shadow:0 1px 4px rgba(0,0,0,0.04); }
+      .payment-card-info { display:flex; gap:14px; align-items:center; flex:1; }
+      .payment-card-icon { width:48px; height:48px; border-radius:8px; background:linear-gradient(135deg,#10b981,#059669); display:flex; align-items:center; justify-content:center; color:#fff; font-size:18px; }
+      .payment-card-details h4 { margin:0 0 4px 0; font-size:15px; font-weight:600; }
+      .payment-card-details p { margin:0; color:#666; font-size:13px; }
+      .payment-card-actions { display:flex; gap:8px; }
+      .payment-card-actions button { padding:8px 14px; border-radius:8px; border:1px solid #e6e6e6; background:#fff; cursor:pointer; font-size:13px; transition:all 0.2s; }
+      .payment-card-actions button:hover { background:#f5f5f5; border-color:var(--primary); color:var(--primary); }
+      .payment-card-actions .delete-btn { color:#dc2626; }
+      .payment-card-actions .delete-btn:hover { background:#fee; border-color:#dc2626; }
+      .add-payment-btn { display:inline-flex; gap:8px; align-items:center; padding:10px 18px; border-radius:10px; background:var(--primary); color:white; border:none; font-weight:600; cursor:pointer; transition:all 0.2s; }
+      .add-payment-btn:hover { background:#0284c7; transform:translateY(-1px); box-shadow:0 4px 12px rgba(14,165,233,0.3); }
+      .no-payment-methods { text-align:center; padding:32px; color:#999; }
+      .no-payment-methods i { font-size:48px; margin-bottom:12px; color:#ddd; }
+
+      /* Modal / content helpers moved here to avoid stray styles in body */
+      .no-content p { font-size: 16px; }
+
+      @media (max-width: 768px) {
+        .content-grid { grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 10px; }
+        .content-modal-content { width: 98%; margin: 10% auto; }
+        .content-tabs { gap: 5px; }
+        .content-tab-btn { padding: 10px 12px; font-size: 12px; }
+        .page-content, .container { padding-left: 12px; padding-right: 12px; }
+        .top-header { padding: 6px 12px; }
+        .menu-container { position: static; }
+        .menu-dropdown {
+          position: fixed;
+          top: 0;
+          right: 0;
+          left: auto;
+          min-width: 0;
+          max-width: none;
+          width: min(360px, 92vw);
+          height: 100vh;
+          max-height: 100vh;
+          border-radius: 0;
+          border: 1px solid #e5e7eb;
+          overflow-y: auto;
+          -webkit-overflow-scrolling: touch;
+          box-shadow: 0 16px 40px rgba(15, 23, 42, 0.2);
+          transform: translateY(0) translateX(105%);
+          padding-top: calc(10px + env(safe-area-inset-top));
+        }
+        .menu-dropdown.active { transform: translateY(0) translateX(0); }
+        .menu-item {
+          min-height: 50px;
+          font-size: 16px;
+          padding: 14px 16px;
+        }
+        .profile-actions { width:fit-content; margin:0 auto; flex-wrap: nowrap; justify-content:center; gap:6px; }
+        .profile-actions .action-btn,
+        .profile-actions button,
+        .profile-actions a { flex: 0 0 auto; align-items: center; justify-content: center; min-width: 34px; height:34px; padding:0 10px; font-size:12px; }
+        #subscribeBtn, #dmBtn { display: inline-flex; }
+        #myProductsBtn, .profile-actions .product-btn { width:34px; min-width:34px; padding:0; display: inline-flex; }
+        .upload-card-icon { width:48px; height:48px; }
+      }
+
+      .my-products-btn { background: none; border: none; cursor: pointer; padding: 0; display: flex; align-items: center; justify-content: center; }
+      .my-products-btn:hover i { transform: scale(1.15); }
+
+      .products-modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.6); animation: fadeIn 0.3s ease; }
+
+      @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+      .products-modal-content { background-color: white; margin: 2% auto; padding: 20px; border-radius: 10px; width: 95%; max-width: 900px; max-height: 80vh; overflow-y: auto; animation: slideDown 0.3s ease; }
+
+      @keyframes slideDown { from { transform: translateY(-50px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+
+      .products-modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 2px solid #0EA5E9; padding-bottom: 15px; }
+
+      .products-modal-header h2 { margin: 0; color: #333; font-size: 24px; }
+
+      .close-modal-btn { background: none; border: none; font-size: 28px; cursor: pointer; color: #0EA5E9; transition: all 0.3s ease; }
+
+      .close-modal-btn:hover { color: #FF6B6B; transform: rotate(90deg); }
+
+      /* Camera Styles */
+      .camera-container { width: 100%; max-width: 600px; margin: 0 auto; }
+      .camera-preview { position: relative; width: 100%; background: #000; border-radius: 12px; overflow: hidden; margin-bottom: 16px; }
+      .camera-video, .camera-canvas { width: 100%; height: auto; display: block; }
+      .camera-controls { display: flex; gap: 8px; justify-content: center; margin-bottom: 16px; flex-wrap: wrap; }
+      .camera-btn { padding: 10px 16px; border: 1px solid #ddd; border-radius: 8px; background: white; cursor: pointer; font-size: 14px; transition: all 0.3s; display: flex; align-items: center; gap: 6px; }
+      .camera-btn:hover { background: #f5f5f5; border-color: #0095f6; color: #0095f6; }
+      .camera-btn.active { background: #0095f6; color: white; border-color: #0095f6; }
+      .camera-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+      .camera-toggle { display: flex; gap: 8px; margin-bottom: 16px; }
+      .camera-toggle-btn { flex: 1; padding: 10px; border: 2px solid #ddd; background: white; border-radius: 8px; cursor: pointer; font-weight: 600; transition: all 0.3s; }
+      .camera-toggle-btn.active { border-color: #0095f6; background: #e3f2fd; color: #0095f6; }
+      .filter-controls { background: #f9fafb; padding: 16px; border-radius: 12px; margin-bottom: 16px; }
+      .filter-controls h4 { margin: 0 0 12px 0; font-size: 14px; color: #333; }
+      .filter-slider { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
+      .filter-slider label { min-width: 100px; font-size: 13px; color: #666; }
+      .filter-slider input { flex: 1; }
+      .filter-slider span { min-width: 40px; text-align: right; font-size: 13px; color: #999; }
+      .preset-filters { display: grid; grid-template-columns: repeat(auto-fill, minmax(80px, 1fr)); gap: 8px; }
+      .preset-filter { padding: 8px; border: 2px solid #ddd; background: white; border-radius: 8px; cursor: pointer; font-size: 12px; text-align: center; transition: all 0.3s; height: 60px; display: flex; align-items: center; justify-content: center; }
+      .preset-filter:hover { border-color: #0095f6; }
+      .preset-filter.active { background: #0095f6; color: white; border-color: #0095f6; }
+      .camera-error { padding: 16px; background: #fee2e2; color: #dc2626; border-radius: 8px; margin-bottom: 16px; border-left: 4px solid #dc2626; }
+
+      /* Full-Screen Reel Camera Modal */
+      #reelCameraModal { background-color: #000; }
+      #reelCameraModal.active, #reelCameraModal[style*="display: flex"] { display: flex !important; align-items: stretch; justify-content: center; }
+      .fullscreen-camera-container { position: relative; width: 100%; height: 100vh; background: #000; display: flex; align-items: center; justify-content: center; overflow: hidden; }
+      #reelVideo { width: 100%; height: 100%; object-fit: cover; background: #000; }
+      .camera-overlay { position: absolute; top: 0; left: 0; right: 0; bottom: 0; pointer-events: none; }
+      .camera-top-bar { position: absolute; top: 0; left: 0; right: 0; padding: env(safe-area-inset-top, 20px) 20px 20px; display: flex; justify-content: space-between; align-items: center; background: linear-gradient(to bottom, rgba(0,0,0,0.6), transparent); pointer-events: auto; }
+      .camera-close-btn { background: rgba(255, 255, 255, 0.2); backdrop-filter: blur(10px); border: none; width: 40px; height: 40px; border-radius: 50%; color: white; font-size: 24px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.3s; }
+      .camera-close-btn:hover { background: rgba(255, 255, 255, 0.3); }
+      .camera-timer { background: rgba(220, 38, 38, 0.9); backdrop-filter: blur(10px); padding: 8px 16px; border-radius: 20px; color: white; font-size: 16px; font-weight: 600; display: flex; align-items: center; gap: 8px; }
+      .recording-dot { width: 8px; height: 8px; background: white; border-radius: 50%; animation: pulse 1.5s infinite; }
+      @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+      .camera-bottom-bar { position: absolute; bottom: 0; left: 0; right: 0; padding: 20px 20px calc(env(safe-area-inset-bottom, 20px) + 20px); display: flex; justify-content: center; align-items: center; gap: 30px; background: linear-gradient(to top, rgba(0,0,0,0.6), transparent); pointer-events: auto; }
+      .camera-control-btn { background: rgba(255, 255, 255, 0.2); backdrop-filter: blur(10px); border: 3px solid white; width: 70px; height: 70px; border-radius: 50%; color: white; font-size: 28px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.3s; }
+      .camera-control-btn:hover { background: rgba(255, 255, 255, 0.3); transform: scale(1.05); }
+      .camera-control-btn.recording { background: rgba(220, 38, 38, 0.9); border-color: #dc2626; }
+      .camera-control-btn.recording:hover { background: rgba(220, 38, 38, 1); }
+      .camera-switch-btn { background: rgba(255, 255, 255, 0.2); backdrop-filter: blur(10px); border: 2px solid white; width: 50px; height: 50px; border-radius: 50%; color: white; font-size: 20px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.3s; }
+      .camera-switch-btn:hover { background: rgba(255, 255, 255, 0.3); transform: rotate(180deg); }
+      .camera-switch-btn:disabled { opacity: 0.3; cursor: not-allowed; }
+      .camera-switch-btn:disabled:hover { transform: none; }
+
+      /* Filter Sidebar */
+      .filter-sidebar { position: absolute; right: 12px; top: 50%; transform: translateY(-50%); display: flex; flex-direction: column; gap: 12px; pointer-events: auto; max-height: 70vh; overflow-y: auto; padding: 8px; }
+      .filter-sidebar::-webkit-scrollbar { width: 4px; }
+      .filter-sidebar::-webkit-scrollbar-track { background: transparent; }
+      .filter-sidebar::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.3); border-radius: 2px; }
+      .filter-option { position: relative; width: 60px; cursor: pointer; transition: all 0.3s; }
+      .filter-preview { width: 60px; height: 80px; border-radius: 12px; border: 2px solid rgba(255, 255, 255, 0.3); background: rgba(0, 0, 0, 0.4); backdrop-filter: blur(10px); display: flex; align-items: center; justify-content: center; font-size: 10px; color: white; font-weight: 600; text-align: center; overflow: hidden; transition: all 0.3s; }
+      .filter-option.active .filter-preview { border-color: #0EA5E9; border-width: 3px; box-shadow: 0 0 20px rgba(14, 165, 233, 0.6); }
+      .filter-option:hover .filter-preview { transform: scale(1.05); border-color: rgba(255, 255, 255, 0.6); }
+      .filter-name { margin-top: 4px; font-size: 10px; color: white; text-align: center; text-shadow: 0 1px 3px rgba(0, 0, 0, 0.8); font-weight: 600; }
+      .filter-icon { font-size: 24px; }
+      @media (max-width: 768px) {
+        .filter-sidebar { right: 8px; gap: 8px; }
+        .filter-option { width: 50px; }
+        .filter-preview { width: 50px; height: 65px; }
+        .filter-name { font-size: 9px; }
+      }
+
+      .my-products-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 20px; }
+
+      .my-product-card { background: white; border: 1px solid #eee; border-radius: 10px; overflow: hidden; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); transition: all 0.3s ease; }
+
+      .my-product-card:hover { box-shadow: 0 6px 16px rgba(177, 151, 252, 0.3); transform: translateY(-5px); }
+
+      .my-product-image { width: 100%; height: 180px; background: linear-gradient(135deg, #0EA5E9, #FF6B6B); display: flex; align-items: center; justify-content: center; color: white; font-size: 36px; position: relative; }
+
+      .my-product-badge { position: absolute; top: 10px; right: 10px; background-color: #0EA5E9; color: white; padding: 5px 10px; border-radius: 5px; font-size: 11px; font-weight: 600; }
+
+      .my-product-info { padding: 15px; }
+
+      .my-product-name { font-size: 15px; font-weight: 600; color: #333; margin-bottom: 8px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+      .my-product-price { font-size: 18px; font-weight: 700; color: #0EA5E9; margin-bottom: 10px; }
+
+      .my-product-details { display: flex; flex-direction: column; gap: 6px; font-size: 12px; color: #666; }
+
+      .my-product-detail-item { display: flex; align-items: center; gap: 6px; }
+
+      .my-product-detail-item i { color: #0EA5E9; width: 14px; }
+
+      .my-product-actions { display: flex; gap: 8px; margin-top: 12px; }
+
+      .edit-product-btn, .delete-product-btn { flex: 1; padding: 8px; border: none; border-radius: 5px; cursor: pointer; font-size: 12px; font-weight: 600; transition: all 0.3s ease; }
+
+      .edit-product-btn { background-color: #0EA5E9; color: white; }
+
+      .edit-product-btn:hover { background: linear-gradient(-75deg, #e43905, #FF6B6B, #241f22, #059a34); background-size: 400% 400%; animation: gradient 5s ease infinite; }
+
+      .delete-product-btn { background-color: #ffebee; color: #FF6B6B; border: 1px solid #FF6B6B; }
+
+      .delete-product-btn:hover { background-color: #FF6B6B; color: white; }
+
+      .no-products { grid-column: 1 / -1; text-align: center; padding: 60px 20px; color: #999; }
+
+      .no-products i { margin-bottom: 20px; color: #ddd; }
+
+      .no-products a { color: #0EA5E9; text-decoration: none; font-weight: 600; }
+
+      .no-products a:hover { text-decoration: underline; }
+
+      @media (max-width: 768px) {
+        .my-products-grid { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 12px; }
+        .products-modal-content { width: 98%; margin: 10% auto; }
+      }
+
+    .products-modal-content img, .products-modal-content video { width: 100%; max-height: 60vh; object-fit: contain; border-radius: 8px; display: block; }
+    #contentModal .products-modal-content { width: 100vw; max-width: none; height: 100vh; max-height: none; margin: 0; border-radius: 0; padding: 16px; }
+    #contentModalBody { max-height: calc(100vh - 140px); overflow-y: auto; }
+    #contentModal #contentModalBody img,
+    #contentModal #contentModalBody video { width: 100%; max-height: 78vh; object-fit: contain; background:#000; border-radius: 10px; }
+
+        .footer {
+          position: fixed;
+          bottom: 0;
+          left: 0;
+          right: 0;
+          background: white;
+          border-top: 2px solid #f0f0f0;
+          display: flex !important;
+          justify-content: space-around !important;
+          align-items: center;
+          padding: 12px 0 !important;
+          padding-bottom: calc(12px + env(safe-area-inset-bottom));
+          box-shadow: 0 -2px 12px rgba(0, 0, 0, 0.08);
+          z-index: 99;
+          margin: 0 !important;
+          width: 100%;
+          box-sizing: border-box;
+        }
+
+        .footer a {
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            padding: 12px 20px !important;
+            text-decoration: none !important;
+            color: #0EA5E9 !important;
+            margin: 0 !important;
+          transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+            border-radius: 12px !important;
+            position: relative !important;
+          font-size: 15px !important;
+        }
+        .footer a:hover {
+            background-color: rgba(14, 165, 233, 0.12) !important;
+            transform: translateY(-4px) scale(1.1) !important;
+            color: #FF6B6B !important;
+        }
+        
+        .footer a:active {
+            transform: translateY(-2px) scale(1.08) !important;
+        }
+
+        .footer a.active {
+          background: linear-gradient(135deg, rgba(14, 165, 233, 0.2), rgba(255, 107, 107, 0.15)) !important;
+          color: #FF6B6B !important;
+          box-shadow: 0 4px 12px rgba(14, 165, 233, 0.2) !important;
+        }
+
+        .footer a::before { display: none !important; }
+
+        .footer a.active::before {
+            opacity: 1;
+        }
+
+        .footer a:hover::before {
+            opacity: 0.5;
+        }
+
+        .footer i {
+            transition: all 0.3s ease !important;
+        }
+
+        .footer a:hover i {
+          filter: drop-shadow(0 4px 8px rgba(255, 107, 107, 0.3));
+        }
+
+        .footer-tooltip { position: static; bottom: auto; left: auto; transform: none; background: transparent; color: inherit; padding: 0; margin-top:6px; opacity:1; pointer-events:auto; font-weight:600; font-size:12px; }
+        .footer a .footer-tooltip { display: block !important; }
+
+        .footer-tooltip::after { display: none; }
+
+        .footer a:hover .footer-tooltip { opacity: 1; transform: none; }
+
+        @media (max-width: 768px) {
+            .footer {
+                padding: 10px 0 !important;
+                gap: 0 !important;
+            }
+
+            .footer a {
+                padding: 10px 15px !important;
+                flex-grow: 1;
+            }
+
+        }
+    </style>
+    <!-- MySQL API Client -->
+    <script src="coshin-api.js"></script>
+    <script>
+      // Menu dropdown toggle
+      document.addEventListener('DOMContentLoaded', function() {
+        const menuBtn = document.getElementById('menuBtn');
+        const menuDropdown = document.getElementById('menuDropdown');
+        const menuBackdrop = document.getElementById('menuBackdrop');
+        const signOutBtn = document.getElementById('signOutBtn');
+
+        function setMenuOpen(isOpen) {
+          menuDropdown.classList.toggle('active', isOpen);
+          if (menuBackdrop) menuBackdrop.classList.toggle('active', isOpen);
+          document.body.classList.toggle('menu-open', isOpen);
+          menuBtn.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+        }
+
+        // Toggle menu dropdown
+        menuBtn.addEventListener('click', function(e) {
+          e.stopPropagation();
+          setMenuOpen(!menuDropdown.classList.contains('active'));
+        });
+
+        if (menuBackdrop) {
+          menuBackdrop.addEventListener('click', function() {
+            setMenuOpen(false);
+          });
+        }
+
+        // Close menu when clicking outside
+        document.addEventListener('click', function(e) {
+          if (!menuBtn.contains(e.target) && !menuDropdown.contains(e.target)) {
+            setMenuOpen(false);
+          }
+        });
+
+        // Close menu on Escape key for accessibility
+        document.addEventListener('keydown', function(e) {
+          if (e.key === 'Escape') {
+            setMenuOpen(false);
+          }
+        });
+
+        // Ensure desktop view is not stuck in menu-open state after rotating/resizing
+        window.addEventListener('resize', function() {
+          if (window.innerWidth > 768 && menuDropdown.classList.contains('active')) {
+            setMenuOpen(false);
+          }
+        });
+
+        // Close menu after selecting a menu action (except toggle switch row)
+        menuDropdown.addEventListener('click', function(e) {
+          const clickedItem = e.target.closest('.menu-item');
+          if (!clickedItem) return;
+          if (clickedItem.id === 'emailVisibilityMenuItem' || e.target.closest('.toggle-switch')) return;
+          setMenuOpen(false);
+        });
+
+        // Sign out functionality
+        signOutBtn.addEventListener('click', function() {
+          if (confirm('Are you sure you want to sign out?')) {
+            // Clear authentication
+            coshinAPI.clearAuth();
+            
+            // Redirect to login page
+            window.location.href = 'login.html';
+          }
+        });
+
+        // Privacy Settings
+        const privacySettingsBtn = document.getElementById('privacySettingsBtn');
+        if (privacySettingsBtn) {
+          privacySettingsBtn.addEventListener('click', function() {
+            alert('Privacy Settings - Coming Soon');
+            setMenuOpen(false);
+          });
+        }
+
+        // Help & Support
+        const helpSupportBtn = document.getElementById('helpSupportBtn');
+        if (helpSupportBtn) {
+          helpSupportBtn.addEventListener('click', function() {
+            alert('Help & Support - Coming Soon');
+            setMenuOpen(false);
+          });
+        }
+
+        const uploadMenuItems = document.querySelectorAll('.upload-card[data-upload-menu]');
+        if (uploadMenuItems.length) {
+          uploadMenuItems[0].classList.add('active');
+          uploadMenuItems.forEach(function(item) {
+            item.addEventListener('click', function() {
+              uploadMenuItems.forEach(function(entry) { entry.classList.remove('active'); });
+              item.classList.add('active');
+            });
+          });
+        }
+      });
+    </script>
+
+</head>
+<body>
+<!-- Top Header Menu -->
+<div class="top-header">
+  <div class="menu-container">
+    <button class="menu-btn" id="menuBtn" title="Menu" aria-label="Open menu" aria-expanded="false" aria-controls="menuDropdown">
+      <i class="fa-solid fa-bars"></i>
+    </button>
+    <div class="menu-backdrop" id="menuBackdrop" aria-hidden="true"></div>
+    <div class="menu-dropdown" id="menuDropdown">
+      <a class="menu-item" href="edit-profile.html">
+        <i class="fa-solid fa-user-pen"></i>
+        <span>Edit Profile</span>
+      </a>
+      <button class="menu-item" id="shopSettingsMenuBtn" onclick="openShopSettings()">
+        <i class="fa-solid fa-store"></i>
+        <span>Shop Settings</span>
+      </button>
+      <button class="menu-item" id="paymentMethodsMenuBtn" onclick="openPaymentMethodsManager()">
+        <i class="fa-solid fa-credit-card"></i>
+        <span>Payment Methods</span>
+      </button>
+      <a class="menu-item" href="mylistings.html">
+        <i class="fa-solid fa-list"></i>
+        <span>My Listings</span>
+      </a>
+      <a class="menu-item" href="messages.html">
+        <i class="fa-solid fa-envelope"></i>
+        <span>Messages</span>
+      </a>
+      <a class="menu-item" href="notification.html">
+        <i class="fa-solid fa-bell"></i>
+        <span>Notifications</span>
+      </a>
+      <button class="menu-item" id="privacySettingsBtn">
+        <i class="fa-solid fa-lock"></i>
+        <span>Privacy Settings</span>
+      </button>
+      <div class="menu-item menu-toggle-item" id="emailVisibilityMenuItem" style="display:none;">
+        <span class="menu-toggle-label">
+          <i class="fa-solid fa-at"></i>
+          <span>Public Email</span>
+        </span>
+        <label class="toggle-switch" id="emailToggleWrap" title="Allow public users to see your email">
+          <input type="checkbox" id="emailVisibilityToggle" aria-label="Make email public">
+          <span class="toggle-slider"></span>
+        </label>
+      </div>
+      <a class="menu-item" href="settings.html">
+        <i class="fa-solid fa-gear"></i>
+        <span>Settings</span>
+      </a>
+      <a class="menu-item" href="privacy-policy.html">
+        <i class="fa-solid fa-shield-halved"></i>
+        <span>Privacy Policy</span>
+      </a>
+      <a class="menu-item" href="coshinmarketpolicies.html">
+        <i class="fa-solid fa-file-lines"></i>
+        <span>Policies</span>
+      </a>
+      <button class="menu-item" id="helpSupportBtn">
+        <i class="fa-solid fa-circle-question"></i>
+        <span>Help & Support</span>
+      </button>
+      <button class="menu-item sign-out" id="signOutBtn">
+        <i class="fa-solid fa-right-from-bracket"></i>
+        <span>Sign Out</span>
+      </button>
+    </div>
+  </div>
+</div>
+
+<div class="page-content">
+<div class="profile-section">
+  <div class="usericon">
+    <button class="profile-upload-btn" id="profileBtn" title="Click to upload profile picture">
+      <img id="profileImg" src="./COSHIN Assets/profile silhouette 2.jpg" alt="Profile Picture">
+      <i class="fa-solid fa-camera fa-lg profile-camera-icon"></i>
+    </button>
+    <input type="file" id="profileFileInput" accept="image/*" capture="environment" style="display: none;">
+  </div>
+
+  <div class="profile-info">
+    <h2 class="profile-name" id="displayName">Your Name</h2>
+    <p class="profile-bio" id="displayBio">Add a short bio about yourself — what you do and what people can expect from your content.</p>
+    <div class="profile-stats">
+      <div><strong id="followersCount">0</strong><span> Followers</span></div>
+      <div><strong id="followingCount">0</strong><span> Following</span></div>
+      <div><strong id="postsCount">0</strong><span> Posts</span></div>
+    </div>
+    <div class="profile-actions">
+      <button id="subscribeBtn" class="subscribebtn" data-subscribed="false">Subscribe</button>
+      <button id="dmBtn" class="dm-btn" onclick="window.location.href='messages.html'">
+        <i class="fa-solid fa-paper-plane"></i> Message
+      </button>
+      <a href="user-products.html" id="myProductsBtn" class="my-products-btn product-btn" title="View my products" style="text-decoration: none; color: inherit; display: inline-flex;">
+        <i class="fa-solid fa-basket-shopping"></i>
+      </a>
+    </div>
+  </div>
+  
+</div>
+
+<!-- Upload Content Section -->
+<div class="upload-section">
+  <div class="upload-grid">
+        <button class="upload-card" data-upload-menu="photo" onclick="handleUploadCardAction('photo')" title="Upload Photo" aria-label="Upload Photo">
+          <div class="upload-card-icon"><i class="fa-solid fa-image fa-lg"></i></div>
+          <span class="upload-menu-tooltip">Photo</span>
+        </button>
+
+        <button class="upload-card" data-upload-menu="video" onclick="handleUploadCardAction('video')" title="Upload Video" aria-label="Upload Video">
+          <div class="upload-card-icon"><i class="fa-solid fa-video fa-lg"></i></div>
+          <span class="upload-menu-tooltip">Video</span>
+        </button>
+
+        <button class="upload-card" data-upload-menu="reel" onclick="handleUploadCardAction('reel')" title="Create Reel" aria-label="Create Reel">
+          <div class="upload-card-icon" style="background: linear-gradient(135deg, #0EA5E9, #FF6B6B);"><i class="fa-solid fa-film fa-lg"></i></div>
+          <span class="upload-menu-tooltip">Reel</span>
+        </button>
+
+        <button class="upload-card" data-upload-menu="post" onclick="handleUploadCardAction('post')" title="Create Post" aria-label="Create Post">
+          <div class="upload-card-icon"><i class="fa-solid fa-pen-to-square fa-lg"></i></div>
+          <span class="upload-menu-tooltip">Post</span>
+        </button>
+        </div>
+
+        <h4 style="margin-top:18px; margin-bottom:8px;">Recent Uploads</h4>
+        <div id="recentGrid" class="content-grid"></div>
+
+</div>
+
+<!-- Camera Permission Modal -->
+<div id="cameraPermissionModal" class="upload-modal">
+  <div class="upload-modal-content" style="max-width: 450px;">
+    <div class="upload-modal-header">
+      <h2>📷 Camera Access</h2>
+      <button class="close-upload-modal" onclick="closeCameraPermissionModal()">&times;</button>
+    </div>
+
+    <div id="permissionError" class="camera-error" style="display: none; margin: 12px;"></div>
+
+    <div style="padding: 25px; text-align: center;">
+      <i class="fa-solid fa-camera" style="font-size: 48px; color: #0EA5E9; margin-bottom: 15px; display: block;"></i>
+      
+      <h3 style="margin: 0 0 12px 0; color: #333; font-size: 18px;">We need camera access</h3>
+      
+      <p style="margin: 0 0 20px 0; color: #666; font-size: 14px; line-height: 1.6;">
+        To capture photos and videos with beautiful filters, we need permission to access your camera. Your privacy is important—we never store or share camera data.
+      </p>
+
+      <div style="background: #f5f5f5; border-left: 4px solid #0EA5E9; padding: 12px 15px; margin-bottom: 20px; text-align: left; border-radius: 4px;">
+        <p style="margin: 0; font-size: 13px; color: #333; font-weight: 600; margin-bottom: 8px;">
+          ✓ We will:
+        </p>
+        <ul style="margin: 0; padding-left: 16px; font-size: 12px; color: #666;">
+          <li>Only access your camera when you choose to record</li>
+          <li>Never store or share camera footage</li>
+          <li>Respect your privacy settings</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="upload-form-actions">
+      <button class="upload-cancel-btn" onclick="closeCameraPermissionModal()">Cancel</button>
+      <button class="upload-submit-btn" onclick="requestCameraPermission()">Allow Camera Access</button>
+    </div>
+  </div>
+</div>
+
+<!-- Camera Modal -->
+<div id="cameraModal" class="upload-modal">
+  <div class="upload-modal-content">
+    <div class="upload-modal-header">
+      <h2>📷 Capture & Style</h2>
+      <button class="close-upload-modal" onclick="closeCameraModal()">&times;</button>
+    </div>
+
+    <div id="cameraError" class="camera-error" style="display: none;"></div>
+
+    <div class="camera-toggle">
+      <button class="camera-toggle-btn active" onclick="switchCameraMode('capture')">Capture</button>
+      <button class="camera-toggle-btn" onclick="switchCameraMode('filter')">Filters</button>
+    </div>
+
+    <div class="camera-container">
+      <!-- Capture Mode -->
+      <div id="captureMode" style="display: block;">
+        <div class="camera-preview">
+          <video id="cameraVideo" class="camera-video" autoplay playsinline muted style="display: block;"></video>
+          <canvas id="cameraCanvas" class="camera-canvas" style="display: none;"></canvas>
+        </div>
+
+        <div class="camera-controls">
+          <button id="startCameraBtn" class="camera-btn" onclick="startCamera()">
+            <i class="fa-solid fa-play"></i> Start Camera
+          </button>
+          <button id="stopCameraBtn" class="camera-btn" style="display: none;" onclick="stopCamera()">
+            <i class="fa-solid fa-stop"></i> Stop Camera
+          </button>
+          <button id="snapBtn" class="camera-btn" style="display: none;" onclick="snapPhoto()">
+            <i class="fa-solid fa-camera"></i> Snap Photo
+          </button>
+          <button id="switchCamBtn" class="camera-btn" style="display: none;" onclick="switchCamera()" title="Switch front/back camera">
+            <i class="fa-solid fa-repeat"></i> Switch
+          </button>
+        </div>
+
+        <div class="filter-controls">
+          <h4>Quick Filters</h4>
+          <div class="preset-filters">
+            <button class="preset-filter" onclick="applyFilter('normal')" data-filter="normal">Normal</button>
+            <button class="preset-filter" onclick="applyFilter('vintage')" data-filter="vintage">Vintage</button>
+            <button class="preset-filter" onclick="applyFilter('sepia')" data-filter="sepia">Sepia</button>
+            <button class="preset-filter" onclick="applyFilter('bw')" data-filter="bw">B&W</button>
+            <button class="preset-filter" onclick="applyFilter('warm')" data-filter="warm">Warm</button>
+            <button class="preset-filter" onclick="applyFilter('cool')" data-filter="cool">Cool</button>
+            <button class="preset-filter" onclick="applyFilter('vivid')" data-filter="vivid">Vivid</button>
+            <button class="preset-filter" onclick="applyFilter('blur')" data-filter="blur">Blur</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Beautify Mode -->
+      <div id="filterMode" style="display: none;">
+        <div class="camera-preview">
+          <canvas id="beautyCanvas" class="camera-canvas" style="display: block;"></canvas>
+        </div>
+
+        <div class="filter-controls">
+          <h4>🎨 Beautify Settings</h4>
+          
+          <div class="filter-slider">
+            <label for="brightnessSlider">Brightness</label>
+            <input type="range" id="brightnessSlider" min="0.5" max="2" step="0.1" value="1" onchange="updateBeautyFilter()">
+            <span id="brightnessValue">100%</span>
+          </div>
+
+          <div class="filter-slider">
+            <label for="contrastSlider">Contrast</label>
+            <input type="range" id="contrastSlider" min="0.5" max="2" step="0.1" value="1" onchange="updateBeautyFilter()">
+            <span id="contrastValue">100%</span>
+          </div>
+
+          <div class="filter-slider">
+            <label for="saturationSlider">Saturation</label>
+            <input type="range" id="saturationSlider" min="0" max="2" step="0.1" value="1" onchange="updateBeautyFilter()">
+            <span id="saturationValue">100%</span>
+          </div>
+
+          <div class="filter-slider">
+            <label for="hueSlider">Hue</label>
+            <input type="range" id="hueSlider" min="-180" max="180" step="5" value="0" onchange="updateBeautyFilter()">
+            <span id="hueValue">0°</span>
+          </div>
+
+          <div class="filter-slider">
+            <label for="blurSlider">Blur</label>
+            <input type="range" id="blurSlider" min="0" max="10" step="1" value="0" onchange="updateBeautyFilter()">
+            <span id="blurValue">0px</span>
+          </div>
+
+          <div class="filter-slider">
+            <label for="opacitySlider">Opacity</label>
+            <input type="range" id="opacitySlider" min="0" max="1" step="0.1" value="1" onchange="updateBeautyFilter()">
+            <span id="opacityValue">100%</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="upload-form-actions">
+      <button class="upload-cancel-btn" onclick="closeCameraModal()">Cancel</button>
+      <button class="upload-submit-btn" id="useCameraPhotoBtn" style="display: none;" onclick="useCameraPhoto()">
+        <i class="fa-solid fa-check"></i> Use Photo
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Upload Photo Modal -->
+<div id="photoUploadModal" class="upload-modal">
+  <div class="upload-modal-content">
+    <div class="upload-modal-header">
+      <h2>Upload Photo</h2>
+      <button class="close-upload-modal" onclick="closePhotoUploadModal()">&times;</button>
+    </div>
+
+    <div class="upload-form-group">
+      <label>Photo Preview</label>
+      <div class="photo-preview empty" id="photoPreview" onclick="document.getElementById('photoUploadInput').click()">
+        <i class="fa-solid fa-image"></i>
+      </div>
+      <input type="file" id="photoUploadInput" accept="image/*" capture="environment" style="display: none;">
+      <small style="color: #999;">Click to select image or use camera below</small>
+      <button class="camera-toggle-btn" onclick="openCameraModal()" style="width: 100%; margin-top: 10px;">
+        <i class="fa-solid fa-camera"></i> 📷 Use Camera
+      </button>
+    </div>
+
+    <div class="upload-form-group">
+      <label for="photoUploadTitle">Title *</label>
+      <input type="text" id="photoUploadTitle" class="upload-input" placeholder="Give your photo a title" maxlength="100">
+
+    </div>
+
+    <div class="upload-form-group">
+      <label for="photoUploadDesc">Description</label>
+      <textarea id="photoUploadDesc" class="upload-textarea" placeholder="Add a description (optional)" rows="4" maxlength="500"></textarea>
+
+      <small style="color: #999;"><span id="charCount">0</span>/500 characters</small>
+    </div>
+
+    <div class="gift-toggle-group">
+      <input type="checkbox" id="photoAllowGifts" checked>
+      <label for="photoAllowGifts">
+        <i class="fa-solid fa-gift"></i>
+        Allow viewers to send gifts
+      </label>
+    </div>
+
+    <div class="upload-form-actions">
+      <button class="upload-cancel-btn" onclick="closePhotoUploadModal()">Cancel</button>
+      <button class="upload-submit-btn" onclick="submitPhotoUpload()">
+        <i class="fa-solid fa-check"></i> Upload Photo
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Upload Video Modal -->
+<div id="videoUploadModal" class="upload-modal">
+  <div class="upload-modal-content">
+    <div class="upload-modal-header">
+      <h2>Upload Video</h2>
+      <button class="close-upload-modal" onclick="closeVideoUploadModal()">&times;</button>
+    </div>
+
+    <div class="upload-form-group">
+      <label>Video Preview</label>
+      <div class="photo-preview empty" id="videoPreview" onclick="document.getElementById('videoUploadInput').click()" style="cursor: pointer;">
+        <i class="fa-solid fa-video"></i>
+      </div>
+      <input type="file" id="videoUploadInput" accept="video/*" capture="user" style="display: none;">
+      <small style="color: #999;">Click to select video file (MP4, WebM, Ogg supported)</small>
+      <button class="camera-toggle-btn" onclick="openCameraModal()" style="width: 100%; margin-top: 10px;">
+        <i class="fa-solid fa-video"></i> 📹 Record Video
+      </button>
+    </div>
+
+    <div class="upload-form-group">
+      <label for="videoUploadTitle">Title *</label>
+      <input type="text" id="videoUploadTitle" class="upload-input" placeholder="Give your video a title" maxlength="100">
+
+    </div>
+
+    <div class="upload-form-group">
+      <label for="videoUploadDesc">Description</label>
+      <textarea id="videoUploadDesc" class="upload-textarea" placeholder="Add a description (optional)" rows="4" maxlength="500"></textarea>
+
+      <small style="color: #999;"><span id="videoCharCount">0</span>/500 characters</small>
+    </div>
+
+    <div class="gift-toggle-group">
+      <input type="checkbox" id="videoAllowGifts" checked>
+      <label for="videoAllowGifts">
+        <i class="fa-solid fa-gift"></i>
+        Allow viewers to send gifts
+      </label>
+    </div>
+
+    <div class="upload-form-actions">
+      <button class="upload-cancel-btn" onclick="closeVideoUploadModal()">Cancel</button>
+      <button class="upload-submit-btn" onclick="submitVideoUpload()">
+        <i class="fa-solid fa-check"></i> Upload Video
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Create Post Modal -->
+<div id="postUploadModal" class="upload-modal">
+  <div class="upload-modal-content">
+    <div class="upload-modal-header">
+      <h2>Create Post</h2>
+      <button class="close-upload-modal" onclick="closePostUploadModal()">&times;</button>
+    </div>
+
+    <div class="upload-form-group">
+      <label for="postUploadTitle">Title *</label>
+      <input type="text" id="postUploadTitle" class="upload-input" placeholder="Give your post a title" maxlength="100">
+
+    </div>
+
+    <div class="upload-form-group">
+      <label for="postUploadContent">Content *</label>
+      <textarea id="postUploadContent" class="upload-textarea" placeholder="Write your post here..." rows="6" maxlength="5000"></textarea>
+
+      <small style="color: #999;"><span id="postCharCount">0</span>/5000 characters</small>
+    </div>
+
+    <div class="gift-toggle-group">
+      <input type="checkbox" id="postAllowGifts" checked>
+      <label for="postAllowGifts">
+        <i class="fa-solid fa-gift"></i>
+        Allow viewers to send gifts
+      </label>
+    </div>
+
+    <div class="upload-form-actions">
+      <button class="upload-cancel-btn" onclick="closePostUploadModal()">Cancel</button>
+      <button class="upload-submit-btn" onclick="submitPostUpload()">
+        <i class="fa-solid fa-check"></i> Publish Post
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Payment Method Modal -->
+<div id="paymentMethodModal" class="upload-modal">
+  <div class="upload-modal-content">
+    <div class="upload-modal-header">
+      <h2>Add Payment Method</h2>
+      <button class="close-upload-modal" onclick="closePaymentMethodModal()">&times;</button>
+    </div>
+
+    <div class="upload-form-group">
+      <label for="paymentType">Payment Type *</label>
+      <select id="paymentType" class="upload-input" onchange="handlePaymentTypeChange()">
+        <option value="">Select payment type</option>
+        <option value="credit-card">Credit/Debit Card</option>
+        <option value="paypal">PayPal</option>
+        <option value="bank-account">Bank Account</option>
+        <option value="mobile-money">Mobile Money</option>
+        <option value="crypto">Cryptocurrency</option>
+      </select>
+    </div>
+
+    <div id="creditCardFields" style="display:none;">
+      <div class="upload-form-group">
+        <label for="cardNumber">Card Number *</label>
+        <input type="text" id="cardNumber" class="upload-input" placeholder="1234 5678 9012 3456" maxlength="19">
+      </div>
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+        <div class="upload-form-group">
+          <label for="cardExpiry">Expiry Date *</label>
+          <input type="text" id="cardExpiry" class="upload-input" placeholder="MM/YY" maxlength="5">
+        </div>
+        <div class="upload-form-group">
+          <label for="cardCVV">CVV *</label>
+          <input type="text" id="cardCVV" class="upload-input" placeholder="123" maxlength="4">
+        </div>
+      </div>
+      <div class="upload-form-group">
+        <label for="cardName">Cardholder Name *</label>
+        <input type="text" id="cardName" class="upload-input" placeholder="John Doe">
+      </div>
+    </div>
+
+    <div id="paypalFields" style="display:none;">
+      <div class="upload-form-group">
+        <label for="paypalEmail">PayPal Email *</label>
+        <input type="email" id="paypalEmail" class="upload-input" placeholder="your-email@example.com">
+      </div>
+    </div>
+
+    <div id="bankAccountFields" style="display:none;">
+      <div class="upload-form-group">
+        <label for="bankName">Bank Name *</label>
+        <input type="text" id="bankName" class="upload-input" placeholder="Bank of America">
+      </div>
+      <div class="upload-form-group">
+        <label for="accountNumber">Account Number *</label>
+        <input type="text" id="accountNumber" class="upload-input" placeholder="1234567890">
+      </div>
+      <div class="upload-form-group">
+        <label for="routingNumber">Routing Number *</label>
+        <input type="text" id="routingNumber" class="upload-input" placeholder="123456789">
+      </div>
+      <div class="upload-form-group">
+        <label for="accountHolderName">Account Holder Name *</label>
+        <input type="text" id="accountHolderName" class="upload-input" placeholder="John Doe">
+      </div>
+    </div>
+
+    <div id="mobileMoneyFields" style="display:none;">
+      <div class="upload-form-group">
+        <label for="mobileProvider">Provider *</label>
+        <select id="mobileProvider" class="upload-input">
+          <option value="">Select provider</option>
+          <option value="mpesa">M-Pesa</option>
+          <option value="mtn">MTN Mobile Money</option>
+          <option value="airtel">Airtel Money</option>
+          <option value="orange">Orange Money</option>
+          <option value="other">Other</option>
+        </select>
+      </div>
+      <div class="upload-form-group">
+        <label for="mobileNumber">Mobile Number *</label>
+        <input type="tel" id="mobileNumber" class="upload-input" placeholder="+1 234 567 8900">
+      </div>
+      <div class="upload-form-group">
+        <label for="mobileAccountName">Account Name *</label>
+        <input type="text" id="mobileAccountName" class="upload-input" placeholder="John Doe">
+      </div>
+    </div>
+
+    <div id="cryptoFields" style="display:none;">
+      <div class="upload-form-group">
+        <label for="cryptoType">Cryptocurrency *</label>
+        <select id="cryptoType" class="upload-input">
+          <option value="">Select cryptocurrency</option>
+          <option value="bitcoin">Bitcoin (BTC)</option>
+          <option value="ethereum">Ethereum (ETH)</option>
+          <option value="usdt">Tether (USDT)</option>
+          <option value="usdc">USD Coin (USDC)</option>
+          <option value="other">Other</option>
+        </select>
+      </div>
+      <div class="upload-form-group">
+        <label for="walletAddress">Wallet Address *</label>
+        <input type="text" id="walletAddress" class="upload-input" placeholder="0x1234...5678">
+      </div>
+    </div>
+
+    <div class="upload-form-group">
+      <label for="paymentNickname">Nickname (Optional)</label>
+      <input type="text" id="paymentNickname" class="upload-input" placeholder="My primary card">
+      <small style="color: #999;">Give this payment method a nickname for easy identification</small>
+    </div>
+
+    <div class="upload-form-actions">
+      <button class="upload-cancel-btn" onclick="closePaymentMethodModal()">Cancel</button>
+      <button class="upload-submit-btn" onclick="submitPaymentMethod()">
+        <i class="fa-solid fa-check"></i> Add Payment Method
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Reel Camera Recording Modal -->
+<div id="reelCameraModal" class="upload-modal">
+  <div class="fullscreen-camera-container">
+    <video id="reelVideo" autoplay playsinline muted></video>
+    
+    <div class="camera-overlay">
+      <!-- Top Bar -->
+      <div class="camera-top-bar">
+        <button class="camera-close-btn" onclick="closeReelCameraModal()">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+        <div id="reelRecordingTimer" class="camera-timer" style="display: none;">
+          <span class="recording-dot"></span>
+          <span id="reelTimerText">0:00</span>
+        </div>
+        <button id="flashToggleBtn" class="camera-close-btn" onclick="toggleReelFlash()" title="Toggle flash">
+          <i class="fa-solid fa-bolt" id="flashIcon"></i>
+        </button>
+      </div>
+
+      <!-- Error Message -->
+      <div id="reelCameraError" class="camera-error" style="display: none; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); max-width: 90%; z-index: 10;"></div>
+
+      <!-- Filter Sidebar -->
+      <div class="filter-sidebar">
+        <div class="filter-option active" onclick="applyReelFilter('none')" data-filter="none">
+          <div class="filter-preview">
+            <span class="filter-icon">✨</span>
+          </div>
+          <div class="filter-name">Normal</div>
+        </div>
+        <div class="filter-option" onclick="applyReelFilter('vintage')" data-filter="vintage">
+          <div class="filter-preview" style="filter: sepia(0.5) contrast(1.2) brightness(0.9);">
+            <span class="filter-icon">📷</span>
+          </div>
+          <div class="filter-name">Vintage</div>
+        </div>
+        <div class="filter-option" onclick="applyReelFilter('vivid')" data-filter="vivid">
+          <div class="filter-preview" style="filter: saturate(1.8) contrast(1.2);">
+            <span class="filter-icon">🌈</span>
+          </div>
+          <div class="filter-name">Vivid</div>
+        </div>
+        <div class="filter-option" onclick="applyReelFilter('cool')" data-filter="cool">
+          <div class="filter-preview" style="filter: hue-rotate(180deg) saturate(1.2);">
+            <span class="filter-icon">❄️</span>
+          </div>
+          <div class="filter-name">Cool</div>
+        </div>
+        <div class="filter-option" onclick="applyReelFilter('warm')" data-filter="warm">
+          <div class="filter-preview" style="filter: sepia(0.3) saturate(1.4) brightness(1.1);">
+            <span class="filter-icon">☀️</span>
+          </div>
+          <div class="filter-name">Warm</div>
+        </div>
+        <div class="filter-option" onclick="applyReelFilter('bw')" data-filter="bw">
+          <div class="filter-preview" style="filter: grayscale(1) contrast(1.1);">
+            <span class="filter-icon">⚫</span>
+          </div>
+          <div class="filter-name">B&W</div>
+        </div>
+        <div class="filter-option" onclick="applyReelFilter('dramatic')" data-filter="dramatic">
+          <div class="filter-preview" style="filter: contrast(1.5) brightness(0.9) saturate(1.3);">
+            <span class="filter-icon">🎭</span>
+          </div>
+          <div class="filter-name">Drama</div>
+        </div>
+        <div class="filter-option" onclick="applyReelFilter('sunset')" data-filter="sunset">
+          <div class="filter-preview" style="filter: sepia(0.4) hue-rotate(330deg) saturate(1.5);">
+            <span class="filter-icon">🌅</span>
+          </div>
+          <div class="filter-name">Sunset</div>
+        </div>
+        <div class="filter-option" onclick="applyReelFilter('bright')" data-filter="bright">
+          <div class="filter-preview" style="filter: brightness(1.3) contrast(1.1) saturate(1.2);">
+            <span class="filter-icon">💡</span>
+          </div>
+          <div class="filter-name">Bright</div>
+        </div>
+        <div class="filter-option" onclick="applyReelFilter('blur')" data-filter="blur">
+          <div class="filter-preview" style="filter: blur(3px);">
+            <span class="filter-icon">🌫️</span>
+          </div>
+          <div class="filter-name">Blur</div>
+        </div>
+      </div>
+
+      <!-- Bottom Controls -->
+      <div class="camera-bottom-bar">
+        <!-- Switch Camera Button -->
+        <button id="reelSwitchBtn" onclick="switchReelCamera()" class="camera-switch-btn">
+          <i class="fa-solid fa-camera-rotate"></i>
+        </button>
+
+        <!-- Record Button -->
+        <button id="reelStartBtn" onclick="startReelRecording()" class="camera-control-btn">
+          <i class="fa-solid fa-circle" style="font-size: 32px;"></i>
+        </button>
+        <button id="reelStopBtn" onclick="stopReelRecording()" class="camera-control-btn recording" style="display: none;">
+          <i class="fa-solid fa-stop"></i>
+        </button>
+
+        <!-- Gallery Button -->
+        <button onclick="openReelGallery()" class="camera-switch-btn" title="Choose from gallery">
+          <i class="fa-solid fa-image"></i>
+        </button>
+      </div>
+
+      <!-- Hidden File Input -->
+      <input type="file" id="reelGalleryInput" accept="video/*,image/*" capture="user" style="display: none;" onchange="handleReelGallerySelection(event)">
+    </div>
+  </div>
+</div>
+
+<!-- Payment Methods Manager Modal -->
+<div id="paymentMethodsManagerModal" class="products-modal" style="display:none;">
+  <div class="products-modal-content">
+    <div class="products-modal-header">
+      <h2>Payment Methods</h2>
+      <button class="close-modal-btn" onclick="closePaymentMethodsManager()">&times;</button>
+    </div>
+    
+    <div style="margin-bottom:16px;">
+      <button class="add-payment-btn" onclick="openPaymentMethodModal()" style="width:100%;">
+        <i class="fa-solid fa-plus"></i> Add Payment Method
+      </button>
+    </div>
+    
+    <div id="paymentMethodsList">
+      <!-- Payment methods will be rendered here -->
+    </div>
+  </div>
+</div>
+
+<!-- Shop Settings Modal -->
+<div id="shopSettingsModal" class="products-modal" style="display:none;">
+  <div class="products-modal-content" style="max-width: 500px;">
+    <div class="products-modal-header">
+      <h2>Shop Settings</h2>
+      <button class="close-modal-btn" onclick="closeShopSettings()">&times;</button>
+    </div>
+    
+    <div style="padding: 20px;">
+      <div class="upload-form-group" style="margin-bottom: 20px;">
+        <label for="shopName" style="display: block; margin-bottom: 8px; font-weight: 600; color: #333;">Shop Name</label>
+        <input type="text" id="shopName" class="upload-input" placeholder="e.g., John's Electronics Store" maxlength="50">
+        <small style="color: #999; display: block; margin-top: 6px;">This is the name that will appear on your products page</small>
+      </div>
+      
+      <div class="upload-form-group" style="margin-bottom: 20px;">
+        <label for="shopDescription" style="display: block; margin-bottom: 8px; font-weight: 600; color: #333;">Shop Description (Optional)</label>
+        <textarea id="shopDescription" class="upload-textarea" placeholder="Describe what you sell..." rows="3" maxlength="200"></textarea>
+        <small style="color: #999; display: block; margin-top: 6px;"><span id="shopDescCount">0</span>/200 characters</small>
+      </div>
+      
+      <div style="display: flex; gap: 12px; justify-content: flex-end;">
+        <button class="upload-cancel-btn" onclick="closeShopSettings()">Cancel</button>
+        <button class="upload-submit-btn" onclick="saveShopSettings()">
+          <i class="fa-solid fa-check"></i> Save Settings
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- My Products Modal -->
+<div id="productsModal" class="products-modal">
+  <div class="products-modal-content">
+    <div class="products-modal-header">
+      <h2>My Products for Sale</h2>
+      <button class="close-modal-btn" id="closeModalBtn">&times;</button>
+    </div>
+    <div id="myProductsGrid" class="my-products-grid">
+      <div class="no-products">
+        <i class="fa-solid fa-box-open fa-3x"></i>
+        <p>You haven't listed any products yet. <a href="mylistings.html">Start selling!</a></p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Content Full-View / Edit Modal -->
+<div id="contentModal" class="products-modal" style="display:none;">
+  <div class="products-modal-content" role="dialog" aria-modal="true" aria-labelledby="contentModalTitle">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+      <h3 id="contentModalTitle">Content</h3>
+      <button class="close-modal-btn" id="closeContentModal">&times;</button>
+    </div>
+    <div id="contentModalBody"></div>
+    <div style="margin-top:12px;display:flex;gap:8px;justify-content:flex-end;">
+      <button id="editToggleBtn" class="edit-product-btn">Edit</button>
+      <button id="saveContentBtn" class="subscribebtn" style="display:none;">Save</button>
+    </div>
+  </div>
+</div>
+
+<!-- My Content section removed per request -->
+<script>
+    let isViewingOwnProfile = true;
+    let viewedProfileUserId = null;
+    let activeContentType = 'all';
+    let currentRenderedItems = [];
+
+    function resetContentFilter() {
+      activeContentType = 'all';
+      const uploadMenuItems = document.querySelectorAll('.upload-card[data-upload-menu]');
+      uploadMenuItems.forEach(function(entry, idx) {
+        entry.classList.toggle('active', idx === 0);
+      });
+    }
+
+    function setActiveUploadCard(type) {
+      const uploadMenuItems = document.querySelectorAll('.upload-card[data-upload-menu]');
+      uploadMenuItems.forEach(function(entry) {
+        entry.classList.toggle('active', entry.getAttribute('data-upload-menu') === type);
+      });
+      activeContentType = type || 'all';
+    }
+
+    function handleUploadCardAction(type) {
+      setActiveUploadCard(type);
+      if (!isViewingOwnProfile) {
+        renderRecentUploads();
+        return;
+      }
+
+      if (type === 'photo') {
+        openPhotoUploadModal();
+      } else if (type === 'video') {
+        openVideoUploadModal();
+      } else if (type === 'reel') {
+        openReelCameraModal();
+      } else if (type === 'post') {
+        openPostUploadModal();
+      }
+    }
+
+    function navigateToPostedLocation(index) {
+      const item = currentRenderedItems[index];
+      if (!item) return;
+
+      if (item.type === 'video') {
+        window.location.href = 'reels.html';
+        return;
+      }
+
+      const params = new URLSearchParams();
+      params.set('contentType', item.type || 'post');
+      if (item.id) params.set('contentId', String(item.id));
+      if (viewedProfileUserId) params.set('userId', viewedProfileUserId);
+      window.location.href = `index.html?${params.toString()}`;
+    }
+
+    // Helpers: read all content items with source info
+    async function getCombinedItems() {
+      const items = [];
+      try {
+        let photos = [];
+        let videos = [];
+        let posts = [];
+
+        if (!isViewingOwnProfile && viewedProfileUserId) {
+          const apiBaseUrl = getApiBaseUrl();
+          const [photosRes, videosRes, postsRes] = await Promise.all([
+            fetch(`${apiBaseUrl}/users/${viewedProfileUserId}/photos`),
+            fetch(`${apiBaseUrl}/users/${viewedProfileUserId}/videos`),
+            fetch(`${apiBaseUrl}/users/${viewedProfileUserId}/posts`)
+          ]);
+          photos = photosRes.ok ? await photosRes.json() : [];
+          videos = videosRes.ok ? await videosRes.json() : [];
+          posts = postsRes.ok ? await postsRes.json() : [];
+        } else {
+          [photos, videos, posts] = await Promise.all([
+            coshinAPI.getPhotos().catch(() => []),
+            coshinAPI.getVideos().catch(() => []),
+            coshinAPI.getPosts().catch(() => [])
+          ]);
+        }
+
+        if (Array.isArray(photos)) {
+          photos.forEach((p, i) => items.push({ 
+            type: 'photo', 
+            src: p.photo_data || p.src || '', 
+            title: p.title || '', 
+            date: p.created_at || p.uploadDate || '', 
+            id: p.id,
+            profile_picture: p.profile_picture || './COSHIN Assets/profile silhouette 2.jpg',
+            username: p.username || 'User',
+            sourceKey: 'photos',
+            sourceIndex: i 
+          }));
+        }
+
+        if (Array.isArray(videos)) {
+          videos.forEach((v, i) => items.push({ 
+            type: 'video', 
+            url: v.video_data || v.url || v.src || '', 
+            title: v.title || '', 
+            date: v.created_at || v.uploadDate || '', 
+            id: v.id,
+            profile_picture: v.profile_picture || './COSHIN Assets/profile silhouette 2.jpg',
+            username: v.username || 'User',
+            sourceKey: 'videos',
+            sourceIndex: i 
+          }));
+        }
+
+        if (Array.isArray(posts)) {
+          posts.forEach((p, i) => items.push({ 
+            type: 'post', 
+            content: p.content || '', 
+            title: p.title || '', 
+            date: p.created_at || p.uploadDate || '', 
+            id: p.id,
+            profile_picture: p.profile_picture || './COSHIN Assets/profile silhouette 2.jpg',
+            username: p.username || 'User',
+            sourceKey: 'posts',
+            sourceIndex: i 
+          }));
+        }
+      } catch (error) {
+        console.error('Error loading user uploads from API:', error);
+      }
+      return items;
+    }
+
+    function closeAllUploadMenus() {
+      document.querySelectorAll('.upload-item-menu').forEach(menu => menu.classList.remove('active'));
+    }
+
+    function toggleUploadMenu(event, index) {
+      event.stopPropagation();
+      const menu = document.getElementById(`uploadMenu-${index}`);
+      if (!menu) return;
+      const isOpen = menu.classList.contains('active');
+      closeAllUploadMenus();
+      if (!isOpen) menu.classList.add('active');
+    }
+
+    document.addEventListener('click', closeAllUploadMenus);
+
+    // Render uploads into Recent Uploads in compact grid with item menu controls
+    async function renderRecentUploads() {
+      const grid = document.getElementById('recentGrid');
+      if (!grid) return;
+      const allItems = await getCombinedItems();
+      let items = allItems;
+
+      if (activeContentType === 'photo') {
+        items = allItems.filter(item => item.type === 'photo');
+      } else if (activeContentType === 'video' || activeContentType === 'reel') {
+        items = allItems.filter(item => item.type === 'video');
+      } else if (activeContentType === 'post') {
+        items = allItems.filter(item => item.type === 'post');
+      }
+
+      if (items.length === 0) {
+        currentRenderedItems = [];
+        grid.innerHTML = isViewingOwnProfile
+          ? '<div class="no-content" style="text-align:center;padding:24px;color:var(--muted,#777)"><i class="fa-regular fa-folder-open fa-2x"></i><p style="margin:8px 0 0">No uploads yet — use the upload cards above.</p></div>'
+          : '<div class="no-content" style="text-align:center;padding:24px;color:var(--muted,#777)"><i class="fa-regular fa-folder-open fa-2x"></i><p style="margin:8px 0 0">No content yet.</p></div>';
+        return;
+      }
+
+      items.sort((a, b) => {
+        const da = a.date ? new Date(a.date).getTime() : 0;
+        const db = b.date ? new Date(b.date).getTime() : 0;
+        return db - da;
+      });
+
+      currentRenderedItems = items;
+
+      grid.innerHTML = items.map((item, idx) => {
+        const clickAction = isViewingOwnProfile
+          ? `openFullView(${idx})`
+          : `navigateToPostedLocation(${idx})`;
+        const controlsMenu = isViewingOwnProfile ? `
+          <div class="upload-item-actions" onclick="event.stopPropagation()">
+            <button class="upload-menu-btn" onclick="toggleUploadMenu(event, ${idx})" aria-label="Open options">
+              <i class="fa-solid fa-ellipsis-vertical"></i>
+            </button>
+            <div class="upload-item-menu" id="uploadMenu-${idx}">
+              <button onclick="openFullView(${idx}); closeAllUploadMenus();"><i class="fa-solid fa-eye"></i> View</button>
+              <button onclick="openEdit(${idx}); closeAllUploadMenus();"><i class="fa-solid fa-pen"></i> Edit</button>
+              <button class="danger" onclick="deleteUploaded(${idx}); closeAllUploadMenus();"><i class="fa-solid fa-trash"></i> Delete</button>
+            </div>
+          </div>` : '';
+
+        if (item.type === 'photo') {
+          return `
+            <div class="content-item" onclick="${clickAction}">
+              ${controlsMenu}
+              <img src="${item.src}" alt="${escapeHtml(item.title || 'Photo')}" />
+              <div class="content-item-body">
+                <p class="content-item-title">${escapeHtml(item.title || 'Photo')}</p>
+                ${item.date ? `<small class="content-item-date">${escapeHtml(new Date(item.date).toLocaleString())}</small>` : ''}
+              </div>
+            </div>`;
+        }
+
+        if (item.type === 'video') {
+          return `
+            <div class="content-item" onclick="${clickAction}">
+              ${controlsMenu}
+              <div class="video-placeholder"><i class="fa-solid fa-video fa-2x"></i></div>
+              <div class="content-item-body">
+                <p class="content-item-title">${escapeHtml(item.title || 'Video')}</p>
+                ${item.date ? `<small class="content-item-date">${escapeHtml(new Date(item.date).toLocaleString())}</small>` : ''}
+              </div>
+            </div>`;
+        }
+
+        return `
+          <div class="content-item" onclick="${clickAction}">
+            ${controlsMenu}
+            <div class="post-placeholder"><i class="fa-solid fa-file-lines fa-2x"></i></div>
+            <div class="content-item-body">
+              <p class="content-item-title">${escapeHtml(item.title || 'Post')}</p>
+              ${item.date ? `<small class="content-item-date">${escapeHtml(new Date(item.date).toLocaleString())}</small>` : ''}
+            </div>
+          </div>`;
+      }).join('');
+    }
+
+    // helpers to escape
+    function escapeHtml(str) { return String(str || '').replace(/[&<>"']/g, function (s) { return ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[s]; }); }
+    function escapeAttr(s) { return String(s || '').replace(/"/g, '&quot;'); }
+
+    // Delete an uploaded item by combined index
+    async function deleteUploaded(index) {
+      if (!isViewingOwnProfile) return;
+      const items = currentRenderedItems;
+      const item = items[index];
+      if (!item) return;
+      if (!confirm('Delete this item?')) return;
+
+      try {
+        // Call API to delete based on type
+        if (item.type === 'photo') {
+          await coshinAPI.deletePhoto(item.id);
+        } else if (item.type === 'video') {
+          await coshinAPI.deleteVideo(item.id);
+        } else if (item.type === 'post') {
+          await coshinAPI.deletePost(item.id);
+        }
+        
+        // Refresh the list
+        renderRecentUploads();
+      } catch (error) {
+        console.error('Delete error:', error);
+        alert('Failed to delete: ' + error.message);
+      }
+    }
+
+    // Show a combined item at index inside the modal (central render)
+    async function showItemAt(index) {
+      const items = currentRenderedItems;
+      const item = items[index];
+      if (!item) return;
+      window.currentContentIndex = index;
+      const modal = document.getElementById('contentModal');
+      const body = document.getElementById('contentModalBody');
+      let html = '';
+      if (item.type === 'photo') {
+        html = `<img src="${item.src}" alt="${escapeHtml(item.title)}">`;
+        html += `<label>Title</label><div id="contentTitleDisplay" style="margin-bottom:8px;font-weight:600">${escapeHtml(item.title)}</div>`;
+      } else if (item.type === 'video') {
+        const safeUrl = escapeAttr(item.url || '');
+        html = `<video controls preload="metadata" src="${safeUrl}"></video>`;
+        html += `<label>Title</label><div id="contentTitleDisplay" style="margin-bottom:8px;font-weight:600">${escapeHtml(item.title)}</div>`;
+        html += `<label>URL</label><div id="contentUrlDisplay" style="margin-bottom:8px;color:var(--muted)">${escapeHtml(item.url)}</div>`;
+      } else {
+        html = `<div style="padding:8px;background:var(--bg);border-radius:8px;margin-bottom:12px;color:var(--text)">${escapeHtml(item.content)}</div>`;
+        html += `<label>Title</label><div id="contentTitleDisplay" style="margin-bottom:8px;font-weight:600">${escapeHtml(item.title)}</div>`;
+      }
+      html += `<input type="hidden" id="contentIndexHidden" value="${index}">`;
+      body.innerHTML = html;
+      document.getElementById('saveContentBtn').style.display = 'none';
+      document.getElementById('editToggleBtn').style.display = isViewingOwnProfile ? 'inline-flex' : 'none';
+      document.getElementById('editToggleBtn').textContent = 'Edit';
+      modal.style.display = 'block';
+
+      // autoplay video when available
+      const v = modal.querySelector('video');
+      if (v) {
+        v.currentTime = 0;
+        const p = v.play();
+        if (p && p.catch) p.catch(()=>{});
+      }
+    }
+
+    function openFullView(index) {
+      if (!isViewingOwnProfile) {
+        navigateToPostedLocation(index);
+        return;
+      }
+      showItemAt(index);
+    }
+
+    // Open edit mode directly
+    function openEdit(index) {
+      if (!isViewingOwnProfile) return;
+      openFullView(index);
+      toggleEditMode();
+    }
+
+    async function toggleEditMode() {
+      if (!isViewingOwnProfile) return;
+      const editBtn = document.getElementById('editToggleBtn');
+      const saveBtn = document.getElementById('saveContentBtn');
+      const idx = parseInt(document.getElementById('contentIndexHidden').value, 10);
+      const items = currentRenderedItems;
+      const item = items[idx];
+      if (!item) return;
+      const body = document.getElementById('contentModalBody');
+      if (editBtn.textContent === 'Edit') {
+        // replace displays with inputs
+        if (item.type === 'photo') {
+          body.innerHTML = `<img src="${item.src}" style="width:100%;max-height:60vh;object-fit:contain;border-radius:8px;display:block;margin-bottom:12px;">` +
+            `<label>Title</label><input id="editTitle" value="${escapeAttr(item.title)}">` +
+            `<input type="hidden" id="contentIndexHidden" value="${idx}">`;
+        } else if (item.type === 'video') {
+          body.innerHTML = `<div style="width:100%;height:220px;display:flex;align-items:center;justify-content:center;background:#000;color:#fff;border-radius:8px;margin-bottom:12px">Video</div>` +
+            `<label>Title</label><input id="editTitle" value="${escapeAttr(item.title)}">` +
+            `<label>URL</label><input id="editUrl" value="${escapeAttr(item.url)}">` +
+            `<input type="hidden" id="contentIndexHidden" value="${idx}">`;
+        } else {
+          body.innerHTML = `<label>Title</label><input id="editTitle" value="${escapeAttr(item.title)}">` +
+            `<label>Content</label><textarea id="editContent">${escapeHtml(item.content)}</textarea>` +
+            `<input type="hidden" id="contentIndexHidden" value="${idx}">`;
+        }
+        editBtn.textContent = 'Cancel';
+        saveBtn.style.display = 'inline-flex';
+      } else {
+        // cancel -> reopen view
+        openFullView(idx);
+      }
+    }
+
+    // Save edits (disabled - content is saved to database on publish)
+    function saveContentEdits() {
+      showPhotoUploadNotification('Editing not available - publish new content instead', 'info');
+      closeContentModal();
+    }
+
+    function closeContentModal() {
+      const modal = document.getElementById('contentModal');
+      // pause any playing video inside modal
+      const v = modal.querySelector('video');
+      if (v && !v.paused) try { v.pause(); } catch(e) {}
+      modal.style.display = 'none';
+    }
+
+    async function showPrev() {
+      const items = currentRenderedItems;
+      if (!items.length) return;
+      const idx = (window.currentContentIndex - 1 + items.length) % items.length;
+      showItemAt(idx);
+    }
+
+    async function showNext() {
+      const items = currentRenderedItems;
+      if (!items.length) return;
+      const idx = (window.currentContentIndex + 1) % items.length;
+      showItemAt(idx);
+    }
+
+    // update on storage changes (e.g., when upload pages redirect back)
+    window.addEventListener('storage', function () { renderRecentUploads(); });
+
+    // ============================================
+    // PAYMENT METHODS FUNCTIONALITY
+    // ============================================
+
+    function getPaymentMethods() {
+      return JSON.parse(localStorage.getItem('paymentMethods') || '[]');
+    }
+
+    function savePaymentMethods(methods) {
+      localStorage.setItem('paymentMethods', JSON.stringify(methods));
+    }
+
+    function openPaymentMethodsManager() {
+      document.getElementById('paymentMethodsManagerModal').style.display = 'flex';
+      document.getElementById('menuDropdown').classList.remove('active'); // Close menu
+      renderPaymentMethods();
+    }
+
+    function closePaymentMethodsManager() {
+      document.getElementById('paymentMethodsManagerModal').style.display = 'none';
+    }
+
+    function renderPaymentMethods() {
+      const methods = getPaymentMethods();
+      const container = document.getElementById('paymentMethodsList');
+      
+      if (methods.length === 0) {
+        container.innerHTML = `
+          <div class="no-payment-methods">
+            <i class="fa-solid fa-credit-card"></i>
+            <p>No payment methods added yet</p>
+            <small>Add a payment method to receive payments from your content</small>
+          </div>`;
+        return;
+      }
+
+      container.innerHTML = methods.map((method, index) => {
+        let icon = 'fa-credit-card';
+        let title = method.type;
+        let details = '';
+
+        switch(method.type) {
+          case 'credit-card':
+            icon = 'fa-credit-card';
+            title = method.nickname || 'Credit/Debit Card';
+            details = `•••• •••• •••• ${method.cardNumber.slice(-4)}`;
+            break;
+          case 'paypal':
+            icon = 'fa-paypal';
+            title = method.nickname || 'PayPal';
+            details = method.email;
+            break;
+          case 'bank-account':
+            icon = 'fa-building-columns';
+            title = method.nickname || 'Bank Account';
+            details = `${method.bankName} - ••••${method.accountNumber.slice(-4)}`;
+            break;
+          case 'mobile-money':
+            icon = 'fa-mobile-screen';
+            title = method.nickname || 'Mobile Money';
+            details = `${method.provider.toUpperCase()} - ${method.mobileNumber}`;
+            break;
+          case 'crypto':
+            icon = 'fa-bitcoin';
+            title = method.nickname || 'Cryptocurrency';
+            details = `${method.cryptoType.toUpperCase()} - ${method.walletAddress.slice(0, 10)}...${method.walletAddress.slice(-6)}`;
+            break;
+        }
+
+        return `
+          <div class="payment-card">
+            <div class="payment-card-info">
+              <div class="payment-card-icon">
+                <i class="fa-solid ${icon}"></i>
+              </div>
+              <div class="payment-card-details">
+                <h4>${escapeHtml(title)}</h4>
+                <p>${escapeHtml(details)}</p>
+              </div>
+            </div>
+            <div class="payment-card-actions">
+              <button onclick="deletePaymentMethod(${index})" class="delete-btn">
+                <i class="fa-solid fa-trash"></i> Remove
+              </button>
+            </div>
+          </div>`;
+      }).join('');
+    }
+
+    function openPaymentMethodModal() {
+      document.getElementById('paymentMethodModal').style.display = 'flex';
+      resetPaymentForm();
+    }
+
+    function closePaymentMethodModal() {
+      document.getElementById('paymentMethodModal').style.display = 'none';
+      resetPaymentForm();
+    }
+
+    function resetPaymentForm() {
+      document.getElementById('paymentType').value = '';
+      document.getElementById('paymentNickname').value = '';
+      
+      // Hide all field groups
+      document.getElementById('creditCardFields').style.display = 'none';
+      document.getElementById('paypalFields').style.display = 'none';
+      document.getElementById('bankAccountFields').style.display = 'none';
+      document.getElementById('mobileMoneyFields').style.display = 'none';
+      document.getElementById('cryptoFields').style.display = 'none';
+      
+      // Clear all inputs
+      document.querySelectorAll('#paymentMethodModal input, #paymentMethodModal select').forEach(input => {
+        if (input.id !== 'paymentType') input.value = '';
+      });
+    }
+
+    function handlePaymentTypeChange() {
+      const type = document.getElementById('paymentType').value;
+      
+      // Hide all
+      document.getElementById('creditCardFields').style.display = 'none';
+      document.getElementById('paypalFields').style.display = 'none';
+      document.getElementById('bankAccountFields').style.display = 'none';
+      document.getElementById('mobileMoneyFields').style.display = 'none';
+      document.getElementById('cryptoFields').style.display = 'none';
+      
+      // Show relevant
+      if (type === 'credit-card') document.getElementById('creditCardFields').style.display = 'block';
+      else if (type === 'paypal') document.getElementById('paypalFields').style.display = 'block';
+      else if (type === 'bank-account') document.getElementById('bankAccountFields').style.display = 'block';
+      else if (type === 'mobile-money') document.getElementById('mobileMoneyFields').style.display = 'block';
+      else if (type === 'crypto') document.getElementById('cryptoFields').style.display = 'block';
+    }
+
+    function submitPaymentMethod() {
+      const type = document.getElementById('paymentType').value;
+      const nickname = document.getElementById('paymentNickname').value.trim();
+      
+      if (!type) {
+        alert('Please select a payment type');
+        return;
+      }
+
+      let paymentData = { type, nickname, addedDate: new Date().toISOString() };
+
+      try {
+        switch(type) {
+          case 'credit-card':
+            const cardNumber = document.getElementById('cardNumber').value.replace(/\\s/g, '');
+            const cardExpiry = document.getElementById('cardExpiry').value;
+            const cardCVV = document.getElementById('cardCVV').value;
+            const cardName = document.getElementById('cardName').value.trim();
+            
+            if (!cardNumber || !cardExpiry || !cardCVV || !cardName) {
+              alert('Please fill in all card fields');
+              return;
+            }
+            if (cardNumber.length < 13 || cardNumber.length > 19) {
+              alert('Invalid card number');
+              return;
+            }
+            
+            paymentData.cardNumber = cardNumber;
+            paymentData.expiry = cardExpiry;
+            paymentData.cardholderName = cardName;
+            break;
+
+          case 'paypal':
+            const email = document.getElementById('paypalEmail').value.trim();
+            if (!email || !email.includes('@')) {
+              alert('Please enter a valid PayPal email');
+              return;
+            }
+            paymentData.email = email;
+            break;
+
+          case 'bank-account':
+            const bankName = document.getElementById('bankName').value.trim();
+            const accountNumber = document.getElementById('accountNumber').value.trim();
+            const routingNumber = document.getElementById('routingNumber').value.trim();
+            const accountHolderName = document.getElementById('accountHolderName').value.trim();
+            
+            if (!bankName || !accountNumber || !routingNumber || !accountHolderName) {
+              alert('Please fill in all bank account fields');
+              return;
+            }
+            
+            paymentData.bankName = bankName;
+            paymentData.accountNumber = accountNumber;
+            paymentData.routingNumber = routingNumber;
+            paymentData.accountHolderName = accountHolderName;
+            break;
+
+          case 'mobile-money':
+            const provider = document.getElementById('mobileProvider').value;
+            const mobileNumber = document.getElementById('mobileNumber').value.trim();
+            const mobileAccountName = document.getElementById('mobileAccountName').value.trim();
+            
+            if (!provider || !mobileNumber || !mobileAccountName) {
+              alert('Please fill in all mobile money fields');
+              return;
+            }
+            
+            paymentData.provider = provider;
+            paymentData.mobileNumber = mobileNumber;
+            paymentData.accountName = mobileAccountName;
+            break;
+
+          case 'crypto':
+            const cryptoType = document.getElementById('cryptoType').value;
+            const walletAddress = document.getElementById('walletAddress').value.trim();
+            
+            if (!cryptoType || !walletAddress) {
+              alert('Please fill in all cryptocurrency fields');
+              return;
+            }
+            
+            paymentData.cryptoType = cryptoType;
+            paymentData.walletAddress = walletAddress;
+            break;
+        }
+
+        // Save payment method
+        const methods = getPaymentMethods();
+        methods.push(paymentData);
+        savePaymentMethods(methods);
+        
+        // Success feedback
+        alert('Payment method added successfully!');
+        closePaymentMethodModal();
+        renderPaymentMethods();
+        
+      } catch (error) {
+        console.error('Error adding payment method:', error);
+        alert('Failed to add payment method. Please try again.');
+      }
+    }
+
+    function deletePaymentMethod(index) {
+      if (!confirm('Are you sure you want to remove this payment method?')) {
+        return;
+      }
+      
+      const methods = getPaymentMethods();
+      methods.splice(index, 1);
+      savePaymentMethods(methods);
+      renderPaymentMethods();
+    }
+
+    // Format card number input with spaces
+    document.addEventListener('DOMContentLoaded', function() {
+      const cardNumberInput = document.getElementById('cardNumber');
+      if (cardNumberInput) {
+        cardNumberInput.addEventListener('input', function(e) {
+          let value = e.target.value.replace(/\\s/g, '');
+          let formattedValue = value.match(/.{1,4}/g)?.join(' ') || value;
+          e.target.value = formattedValue;
+        });
+      }
+      
+      const cardExpiryInput = document.getElementById('cardExpiry');
+      if (cardExpiryInput) {
+        cardExpiryInput.addEventListener('input', function(e) {
+          let value = e.target.value.replace(/\\D/g, '');
+          if (value.length >= 2) {
+            value = value.slice(0, 2) + '/' + value.slice(2, 4);
+          }
+          e.target.value = value;
+        });
+      }
+    });
+
+    // ============================================
+    // END PAYMENT METHODS FUNCTIONALITY
+    // ============================================
+
+    // ============================================
+    // SHOP SETTINGS FUNCTIONALITY
+    // ============================================
+
+    function getShopSettings() {
+      return JSON.parse(localStorage.getItem('shopSettings') || '{"name": "My Shop", "description": ""}');
+    }
+
+    function saveShopSettingsData(settings) {
+      localStorage.setItem('shopSettings', JSON.stringify(settings));
+    }
+
+    function openShopSettings() {
+      const settings = getShopSettings();
+      document.getElementById('shopName').value = settings.name || 'My Shop';
+      document.getElementById('shopDescription').value = settings.description || '';
+      updateShopDescriptionCount();
+      document.getElementById('shopSettingsModal').style.display = 'flex';
+      document.getElementById('menuDropdown').classList.remove('active'); // Close menu
+    }
+
+    function closeShopSettings() {
+      document.getElementById('shopSettingsModal').style.display = 'none';
+    }
+
+    function saveShopSettings() {
+      const shopName = document.getElementById('shopName').value.trim();
+      const shopDescription = document.getElementById('shopDescription').value.trim();
+
+      if (!shopName) {
+        alert('Please enter a shop name');
+        return;
+      }
+
+      const settings = {
+        name: shopName,
+        description: shopDescription,
+        updatedAt: new Date().toISOString()
+      };
+
+      saveShopSettingsData(settings);
+      alert('Shop settings saved successfully!');
+      closeShopSettings();
+    }
+
+    function updateShopDescriptionCount() {
+      const textarea = document.getElementById('shopDescription');
+      const counter = document.getElementById('shopDescCount');
+      if (textarea && counter) {
+        counter.textContent = textarea.value.length;
+      }
+    }
+
+    // Character counter for shop description
+    document.addEventListener('DOMContentLoaded', function() {
+      const shopDescTextarea = document.getElementById('shopDescription');
+      if (shopDescTextarea) {
+        shopDescTextarea.addEventListener('input', updateShopDescriptionCount);
+      }
+    });
+
+    // ============================================
+    // END SHOP SETTINGS FUNCTIONALITY
+    // ============================================
+
+    // wire modal buttons and keyboard navigation
+    document.addEventListener('DOMContentLoaded', function () {
+      document.getElementById('closeContentModal').addEventListener('click', closeContentModal);
+      document.getElementById('editToggleBtn').addEventListener('click', toggleEditMode);
+      document.getElementById('saveContentBtn').addEventListener('click', saveContentEdits);
+
+      // Keyboard navigation: Esc to close, ArrowLeft/ArrowRight to navigate
+      document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape') {
+          // Close shop settings modal
+          const shopSettingsModal = document.getElementById('shopSettingsModal');
+          if (shopSettingsModal && shopSettingsModal.style.display === 'flex') {
+            closeShopSettings();
+            return;
+          }
+          
+          // Close payment methods manager modal
+          const paymentManagerModal = document.getElementById('paymentMethodsManagerModal');
+          if (paymentManagerModal && paymentManagerModal.style.display === 'flex') {
+            closePaymentMethodsManager();
+            return;
+          }
+          
+          // Close payment method add modal
+          const paymentModal = document.getElementById('paymentMethodModal');
+          if (paymentModal && paymentModal.style.display === 'flex') {
+            closePaymentMethodModal();
+            return;
+          }
+          
+          // Close content modal
+          const modal = document.getElementById('contentModal');
+          if (modal && modal.style.display === 'block') {
+            closeContentModal();
+            return;
+          }
+        }
+        
+        // Arrow navigation for content modal only
+        const modal = document.getElementById('contentModal');
+        if (!modal || modal.style.display !== 'block') return;
+        if (e.key === 'ArrowLeft') {
+          showPrev();
+        } else if (e.key === 'ArrowRight') {
+          showNext();
+        }
+      });
+    });
+  // Profile picture upload functionality
+  const profileBtn = document.getElementById('profileBtn');
+  const profileFileInput = document.getElementById('profileFileInput');
+  const profileImg = document.getElementById('profileImg');
+  const emailVisibilityToggle = document.getElementById('emailVisibilityToggle');
+  const emailToggleWrap = document.getElementById('emailToggleWrap');
+  const emailVisibilityMenuItem = document.getElementById('emailVisibilityMenuItem');
+
+  function setEmailPrivacyUI(_emailValue, isPublic, isOwnProfile) {
+    if (emailVisibilityToggle) {
+      emailVisibilityToggle.checked = !!isPublic;
+      emailVisibilityToggle.disabled = !isOwnProfile;
+    }
+
+    if (emailToggleWrap) {
+      emailToggleWrap.style.display = isOwnProfile ? 'inline-flex' : 'none';
+    }
+
+    if (emailVisibilityMenuItem) {
+      emailVisibilityMenuItem.style.display = isOwnProfile ? 'flex' : 'none';
+    }
+  }
+
+  async function saveEmailVisibilityPreference(isPublic) {
+    if (!coshinAPI.isAuthenticated()) {
+      alert('Please sign in to update email privacy settings.');
+      return;
+    }
+
+    try {
+      await coshinAPI.updateProfile({ email_public: isPublic ? 1 : 0 });
+      setEmailPrivacyUI('', isPublic, true);
+    } catch (error) {
+      console.error('Failed to update email visibility:', error);
+      alert('Could not update email visibility. Please try again.');
+      emailVisibilityToggle.checked = !isPublic;
+    }
+  }
+
+  if (emailVisibilityToggle) {
+    emailVisibilityToggle.addEventListener('change', (event) => {
+      saveEmailVisibilityPreference(event.target.checked);
+    });
+  }
+
+  // Open file input when profile button is clicked
+  profileBtn.addEventListener('click', () => {
+    profileFileInput.click();
+  });
+
+  // Handle file selection
+  profileFileInput.addEventListener('change', async (event) => {
+    const file = event.target.files[0];
+    if (file) {
+      // Validate file is an image
+      if (file.type.startsWith('image/')) {
+        // Create a FileReader to read the file
+        const reader = new FileReader();
+        reader.onload = async (e) => {
+          // Update the profile image
+          profileImg.src = e.target.result;
+          
+          // Upload to MySQL API if user is logged in
+          try {
+            if (coshinAPI.isAuthenticated()) {
+              // Update profile with new photo (base64)
+              const currentUser = coshinAPI.getCurrentUser();
+              const userId = currentUser?.id || 1;
+              await coshinAPI.updateProfile({ 
+                profile_picture: e.target.result,
+                user_id: userId
+              });
+              
+              console.log('✅ Profile picture uploaded to database for user:', userId);
+            } else {
+              // If not logged in, just store locally
+              localStorage.setItem('profilePicture', e.target.result);
+            }
+          } catch (error) {
+            console.error('Error uploading profile picture:', error);
+            // Still save locally even if API upload fails
+            localStorage.setItem('profilePicture', e.target.result);
+          }
+        };
+        reader.readAsDataURL(file);
+      } else {
+        alert('Please select a valid image file');
+      }
+    }
+  });
+
+  // Helper function to sanitize email for Firebase key
+  function sanitizeEmail(email) {
+    return email.replace(/\./g, '_').replace(/@/g, '_at_');
+  }
+
+  // Helper function to get URL parameter
+  function getUrlParameter(name) {
+    const urlParams = new URLSearchParams(window.location.search);
+    const value = urlParams.get(name);
+    console.log(`getUrlParameter('${name}') =`, value);
+    return value;
+  }
+
+  // Helper function to get API base URL
+  function getApiBaseUrl() {
+    // Reuse the resolved URL from coshin-api.js whenever possible.
+    if (window.COSHIN_API_BASE_URL) {
+      return window.COSHIN_API_BASE_URL;
+    }
+
+    const rawCustomUrl = localStorage.getItem('customApiUrl') || '';
+    const customUrl = rawCustomUrl.trim();
+    if (customUrl) {
+      try {
+        let normalized = customUrl;
+        if (!/^https?:\/\//i.test(normalized)) {
+          normalized = normalized.startsWith('/')
+            ? `${window.location.origin}${normalized}`
+            : `https://${normalized}`;
+        }
+        const parsed = new URL(normalized);
+        const pathname = parsed.pathname.replace(/\/$/, '');
+        parsed.pathname = pathname.toLowerCase().endsWith('/api') ? pathname : `${pathname}/api`;
+        return parsed.toString().replace(/\/$/, '');
+      } catch {
+        // Ignore malformed custom URL and continue with safe fallback.
+      }
+    }
+
+    // Safe fallback for phones/hosted usage: same-origin /api.
+    return `${window.location.origin}/api`;
+  }
+
+  // Toggle UI elements based on whether viewing own profile
+  function toggleProfileUI(isOwnProfile) {
+    console.log('═══════════════════════════════════════════════════════');
+    console.log('► toggleProfileUI CALLED');
+    console.log('  isOwnProfile:', isOwnProfile);
+    console.log('═══════════════════════════════════════════════════════');
+    
+    // Elements that should only show on own profile
+    const profileBtn = document.getElementById('profileBtn');
+    const cameraIcon = document.querySelector('.profile-camera-icon');
+    const uploadSection = document.querySelector('.upload-section');
+    const topHeader = document.querySelector('.top-header');
+
+    // Action buttons: hide Subscribe/Message on own profile, show on others
+    const subscribeBtn = document.getElementById('subscribeBtn');
+    const dmBtn = document.getElementById('dmBtn');
+    const myProductsBtn = document.getElementById('myProductsBtn');
+    const emailPrivacyRow = document.getElementById('emailPrivacyRow');
+    const uploadCards = document.querySelectorAll('.upload-card[data-upload-menu]');
+    
+    console.log('Button elements found:', {
+      subscribeBtn: !!subscribeBtn,
+      dmBtn: !!dmBtn,
+      myProductsBtn: !!myProductsBtn
+    });
+
+    // Hide/show elements based on profile ownership
+    if (profileBtn) {
+      if (!isOwnProfile) {
+        // When viewing others, make profile picture non-clickable
+        profileBtn.style.cursor = 'default';
+        profileBtn.style.pointerEvents = 'none';
+        profileBtn.removeAttribute('title');
+      } else {
+        // Reset for own profile
+        profileBtn.style.cursor = 'pointer';
+        profileBtn.style.pointerEvents = 'auto';
+        profileBtn.setAttribute('title', 'Click to upload profile picture');
+      }
+    }
+    
+    if (cameraIcon) {
+      cameraIcon.style.display = isOwnProfile ? '' : 'none';
+    }
+    
+    if (uploadSection) {
+      uploadSection.style.display = '';
+    }
+    
+    if (topHeader) {
+      topHeader.style.display = isOwnProfile ? '' : 'none';
+    }
+
+    if (emailPrivacyRow) {
+      emailPrivacyRow.style.display = 'flex';
+    }
+
+    if (uploadCards.length) {
+      uploadCards.forEach((card) => {
+        const type = card.getAttribute('data-upload-menu') || 'content';
+        const label = type.charAt(0).toUpperCase() + type.slice(1);
+        const cardTitle = isOwnProfile
+          ? (type === 'post' ? 'Create Post' : type === 'reel' ? 'Create Reel' : `Upload ${label}`)
+          : `View ${label}s`;
+        card.setAttribute('title', cardTitle);
+        card.setAttribute('aria-label', cardTitle);
+      });
+    }
+
+    // Show/hide action buttons
+    if (subscribeBtn) {
+      const beforeDisplay = subscribeBtn.style.display;
+      // ALWAYS show subscribe button
+      subscribeBtn.style.display = 'inline-flex';
+      console.log('  ✓ Subscribe: ALWAYS SHOWING');
+    } else {
+      console.error('  ✗ subscribeBtn element not found!');
+    }
+    
+    if (dmBtn) {
+      dmBtn.style.display = 'inline-flex';
+      const userId = getUrlParameter('userId');
+      const currentUserId = Number(coshinAPI.getCurrentUser?.()?.id || 0);
+      const targetUserId = Number(userId || 0);
+      if (isOwnProfile || !userId) {
+        dmBtn.onclick = function() {
+          window.location.href = 'messages.html';
+        };
+      } else {
+        dmBtn.onclick = function() {
+          if (targetUserId && currentUserId && targetUserId === currentUserId) {
+            window.location.href = 'messages.html';
+            return;
+          }
+          window.location.href = `messages.html?userId=${encodeURIComponent(userId)}`;
+        };
+      }
+      console.log('  ✓ DM: ALWAYS SHOWING');
+    } else {
+      console.error('  ✗ dmBtn element not found!');
+    }
+    
+    if (myProductsBtn) {
+      // Always show products button
+      myProductsBtn.style.display = 'inline-flex';
+      // Update href based on profile ownership
+      const userId = getUrlParameter('userId');
+      if (isOwnProfile || !userId) {
+        myProductsBtn.href = 'user-products.html';
+      } else {
+        myProductsBtn.href = `user-products.html?userId=${userId}`;
+      }
+      console.log('Products button href:', myProductsBtn.href);
+    } else {
+      console.error('✗ myProductsBtn not found!');
+    }
+
+    console.log('═══════════════════════════════════════════════════════');
+    console.log('► toggleProfileUI COMPLETED');
+    console.log('Final button display values:');
+    console.log('  subscribe:', subscribeBtn ? subscribeBtn.style.display : 'NOT FOUND');
+    console.log('  dm:', dmBtn ? dmBtn.style.display : 'NOT FOUND');
+    console.log('  products:', myProductsBtn ? myProductsBtn.style.display : 'NOT FOUND');
+    console.log('═══════════════════════════════════════════════════════');
+  }
+
+  // Load user profile data from MySQL API or URL parameter
+  async function loadUserProfile() {
+    const viewingUserId = getUrlParameter('userId');
+    const profileImg = document.getElementById('profileImg');
+
+    console.log('========== loadUserProfile called ==========');
+    console.log('Full URL:', window.location.href);
+    console.log('URL search params:', window.location.search);
+    console.log('viewingUserId from getUrlParameter:', viewingUserId);
+    console.log('viewingUserId is truthy:', !!viewingUserId);
+    console.log('viewingUserId type:', typeof viewingUserId);
+
+    try {
+      // Check if viewing another user's profile
+      if (viewingUserId) {
+        isViewingOwnProfile = false;
+        viewedProfileUserId = String(viewingUserId);
+        resetContentFilter();
+        console.log('✓ Viewing user profile for ID:', viewingUserId);
+        const apiBaseUrl = getApiBaseUrl();
+        const url = `${apiBaseUrl}/users/${viewingUserId}`;
+        console.log('✓ Fetching from URL:', url);
+        
+        const response = await fetch(url);
+        console.log('✓ Response received, status:', response.status);
+        
+        if (!response.ok) {
+          console.error('✗ API response not OK:', response.status);
+          throw new Error(`HTTP ${response.status}`);
+        }
+        
+        const userData = await response.json();
+        console.log('✓ User data successfully received:', userData);
+        
+        // Update UI with other user's data
+        const displayNameEl = document.getElementById('displayName');
+        const displayBioEl = document.getElementById('displayBio');
+        const postsCountEl = document.getElementById('postsCount');
+        const emailIsPublic = Number(userData.email_public || 0) === 1;
+        
+        if (displayNameEl) {
+          displayNameEl.textContent = userData.name || userData.username || 'User';
+          console.log('✓ Display name updated to:', displayNameEl.textContent);
+        } else {
+          console.error('✗ displayName element not found!');
+        }
+        
+        if (displayBioEl) {
+          displayBioEl.textContent = userData.bio || 'No bio yet';
+          console.log('✓ Display bio updated');
+        }
+
+        setEmailPrivacyUI(userData.email || '', emailIsPublic, false);
+        
+        if (userData.profilePicture) {
+          profileImg.src = userData.profilePicture;
+          console.log('✓ Profile picture set:', userData.profilePicture.substring(0, 50) + '...');
+        } else {
+          profileImg.src = './COSHIN Assets/profile silhouette 2.jpg';
+          console.log('✓ No profile picture, using default');
+        }
+
+        // Update stats if available
+        if (userData.stats && postsCountEl) {
+          postsCountEl.textContent = userData.stats.total || 0;
+          console.log('✓ Stats updated');
+        }
+
+        // Update page title
+        document.title = `${userData.name || userData.username} - Coshin`;
+
+        // Hide own-profile-only elements and SHOW Subscribe/Message
+        console.log('✓ Toggling UI for viewing other profile (isOwnProfile=false)');
+        toggleProfileUI(false);
+
+        // Load viewing user's content in the same account grid layout
+        await renderRecentUploads();
+        
+        console.log('✓ Profile loading completed successfully');
+        console.log('========== loadUserProfile finished ==========');
+        return;
+      }
+
+      // Only reach here if viewingUserId is NOT set (viewing own profile)
+      isViewingOwnProfile = true;
+      viewedProfileUserId = null;
+      resetContentFilter();
+      console.log('✓ No userId in URL - viewing own profile');
+      console.log('✓ Toggling UI for own profile (isOwnProfile=true)');
+      // Load own profile (existing logic)
+      const savedImage = localStorage.getItem('profilePicture');
+      if (savedImage) {
+        profileImg.src = savedImage;
+      }
+
+      // Check if user is authenticated
+      if (coshinAPI.isAuthenticated()) {
+        console.log('✓ User is authenticated, fetching profile from API');
+        // Fetch profile data from API
+        const profileData = await coshinAPI.getProfile();
+        
+        if (profileData) {
+          console.log('✓ Profile data received:', profileData);
+          const profileEmail = profileData.email || '';
+          const profileEmailPublic = Number(profileData.email_public || 0) === 1;
+
+          setEmailPrivacyUI(profileEmail, profileEmailPublic, true);
+
+          // Update UI with profile data
+          if (profileData.name || profileData.username) {
+            document.getElementById('displayName').textContent = profileData.name || profileData.username || profileData.username;
+          }
+          
+          if (profileData.bio) {
+            document.getElementById('displayBio').textContent = profileData.bio;
+          }
+          
+          if (profileData.profilePicture) {
+            profileImg.src = profileData.profilePicture;
+            localStorage.setItem('profilePicture', profileData.profilePicture);
+          }
+          
+          // Save to localStorage as backup
+          const profileToStore = { ...profileData, name: profileData.username || profileData.name };
+          localStorage.setItem('userProfile', JSON.stringify(profileToStore));
+        }
+      } else {
+        console.log('✓ User not authenticated, using localStorage');
+        // User not logged in, try loading from localStorage
+        const localProfile = JSON.parse(localStorage.getItem('userProfile') || '{}');
+        const localEmail = localProfile.email || '';
+        const localEmailPublic = Number(localProfile.email_public || 0) === 1;
+
+        setEmailPrivacyUI(localEmail, localEmailPublic, true);
+
+        if (localProfile.name || localProfile.username) {
+          document.getElementById('displayName').textContent = localProfile.name || localProfile.username;
+        }
+        if (localProfile.bio) {
+          document.getElementById('displayBio').textContent = localProfile.bio;
+        }
+      }
+
+      // Show own-profile-only elements and HIDE Subscribe/Message
+      console.log('✓ Calling toggleProfileUI(true) because viewing own profile');
+      toggleProfileUI(true);
+      console.log('========== loadUserProfile finished ==========');
+
+    } catch (error) {
+      console.error('✗✗✗ ERROR loading profile:', error);
+      console.log('Error occurred with viewingUserId:', viewingUserId);
+      
+      // Fallback to localStorage for own profile
+      if (!viewingUserId) {
+        isViewingOwnProfile = true;
+        viewedProfileUserId = null;
+        resetContentFilter();
+        console.log('✓ Using localStorage fallback for own profile');
+        const localProfile = JSON.parse(localStorage.getItem('userProfile') || '{}');
+        setEmailPrivacyUI(localProfile.email || '', Number(localProfile.email_public || 0) === 1, true);
+        if (localProfile.name || localProfile.username) {
+          document.getElementById('displayName').textContent = localProfile.name || localProfile.username;
+        }
+        if (localProfile.bio) {
+          document.getElementById('displayBio').textContent = localProfile.bio;
+        }
+        toggleProfileUI(true);
+      } else {
+        isViewingOwnProfile = false;
+        viewedProfileUserId = String(viewingUserId);
+        resetContentFilter();
+        // Show error for other user profile
+        console.error('✗ Failed to load user profile for ID:', viewingUserId);
+        document.getElementById('displayName').textContent = 'Error Loading Profile';
+        document.getElementById('displayBio').textContent = 'Could not fetch user data. Error: ' + error.message;
+        setEmailPrivacyUI('', false, false);
+        toggleProfileUI(false);
+      }
+    }
+    
+    console.log('========== loadUserProfile finished ==========');
+  }
+
+  // Load saved profile picture and profile data on page load
+  window.addEventListener('DOMContentLoaded', () => {
+    loadUserProfile();
+  });
+
+  // Photo Upload Modal Functionality
+  const photoUploadInput = document.getElementById('photoUploadInput');
+  const photoPreview = document.getElementById('photoPreview');
+  const photoUploadDesc = document.getElementById('photoUploadDesc');
+
+  function openPhotoUploadModal() {
+    document.getElementById('photoUploadModal').classList.add('active');
+  }
+
+  function closePhotoUploadModal() {
+    document.getElementById('photoUploadModal').classList.remove('active');
+    // Reset form
+    document.getElementById('photoUploadTitle').value = '';
+    document.getElementById('photoUploadDesc').value = '';
+    photoPreview.innerHTML = '<i class="fa-solid fa-image"></i>';
+    photoPreview.classList.add('empty');
+    photoUploadInput.value = '';
+    document.getElementById('charCount').textContent = '0';
+  }
+
+  // Handle photo file selection
+  photoUploadInput.addEventListener('change', (event) => {
+    const file = event.target.files[0];
+    if (file && file.type.startsWith('image/')) {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        photoPreview.innerHTML = `<img src="${e.target.result}" alt="Preview">`;
+        photoPreview.classList.remove('empty');
+        photoPreview.dataset.src = e.target.result;
+      };
+      reader.readAsDataURL(file);
+    } else {
+      alert('Please select a valid image file');
+    }
+  });
+
+  // Close modal when clicking outside
+  document.getElementById('photoUploadModal').addEventListener('click', (e) => {
+    if (e.target.id === 'photoUploadModal') {
+      closePhotoUploadModal();
+    }
+  });
+
+  // Character count for description
+  photoUploadDesc.addEventListener('input', () => {
+    document.getElementById('charCount').textContent = photoUploadDesc.value.length;
+  });
+
+  // Submit photo upload
+  async function submitPhotoUpload() {
+    const title = document.getElementById('photoUploadTitle').value.trim();
+    const description = document.getElementById('photoUploadDesc').value.trim();
+    const allowGifts = document.getElementById('photoAllowGifts').checked;
+    const src = photoPreview.dataset.src;
+
+    if (!title) {
+      alert('Please enter a title for your photo');
+      return;
+    }
+
+    if (!src) {
+      alert('Please select a photo');
+      return;
+    }
+
+    try {
+      // Upload to database via API
+      await coshinAPI.uploadPhoto(title, description, src, allowGifts);
+      
+      // Show success notification
+      showPhotoUploadNotification('Photo uploaded successfully!', 'success');
+
+      // Close modal and reset form
+      setTimeout(() => {
+        closePhotoUploadModal();
+        renderRecentUploads();
+      }, 500);
+    } catch (error) {
+      console.error('Photo upload error:', error);
+      showPhotoUploadNotification('Photo upload failed: ' + error.message, 'error');
+    }
+  }
+
+  // Notification for photo upload
+  function showPhotoUploadNotification(message, type = 'success') {
+    const notification = document.createElement('div');
+    notification.style.cssText = `
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      padding: 14px 20px;
+      background: ${type === 'success' ? '#10b981' : '#ef4444'};
+      color: white;
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+      z-index: 9999;
+      animation: slideInRight 0.3s ease;
+      font-weight: 500;
+      max-width: 300px;
+    `;
+    notification.textContent = message;
+    document.body.appendChild(notification);
+
+    setTimeout(() => {
+      notification.style.animation = 'slideOutRight 0.3s ease';
+      setTimeout(() => notification.remove(), 300);
+    }, 3000);
+  }
+
+  // Video Upload Modal Functionality
+  const videoUploadDesc = document.getElementById('videoUploadDesc');
+  const videoUploadInput = document.getElementById('videoUploadInput');
+  const videoPreview = document.getElementById('videoPreview');
+
+  function openVideoUploadModal() {
+    document.getElementById('videoUploadModal').classList.add('active');
+  }
+
+  function closeVideoUploadModal() {
+    document.getElementById('videoUploadModal').classList.remove('active');
+    document.getElementById('videoUploadTitle').value = '';
+    document.getElementById('videoUploadDesc').value = '';
+    videoPreview.innerHTML = '<i class="fa-solid fa-video"></i>';
+    videoPreview.classList.add('empty');
+    videoUploadInput.value = '';
+    document.getElementById('videoCharCount').textContent = '0';
+  }
+
+  // Handle video file selection
+  videoUploadInput.addEventListener('change', (event) => {
+    const file = event.target.files[0];
+    if (file && file.type.startsWith('video/')) {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        videoPreview.innerHTML = `<video style="width: 100%; height: 100%; object-fit: cover;" controls><source src="${e.target.result}" type="${file.type}">Your browser does not support the video tag.</video>`;
+        videoPreview.classList.remove('empty');
+        videoPreview.dataset.src = e.target.result;
+        videoPreview.dataset.fileName = file.name;
+      };
+      reader.readAsDataURL(file);
+    } else {
+      alert('Please select a valid video file');
+    }
+  });
+
+  // Close modal when clicking outside
+  document.getElementById('videoUploadModal').addEventListener('click', (e) => {
+    if (e.target.id === 'videoUploadModal') {
+      closeVideoUploadModal();
+    }
+  });
+
+  // Character count for video description
+  videoUploadDesc.addEventListener('input', () => {
+    document.getElementById('videoCharCount').textContent = videoUploadDesc.value.length;
+  });
+
+  // Submit video upload
+  async function submitVideoUpload() {
+    const title = document.getElementById('videoUploadTitle').value.trim();
+    const description = document.getElementById('videoUploadDesc').value.trim();
+    const allowGifts = document.getElementById('videoAllowGifts').checked;
+    const videoData = videoPreview.dataset.src;
+
+    if (!title) {
+      alert('Please enter a title for your video');
+      return;
+    }
+
+    if (!videoData) {
+      alert('Please select a video file');
+      return;
+    }
+
+    try {
+      // Upload to database via API
+      await coshinAPI.uploadVideo(title, description, videoData, allowGifts);
+      
+      // Show success notification
+      showPhotoUploadNotification('Video uploaded successfully!', 'success');
+
+      // Close modal and reset form
+      setTimeout(() => {
+        closeVideoUploadModal();
+        renderRecentUploads();
+      }, 500);
+    } catch (error) {
+      console.error('Video upload error:', error);
+      showPhotoUploadNotification('Video upload failed: ' + error.message, 'error');
+    }
+  }
+
+  // Post Upload Modal Functionality
+  const postUploadContent = document.getElementById('postUploadContent');
+
+  function openPostUploadModal() {
+    document.getElementById('postUploadModal').classList.add('active');
+  }
+
+  function closePostUploadModal() {
+    document.getElementById('postUploadModal').classList.remove('active');
+    document.getElementById('postUploadTitle').value = '';
+    document.getElementById('postUploadContent').value = '';
+    document.getElementById('postCharCount').textContent = '0';
+  }
+
+  // Close modal when clicking outside
+  document.getElementById('postUploadModal').addEventListener('click', (e) => {
+    if (e.target.id === 'postUploadModal') {
+      closePostUploadModal();
+    }
+  });
+
+  // Character count for post content
+  postUploadContent.addEventListener('input', () => {
+    document.getElementById('postCharCount').textContent = postUploadContent.value.length;
+  });
+
+  // Submit post upload
+  async function submitPostUpload() {
+    const title = document.getElementById('postUploadTitle').value.trim();
+    const content = document.getElementById('postUploadContent').value.trim();
+    const allowGifts = document.getElementById('postAllowGifts').checked;
+
+    if (!title) {
+      alert('Please enter a title for your post');
+      return;
+    }
+
+    if (!content) {
+      alert('Please write some content for your post');
+      return;
+    }
+
+    try {
+      // Log current user before posting
+      const currentUser = coshinAPI.getCurrentUser();
+      console.log('🔍 Creating post with currentUser:', currentUser);
+      console.log('📤 Posting as user_id:', currentUser?.id || 1);
+      
+      // Upload to database via API
+      await coshinAPI.createPost(title, content, allowGifts);
+      
+      console.log('✅ Post created successfully');
+      
+      // Clear any cached feed data to force refresh on homepage
+      localStorage.removeItem('feedCache');
+      sessionStorage.removeItem('feedCache');
+      
+      // Show success notification
+      showPhotoUploadNotification('Post published successfully!', 'success');
+
+      // Close modal and reset form
+      setTimeout(() => {
+        closePostUploadModal();
+        renderRecentUploads();
+      }, 500);
+    } catch (error) {
+      console.error('Post upload error:', error);
+      showPhotoUploadNotification('Post failed: ' + error.message, 'error');
+    }
+  }
+
+  // Subscribe Button Functionality
+  const subscribeBtn = document.getElementById('subscribeBtn');
+  const currentUserEmail = localStorage.getItem('userEmail') || 'guest';
+  
+  // Initialize subscribe button state
+  function initSubscribeButton() {
+    const userSubscriptions = JSON.parse(localStorage.getItem('userSubscriptions') || '{}');
+    const isSubscribed = userSubscriptions[currentUserEmail] ? true : false;
+    updateSubscribeButtonState(isSubscribed);
+  }
+  
+  function updateSubscribeButtonState(isSubscribed) {
+    subscribeBtn.setAttribute('data-subscribed', isSubscribed ? 'true' : 'false');
+    if (isSubscribed) {
+      subscribeBtn.textContent = 'Unsubscribe';
+      subscribeBtn.classList.add('subscribed');
+    } else {
+      subscribeBtn.textContent = 'Subscribe';
+      subscribeBtn.classList.remove('subscribed');
+    }
+  }
+  
+  function showNotification(message, type = 'success') {
+    const notification = document.createElement('div');
+    notification.style.cssText = `
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      padding: 14px 20px;
+      background: ${type === 'success' ? '#10b981' : '#ef4444'};
+      color: white;
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+      z-index: 9999;
+      animation: slideInRight 0.3s ease;
+      font-weight: 500;
+      max-width: 300px;
+    `;
+    notification.textContent = message;
+    document.body.appendChild(notification);
+    
+    setTimeout(() => {
+      notification.style.animation = 'slideOutRight 0.3s ease';
+      setTimeout(() => notification.remove(), 300);
+    }, 3000);
+  }
+  
+  // Add animation styles
+  const notificationStyle = document.createElement('style');
+  notificationStyle.textContent = `
+    @keyframes slideInRight { from { transform: translateX(400px); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+    @keyframes slideOutRight { from { transform: translateX(0); opacity: 1; } to { transform: translateX(400px); opacity: 0; } }
+  `;
+  document.head.appendChild(notificationStyle);
+  
+  // Handle subscribe button click
+  subscribeBtn.addEventListener('click', async () => {
+    const isCurrentlySubscribed = subscribeBtn.getAttribute('data-subscribed') === 'true';
+    const newState = !isCurrentlySubscribed;
+    
+    // Save to localStorage (MySQL subscription endpoint to be added later)
+    try {
+      const userSubscriptions = JSON.parse(localStorage.getItem('userSubscriptions') || '{}');
+      if (newState) {
+        userSubscriptions[currentUserEmail] = {
+          subscribedAt: new Date().toISOString(),
+          profilePage: window.location.pathname
+        };
+        showNotification('Successfully subscribed!', 'success');
+      } else {
+        delete userSubscriptions[currentUserEmail];
+        showNotification('Successfully unsubscribed!', 'success');
+      }
+      localStorage.setItem('userSubscriptions', JSON.stringify(userSubscriptions));
+      
+      // Update button state
+      updateSubscribeButtonState(newState);
+    } catch (error) {
+      console.error('Subscription error:', error);
+      showNotification('Error updating subscription. Please try again.', 'error');
+    }
+  });
+  
+  // My Products - Now redirects to user-products.html page
+  // Modal functionality removed as shop icon now links directly to products page
+
+  // Upload content functionality
+  const uploadTabBtns = document.querySelectorAll('.upload-tab-btn');
+  uploadTabBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      const uploadType = btn.getAttribute('data-upload-type');
+      
+      // Remove active class from all buttons and tabs
+      document.querySelectorAll('.upload-tab-btn').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('.upload-tab-content').forEach(t => t.classList.remove('active'));
+      
+      // Add active class to clicked button and corresponding tab
+      btn.classList.add('active');
+      document.getElementById(uploadType + 'UploadTab').classList.add('active');
+    });
+  });
+
+  // Upload content function - deprecated, use submitPhotoUpload, submitVideoUpload, submitPostUpload instead
+  function uploadContent(type) {
+    alert('Please use the upload modals to publish content');
+  }
+
+  // Footer Navigation - Set Active Link
+  function updateActiveFooterLink() {
+    const currentPage = window.location.pathname.split('/').pop() || 'index.html';
+    document.querySelectorAll('.footer-link').forEach(link => {
+      link.classList.remove('active');
+    });
+    let activeLink;
+    if (currentPage.includes('account')) {
+      activeLink = document.querySelector('[data-page="account"]');
+    } else if (currentPage.includes('messages')) {
+      activeLink = document.querySelector('[data-page="messages"]');
+    } else if (currentPage.includes('coshinmarket')) {
+      activeLink = document.querySelector('[data-page="coshinmarket"]');
+    } else if (currentPage.includes('reels')) {
+      activeLink = document.querySelector('[data-page="reels"]');
+    } else {
+      activeLink = document.querySelector('[data-page="home"]');
+    }
+    if (activeLink) {
+      activeLink.classList.add('active');
+    }
+  }
+
+  // (ripple setup moved to DOMContentLoaded to ensure footer links exist)
+
+  document.addEventListener('DOMContentLoaded', () => {
+    updateActiveFooterLink();
+    renderRecentUploads();
+    initSubscribeButton();
+
+    // Load profile data from localStorage
+    const profileData = JSON.parse(localStorage.getItem('userProfile') || '{}');
+    if (profileData.name) {
+      document.getElementById('displayName').textContent = profileData.name;
+    }
+    if (profileData.bio) {
+      document.getElementById('displayBio').textContent = profileData.bio;
+    }
+
+    // Add ripple effect to footer links (footer exists now)
+    document.querySelectorAll('.footer-link').forEach(link => {
+      link.addEventListener('click', function(e) {
+        const ripple = document.createElement('span');
+        const rect = this.getBoundingClientRect();
+        const size = Math.max(rect.width, rect.height);
+        const x = e.clientX - rect.left - size / 2;
+        const y = e.clientY - rect.top - size / 2;
+        ripple.style.width = ripple.style.height = size + 'px';
+        ripple.style.left = x + 'px';
+        ripple.style.top = y + 'px';
+        ripple.classList.add('ripple');
+        if (!document.querySelector('style[data-ripple]')) {
+          const style = document.createElement('style');
+          style.setAttribute('data-ripple', 'true');
+          style.textContent = `
+            .footer a {
+              position: relative;
+              overflow: hidden;
+            }
+            .ripple {
+              position: absolute;
+              border-radius: 50%;
+              background: radial-gradient(circle, rgba(255, 107, 107, 0.6) 0%, rgba(255, 107, 107, 0) 70%);
+              transform: scale(0);
+              animation: rippleAnimation 0.6s ease-out;
+              pointer-events: none;
+            }
+            @keyframes rippleAnimation {
+              to {
+                transform: scale(4);
+                opacity: 0;
+              }
+            }
+          `;
+          document.head.appendChild(style);
+        }
+        this.appendChild(ripple);
+        setTimeout(() => ripple.remove(), 600);
+      });
+    });
+  });
+</script>
+
+<footer>
+  <div class="footer">
+    <a href="index.html" class="footer-link" data-page="home" title="Home">
+      <i class="fa-solid fa-house"></i>
+      <span class="footer-tooltip">Home</span>
+    </a>
+    <a href="messages.html" class="footer-link" data-page="messages" title="Messages">
+      <i class="fa-solid fa-message"></i>
+      <span class="footer-tooltip">Messages</span>
+    </a>
+    <a href="coshinmarket.html" class="footer-link" data-page="coshinmarket" title="Shop">
+      <i class="fa-solid fa-shop"></i>
+      <span class="footer-tooltip">Shop</span>
+    </a>
+    <a href="reels.html" class="footer-link" data-page="reels" title="Reels">
+      <i class="fa-solid fa-tv"></i>
+      <span class="footer-tooltip">Reels</span>
+    </a>
+    <a href="account.html" class="footer-link active" data-page="account" title="Account">
+      <i class="fa-solid fa-user"></i>
+      <span class="footer-tooltip">Account</span>
+    </a>
+  </div>
+</footer>
+
+<script>
+  // ============ CAMERA FUNCTIONALITY ============
+  let cameraStream = null;
+  let currentFilter = 'normal';
+  let currentCameraMode = 'user'; // 'user' for front, 'environment' for back
+  let capturedImageData = null;
+  let cameraPermissionRequested = localStorage.getItem('cameraPermissionRequested') === 'true';
+
+  // Request camera permission
+  function openCameraPermissionModal() {
+    document.getElementById('cameraPermissionModal').style.display = 'flex';
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeCameraPermissionModal() {
+    document.getElementById('cameraPermissionModal').style.display = 'none';
+    document.body.style.overflow = '';
+  }
+
+  async function requestCameraPermission() {
+    try {
+      // Request camera permission
+      const stream = await navigator.mediaDevices.getUserMedia({ 
+        video: { width: { ideal: 1280 }, height: { ideal: 720 } }, 
+        audio: false 
+      });
+      
+      // Permission granted, stop the test stream and mark as requested
+      stream.getTracks().forEach(track => track.stop());
+      
+      localStorage.setItem('cameraPermissionRequested', 'true');
+      cameraPermissionRequested = true;
+      closeCameraPermissionModal();
+      
+      // Now proceed to actually open the camera
+      setTimeout(startCamera, 100);
+    } catch (error) {
+      let errorMessage = 'Camera access error: ';
+      if (error.name === 'NotAllowedError') {
+        errorMessage = 'Permission denied. Please allow camera access in your browser settings.';
+      } else if (error.name === 'NotFoundError') {
+        errorMessage = 'No camera device found on your device.';
+      } else {
+        errorMessage = 'Error accessing camera: ' + error.message;
+      }
+      
+      // Show error in permission modal
+      const permissionError = document.getElementById('permissionError');
+      if (permissionError) {
+        permissionError.textContent = errorMessage;
+        permissionError.style.display = 'block';
+      } else {
+        alert(errorMessage);
+      }
+    }
+  }
+
+  // Open camera modal
+  function openCameraModal() {
+    // Check if permission was already requested
+    if (!cameraPermissionRequested) {
+      openCameraPermissionModal();
+    } else {
+      document.getElementById('cameraModal').style.display = 'flex';
+      document.body.style.overflow = 'hidden';
+    }
+  }
+
+  // Close camera modal
+  function closeCameraModal() {
+    stopCamera();
+    document.getElementById('cameraModal').style.display = 'none';
+    document.body.style.overflow = '';
+    clearCameraError();
+  }
+
+  // Show camera error
+  function showCameraError(message) {
+    const errorDiv = document.getElementById('cameraError');
+    errorDiv.textContent = message;
+    errorDiv.style.display = 'block';
+  }
+
+  // Clear camera error
+  function clearCameraError() {
+    document.getElementById('cameraError').style.display = 'none';
+  }
+
+  // Switch between capture and filter modes
+  function switchCameraMode(mode) {
+    const captureMode = document.getElementById('captureMode');
+    const filterMode = document.getElementById('filterMode');
+    const buttons = document.querySelectorAll('.camera-toggle-btn');
+
+    buttons.forEach(btn => btn.classList.remove('active'));
+    event.target.classList.add('active');
+
+    if (mode === 'capture') {
+      captureMode.style.display = 'block';
+      filterMode.style.display = 'none';
+    } else {
+      captureMode.style.display = 'none';
+      filterMode.style.display = 'block';
+      if (capturedImageData) {
+        displayCapturedImageInBeauty();
+      }
+    }
+  }
+
+  // Start camera
+  async function startCamera() {
+    const video = document.getElementById('cameraVideo');
+    const startBtn = document.getElementById('startCameraBtn');
+    const stopBtn = document.getElementById('stopCameraBtn');
+    const snapBtn = document.getElementById('snapBtn');
+    const switchBtn = document.getElementById('switchCamBtn');
+
+    clearCameraError();
+
+    try {
+      const constraints = {
+        video: {
+          facingMode: currentCameraMode,
+          width: { ideal: 1280 },
+          height: { ideal: 720 }
+        }
+      };
+
+      cameraStream = await navigator.mediaDevices.getUserMedia(constraints);
+      video.srcObject = cameraStream;
+
+      // Hide start button, show stop, snap, and switch buttons
+      startBtn.style.display = 'none';
+      stopBtn.style.display = 'inline-block';
+      snapBtn.style.display = 'inline-block';
+      switchBtn.style.display = 'inline-block';
+
+      // Wait for video to be ready
+      video.onloadedmetadata = () => {
+        video.play();
+      };
+
+    } catch (error) {
+      let errorMessage = 'Unable to access camera. ';
+      if (error.name === 'NotAllowedError') {
+        errorMessage += 'Permission denied. Please allow camera access in settings.';
+      } else if (error.name === 'NotFoundError' || error.name === 'DevicesNotFoundError') {
+        errorMessage += 'No camera device found.';
+      } else if (error.name === 'NotReadableError' || error.name === 'SecurityError') {
+        errorMessage += 'Camera is being used by another application.';
+      } else {
+        errorMessage += error.message;
+      }
+      showCameraError(errorMessage);
+      console.error('Camera error:', error);
+    }
+  }
+
+  // Stop camera
+  function stopCamera() {
+    const video = document.getElementById('cameraVideo');
+    const startBtn = document.getElementById('startCameraBtn');
+    const stopBtn = document.getElementById('stopCameraBtn');
+    const snapBtn = document.getElementById('snapBtn');
+    const switchBtn = document.getElementById('switchCamBtn');
+
+    if (cameraStream) {
+      cameraStream.getTracks().forEach(track => track.stop());
+      cameraStream = null;
+      video.srcObject = null;
+    }
+
+    // Show start button, hide stop, snap, and switch buttons
+    startBtn.style.display = 'inline-block';
+    stopBtn.style.display = 'none';
+    snapBtn.style.display = 'none';
+    switchBtn.style.display = 'none';
+
+    clearCameraError();
+  }
+
+  // Switch between front and back camera
+  async function switchCamera() {
+    if (cameraStream) {
+      stopCamera();
+      currentCameraMode = currentCameraMode === 'user' ? 'environment' : 'user';
+      // Small delay to ensure camera is fully stopped
+      setTimeout(startCamera, 100);
+    }
+  }
+
+  // Snap a photo from camera
+  function snapPhoto() {
+    const video = document.getElementById('cameraVideo');
+    const canvas = document.getElementById('cameraCanvas');
+    const ctx = canvas.getContext('2d');
+
+    if (!video) return;
+
+    // Set canvas size to match video
+    canvas.width = video.videoWidth;
+    canvas.height = video.videoHeight;
+
+    // Draw video frame to canvas
+    ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+    // Apply current filter
+    applyCanvasFilter(ctx, canvas, currentFilter);
+
+    // Save image data
+    capturedImageData = {
+      canvas: canvas,
+      imageData: canvas.toDataURL('image/jpeg', 0.95)
+    };
+
+    // Show the use photo button
+    document.getElementById('useCameraPhotoBtn').style.display = 'inline-block';
+
+    showCameraError('✓ Photo captured! Switch to Filters tab to edit or click "Use Photo" to proceed.');
+  }
+
+  // Apply filter to canvas
+  function applyCanvasFilter(ctx, canvas, filter) {
+    const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+    const data = imageData.data;
+
+    switch (filter) {
+      case 'vintage':
+        applyVintageFilter(data);
+        break;
+      case 'sepia':
+        applySepiaFilter(data);
+        break;
+      case 'bw':
+        applyBWFilter(data);
+        break;
+      case 'warm':
+        applyWarmFilter(data);
+        break;
+      case 'cool':
+        applyCoolFilter(data);
+        break;
+      case 'vivid':
+        applyVividFilter(data);
+        break;
+      case 'blur':
+        applyBlurFilter(ctx, canvas);
+        return;
+      case 'normal':
+      default:
+        // No filter
+        break;
+    }
+
+    ctx.putImageData(imageData, 0, 0);
+  }
+
+  // Filter implementations
+  function applySepiaFilter(data) {
+    for (let i = 0; i < data.length; i += 4) {
+      const r = data[i], g = data[i + 1], b = data[i + 2];
+      data[i] = Math.min(255, r * 0.393 + g * 0.769 + b * 0.189);
+      data[i + 1] = Math.min(255, r * 0.349 + g * 0.686 + b * 0.168);
+      data[i + 2] = Math.min(255, r * 0.272 + g * 0.534 + b * 0.131);
+    }
+  }
+
+  function applyBWFilter(data) {
+    for (let i = 0; i < data.length; i += 4) {
+      const gray = data[i] * 0.299 + data[i + 1] * 0.587 + data[i + 2] * 0.114;
+      data[i] = gray;
+      data[i + 1] = gray;
+      data[i + 2] = gray;
+    }
+  }
+
+  function applyWarmFilter(data) {
+    for (let i = 0; i < data.length; i += 4) {
+      data[i] = Math.min(255, data[i] * 1.1); // Increase red
+      data[i + 2] = Math.max(0, data[i + 2] * 0.8); // Decrease blue
+    }
+  }
+
+  function applyCoolFilter(data) {
+    for (let i = 0; i < data.length; i += 4) {
+      data[i] = Math.max(0, data[i] * 0.8); // Decrease red
+      data[i + 2] = Math.min(255, data[i + 2] * 1.1); // Increase blue
+    }
+  }
+
+  function applyVividFilter(data) {
+    for (let i = 0; i < data.length; i += 4) {
+      const r = data[i], g = data[i + 1], b = data[i + 2];
+      data[i] = Math.min(255, r * 1.2);
+      data[i + 1] = Math.min(255, g * 1.2);
+      data[i + 2] = Math.min(255, b * 1.2);
+    }
+  }
+
+  function applyVintageFilter(data) {
+    for (let i = 0; i < data.length; i += 4) {
+      const r = data[i], g = data[i + 1], b = data[i + 2];
+      data[i] = Math.min(255, r * 1.1 + 30);
+      data[i + 1] = Math.min(255, g * 1.0 + 20);
+      data[i + 2] = Math.max(0, b * 0.9 - 10);
+    }
+  }
+
+  function applyBlurFilter(ctx, canvas) {
+    // Simple box blur
+    ctx.filter = 'blur(3px)';
+    ctx.drawImage(canvas, 0, 0);
+  }
+
+  // Apply filter to preset button click
+  function applyFilter(filterName) {
+    currentFilter = filterName;
+    const buttons = document.querySelectorAll('.preset-filter');
+    buttons.forEach(btn => btn.classList.remove('active'));
+    event.target.classList.add('active');
+
+    if (capturedImageData) {
+      const canvas = document.getElementById('cameraCanvas');
+      const ctx = canvas.getContext('2d');
+      const video = document.getElementById('cameraVideo');
+
+      if (video && video.srcObject) {
+        // Redraw from video with new filter
+        canvas.width = video.videoWidth;
+        canvas.height = video.videoHeight;
+        ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+        applyCanvasFilter(ctx, canvas, currentFilter);
+      }
+    }
+  }
+
+  // Display captured image in beauty mode
+  function displayCapturedImageInBeauty() {
+    if (!capturedImageData) return;
+
+    const canvas = document.getElementById('beautyCanvas');
+    const ctx = canvas.getContext('2d');
+    const img = new Image();
+
+    img.onload = () => {
+      canvas.width = img.width;
+      canvas.height = img.height;
+      ctx.drawImage(img, 0, 0);
+      updateBeautyFilter();
+    };
+
+    img.src = capturedImageData.imageData;
+  }
+
+  // Update beauty filter settings
+  function updateBeautyFilter() {
+    if (!capturedImageData) return;
+
+    const canvas = document.getElementById('beautyCanvas');
+    const ctx = canvas.getContext('2d');
+    const img = new Image();
+
+    const brightness = parseFloat(document.getElementById('brightnessSlider').value);
+    const contrast = parseFloat(document.getElementById('contrastSlider').value);
+    const saturation = parseFloat(document.getElementById('saturationSlider').value);
+    const hue = parseFloat(document.getElementById('hueSlider').value);
+    const blur = parseFloat(document.getElementById('blurSlider').value);
+    const opacity = parseFloat(document.getElementById('opacitySlider').value);
+
+    // Update value displays
+    document.getElementById('brightnessValue').textContent = Math.round(brightness * 100) + '%';
+    document.getElementById('contrastValue').textContent = Math.round(contrast * 100) + '%';
+    document.getElementById('saturationValue').textContent = Math.round(saturation * 100) + '%';
+    document.getElementById('hueValue').textContent = hue + '°';
+    document.getElementById('blurValue').textContent = blur + 'px';
+    document.getElementById('opacityValue').textContent = Math.round(opacity * 100) + '%';
+
+    img.onload = () => {
+      canvas.width = img.width;
+      canvas.height = img.height;
+
+      // Apply CSS filters via canvas filter property
+      let filterString = `brightness(${brightness}) contrast(${contrast}) saturate(${saturation}) hue-rotate(${hue}deg)`;
+      if (blur > 0) {
+        filterString += ` blur(${blur}px)`;
+      }
+
+      ctx.filter = filterString;
+      ctx.globalAlpha = opacity;
+      ctx.drawImage(img, 0, 0);
+      ctx.globalAlpha = 1;
+    };
+
+    img.src = capturedImageData.imageData;
+  }
+
+  // Use captured photo
+  function useCameraPhoto() {
+    if (!capturedImageData) {
+      showCameraError('No photo captured');
+      return;
+    }
+
+    // Save to a form or localStorage for uploading
+    localStorage.setItem('cameraPhoto', capturedImageData.imageData);
+
+    // Alert user and close modal
+    showCameraError('✓ Photo saved! Ready to upload.');
+    setTimeout(() => {
+      closeCameraModal();
+      // Auto-fill photo input if available (optional)
+      if (document.getElementById('photoFile')) {
+        // We'll need to convert the data URL to a File object
+        // For now, just show success message
+      }
+    }, 1000);
+  }
+
+  // ============================================
+  // REEL CAMERA RECORDING FUNCTIONS
+  // ============================================
+
+  let reelStream = null;
+  let mediaRecorder = null;
+  let recordedChunks = [];
+  let recordingStartTime = null;
+  let recordingTimer = null;
+  let currentReelCamera = 'user'; // 'user' for front, 'environment' for back
+  let reelFlashEnabled = false;
+
+  function openReelCameraModal() {
+    document.getElementById('reelCameraModal').style.display = 'flex';
+    startReelCamera();
+  }
+
+  function closeReelCameraModal() {
+    document.getElementById('reelCameraModal').style.display = 'none';
+    stopReelCamera();
+    clearReelRecording();
+  }
+
+  async function startReelCamera() {
+    try {
+      reelStream = await navigator.mediaDevices.getUserMedia({
+        video: { facingMode: currentReelCamera },
+        audio: true
+      });
+      const videoElement = document.getElementById('reelVideo');
+      videoElement.srcObject = reelStream;
+      document.getElementById('reelStartBtn').style.display = 'flex';
+      document.getElementById('reelSwitchBtn').style.display = 'flex';
+      clearReelCameraError();
+
+      // Enable flash if it was previously enabled
+      if (reelFlashEnabled && currentReelCamera === 'environment') {
+        await enableReelFlash();
+      }
+    } catch (error) {
+      showReelCameraError('Camera access denied. Please allow camera permissions.');
+      console.error('Camera error:', error);
+    }
+  }
+
+  function stopReelCamera() {
+    if (reelStream) {
+      reelStream.getTracks().forEach(track => track.stop());
+      reelStream = null;
+    }
+  }
+
+  function switchReelCamera() {
+    currentReelCamera = currentReelCamera === 'user' ? 'environment' : 'user';
+    stopReelCamera();
+    startReelCamera();
+  }
+
+  async function toggleReelFlash() {
+    if (!reelStream) {
+      alert('Camera not ready');
+      return;
+    }
+
+    // Flash only works on back camera (environment)
+    if (currentReelCamera === 'user') {
+      alert('Flash is only available on the back camera');
+      return;
+    }
+
+    reelFlashEnabled = !reelFlashEnabled;
+    const flashIcon = document.getElementById('flashIcon');
+    const flashBtn = document.getElementById('flashToggleBtn');
+
+    if (reelFlashEnabled) {
+      await enableReelFlash();
+      flashIcon.style.color = '#FFD700';
+      flashBtn.style.background = 'rgba(255, 215, 0, 0.3)';
+    } else {
+      await disableReelFlash();
+      flashIcon.style.color = 'white';
+      flashBtn.style.background = 'rgba(255, 255, 255, 0.2)';
+    }
+  }
+
+  async function enableReelFlash() {
+    try {
+      const track = reelStream.getVideoTracks()[0];
+      const capabilities = track.getCapabilities();
+      
+      if (capabilities.torch) {
+        await track.applyConstraints({
+          advanced: [{ torch: true }]
+        });
+      } else {
+        console.log('Flash not supported on this device');
+      }
+    } catch (error) {
+      console.error('Flash error:', error);
+    }
+  }
+
+  async function disableReelFlash() {
+    try {
+      const track = reelStream.getVideoTracks()[0];
+      await track.applyConstraints({
+        advanced: [{ torch: false }]
+      });
+    } catch (error) {
+      console.error('Flash error:', error);
+    }
+  }
+
+  let currentReelFilter = 'none';
+
+  function applyReelFilter(filterName) {
+    currentReelFilter = filterName;
+    const video = document.getElementById('reelVideo');
+    
+    // Remove active class from all filters
+    document.querySelectorAll('.filter-option').forEach(opt => {
+      opt.classList.remove('active');
+    });
+    
+    // Add active class to selected filter
+    const selectedFilter = document.querySelector(`[data-filter="${filterName}"]`);
+    if (selectedFilter) {
+      selectedFilter.classList.add('active');
+    }
+    
+    // Apply filter
+    switch(filterName) {
+      case 'none':
+        video.style.filter = 'none';
+        break;
+      case 'vintage':
+        video.style.filter = 'sepia(0.5) contrast(1.2) brightness(0.9)';
+        break;
+      case 'vivid':
+        video.style.filter = 'saturate(1.8) contrast(1.2)';
+        break;
+      case 'cool':
+        video.style.filter = 'hue-rotate(180deg) saturate(1.2)';
+        break;
+      case 'warm':
+        video.style.filter = 'sepia(0.3) saturate(1.4) brightness(1.1)';
+        break;
+      case 'bw':
+        video.style.filter = 'grayscale(1) contrast(1.1)';
+        break;
+      case 'dramatic':
+        video.style.filter = 'contrast(1.5) brightness(0.9) saturate(1.3)';
+        break;
+      case 'sunset':
+        video.style.filter = 'sepia(0.4) hue-rotate(330deg) saturate(1.5)';
+        break;
+      case 'bright':
+        video.style.filter = 'brightness(1.3) contrast(1.1) saturate(1.2)';
+        break;
+      case 'blur':
+        video.style.filter = 'blur(3px)';
+        break;
+      default:
+        video.style.filter = 'none';
+    }
+  }
+
+  function openReelGallery() {
+    document.getElementById('reelGalleryInput').click();
+  }
+
+  async function handleReelGallerySelection(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    try {
+      // Validate file size (max 100MB)
+      const maxSize = 100 * 1024 * 1024;
+      if (file.size > maxSize) {
+        alert('File is too large. Maximum size is 100MB.');
+        return;
+      }
+
+      // Show loading state
+      const errorDiv = document.getElementById('reelCameraError');
+      errorDiv.style.display = 'none';
+      
+      // Stop camera stream
+      stopReelCamera();
+
+      // Preview the selected media
+      const videoPreview = document.getElementById('reelVideo');
+      const fileUrl = URL.createObjectURL(file);
+      videoPreview.srcObject = null;
+      videoPreview.src = fileUrl;
+      videoPreview.controls = false;
+      videoPreview.muted = false;
+      videoPreview.play();
+
+      // Convert to base64 and upload
+      const reader = new FileReader();
+      reader.onloadend = async () => {
+        try {
+          const base64Data = reader.result;
+          const profileData = JSON.parse(localStorage.getItem('userProfile') || '{}');
+          
+          // Show uploading message
+          errorDiv.textContent = 'Uploading...';
+          errorDiv.style.background = '#dbeafe';
+          errorDiv.style.color = '#1e40af';
+          errorDiv.style.borderLeft = '4px solid #3b82f6';
+          errorDiv.style.display = 'block';
+
+          let result;
+          if (file.type.startsWith('video/')) {
+            const videoData = {
+              video: base64Data,
+              caption: 'Uploaded from gallery',
+              profile_picture: profileData.profile_picture || profileData.profilePicture || ''
+            };
+            result = await coshinAPI.uploadVideo(videoData);
+          } else {
+            const photoData = {
+              photo: base64Data,
+              caption: 'Uploaded from gallery',
+              profile_picture: profileData.profile_picture || profileData.profilePicture || ''
+            };
+            result = await coshinAPI.uploadPhoto(photoData);
+          }
+
+          if (result.success) {
+            alert('Uploaded successfully!');
+            closeReelCameraModal();
+            location.reload();
+          } else {
+            throw new Error(result.error || 'Upload failed');
+          }
+        } catch (error) {
+          console.error('Upload error:', error);
+          errorDiv.textContent = 'Upload failed: ' + error.message;
+          errorDiv.style.background = '#fee2e2';
+          errorDiv.style.color = '#dc2626';
+          errorDiv.style.borderLeft = '4px solid #dc2626';
+          errorDiv.style.display = 'block';
+        }
+      };
+      reader.readAsDataURL(file);
+
+    } catch (error) {
+      console.error('File selection error:', error);
+      alert('Failed to process file: ' + error.message);
+    } finally {
+      // Reset file input
+      event.target.value = '';
+    }
+  }
+
+  function startReelRecording() {
+    if (!reelStream) {
+      showReelCameraError('Camera not ready');
+      return;
+    }
+
+    recordedChunks = [];
+    const options = { mimeType: 'video/webm;codecs=vp9' };
+    if (!MediaRecorder.isTypeSupported(options.mimeType)) {
+      options.mimeType = 'video/webm;codecs=vp8';
+    }
+    if (!MediaRecorder.isTypeSupported(options.mimeType)) {
+      options.mimeType = 'video/webm';
+    }
+
+    mediaRecorder = new MediaRecorder(reelStream, options);
+    mediaRecorder.ondataavailable = (event) => {
+      if (event.data.size > 0) {
+        recordedChunks.push(event.data);
+      }
+    };
+
+    mediaRecorder.onstop = () => {
+      const blob = new Blob(recordedChunks, { type: 'video/webm' });
+      uploadRecordedReel(blob);
+    };
+
+    recordedChunks = [];
+    mediaRecorder.start();
+    recordingStartTime = Date.now();
+    startReelRecordingTimer();
+
+    document.getElementById('reelStartBtn').style.display = 'none';
+    document.getElementById('reelStopBtn').style.display = 'flex';
+    document.getElementById('reelSwitchBtn').disabled = true;
+    document.getElementById('reelRecordingTimer').style.display = 'flex';
+  }
+
+  function stopReelRecording() {
+    if (mediaRecorder && mediaRecorder.state !== 'inactive') {
+      mediaRecorder.stop();
+      clearInterval(recordingTimer);
+      
+      // Update UI
+      document.getElementById('reelStartBtn').style.display = 'flex';
+      document.getElementById('reelStopBtn').style.display = 'none';
+      document.getElementById('reelSwitchBtn').disabled = false;
+      document.getElementById('reelRecordingTimer').style.display = 'none';
+    }
+  }
+
+  function startReelRecordingTimer() {
+    const timerElement = document.getElementById('reelTimerText');
+    timerElement.textContent = '0:00';
+    document.getElementById('reelRecordingTimer').style.display = 'flex';
+    recordingTimer = setInterval(() => {
+      const elapsed = Math.floor((Date.now() - recordingStartTime) / 1000);
+      const minutes = Math.floor(elapsed / 60);
+      const seconds = elapsed % 60;
+      timerElement.textContent = `${minutes}:${String(seconds).padStart(2, '0')}`;
+    }, 1000);
+  }
+
+  function clearReelRecording() {
+    recordedChunks = [];
+    mediaRecorder = null;
+    recordingStartTime = null;
+  }
+
+  async function uploadRecordedReel(blob) {
+    if (!blob) {
+      showReelCameraError('No recording found');
+      return;
+    }
+
+    try {
+      // Show loading state
+      document.getElementById('reelStopBtn').disabled = true;
+      
+      const reader = new FileReader();
+      reader.onload = async (e) => {
+        const base64Video = e.target.result;
+        const profileData = JSON.parse(localStorage.getItem('userProfile') || '{}');
+        const videoData = {
+          video: base64Video,
+          caption: 'Recorded from camera',
+          profile_picture: profileData.profile_picture || profileData.profilePicture || ''
+        };
+        
+        const result = await coshinAPI.uploadVideo(videoData);
+        if (result.success) {
+          alert('Reel uploaded successfully!');
+          closeReelCameraModal();
+          location.reload();
+        } else {
+          throw new Error(result.error || 'Upload failed');
+        }
+      };
+      reader.readAsDataURL(blob);
+    } catch (error) {
+      console.error('Upload error:', error);
+      alert('Failed to upload reel: ' + error.message);
+      document.getElementById('reelStopBtn').disabled = false;
+    }
+  }
+
+  function showReelCameraError(message) {
+    const errorDiv = document.getElementById('reelCameraError');
+    errorDiv.textContent = message;
+    errorDiv.style.display = 'block';
+    setTimeout(() => {
+      errorDiv.style.display = 'none';
+    }, 5000);
+  }
+
+  function clearReelCameraError() {
+    document.getElementById('reelCameraError').style.display = 'none';
+  }
+
+</script>
+<script src="title-fixer.js"></script>
+</div>
+</body>
+</html>

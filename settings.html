@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Settings - Coshin.com</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="style.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Helvetica, Arial, sans-serif;
+            background: #fafafa;
+            color: #222;
+        }
+
+        .settings-container {
+            max-width: 600px;
+            margin: 60px auto;
+            padding: 0 20px 120px;
+            box-sizing: border-box;
+        }
+
+        .settings-header {
+            margin-bottom: 30px;
+        }
+
+        .settings-header h1 {
+            font-size: 28px;
+            margin-bottom: 8px;
+            color: #0EA5E9;
+        }
+
+        .settings-header p {
+            color: #666;
+            font-size: 14px;
+        }
+
+        .settings-section {
+            background: white;
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        }
+
+        .settings-section h2 {
+            font-size: 18px;
+            margin-bottom: 20px;
+            color: #111827;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .settings-section h2 i {
+            color: #0EA5E9;
+            font-size: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group:last-child {
+            margin-bottom: 0;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #111827;
+            font-size: 14px;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            box-sizing: border-box;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #0EA5E9;
+            box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.1);
+        }
+
+        .form-group small {
+            display: block;
+            margin-top: 6px;
+            color: #666;
+            font-size: 12px;
+        }
+
+        .preset-buttons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-top: 12px;
+        }
+
+        .preset-btn {
+            padding: 10px;
+            background: #f5f6f8;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 600;
+            color: #0EA5E9;
+            transition: all 0.3s ease;
+        }
+
+        .preset-btn:hover {
+            background: #0EA5E9;
+            color: white;
+            border-color: #0EA5E9;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 12px;
+            margin-top: 20px;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary {
+            background: #0EA5E9;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #0084d9;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(14, 165, 233, 0.3);
+        }
+
+        .btn-secondary {
+            background: #f5f6f8;
+            color: #111827;
+            border: 1px solid #e5e7eb;
+        }
+
+        .btn-secondary:hover {
+            background: #e5e7eb;
+        }
+
+        .btn-danger {
+            background: #ef4444;
+            color: white;
+            border: 1px solid #ef4444;
+        }
+
+        .btn-danger:hover {
+            background: #dc2626;
+            border-color: #dc2626;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(220, 38, 38, 0.3);
+        }
+
+        .session-actions {
+            margin-top: 12px;
+            display: flex;
+            gap: 12px;
+        }
+
+        .status-message {
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 14px;
+            display: none;
+        }
+
+        .status-message.success {
+            background: #d1fae5;
+            color: #065f46;
+            display: block;
+        }
+
+        .status-message.error {
+            background: #fee2e2;
+            color: #991b1b;
+            display: block;
+        }
+
+        .status-message.info {
+            background: #dbeafe;
+            color: #1e40af;
+            display: block;
+        }
+
+        .connection-status {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px;
+            background: #f5f6f8;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+
+        .status-indicator {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: #ef4444;
+        }
+
+        .status-indicator.connected {
+            background: #10b981;
+        }
+
+        @media (max-width: 768px) {
+            .settings-container {
+                margin: 20px auto;
+            }
+
+            .preset-buttons {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="settings-container">
+    <div class="settings-header">
+        <h1><i class="fa-solid fa-gear"></i> Settings</h1>
+        <p>Configure API server and preferences</p>
+    </div>
+
+    <div id="statusMessage" class="status-message"></div>
+
+    <!-- API Server Configuration -->
+    <div class="settings-section">
+        <h2><i class="fa-solid fa-server"></i> API Server Configuration</h2>
+        
+        <div class="form-group">
+            <label for="apiUrl">API Base URL</label>
+            <input 
+                type="text" 
+                id="apiUrl" 
+                placeholder="https://api.example.com or http://localhost:5000"
+                value="http://localhost:5000"
+            >
+            <small>Enter your API server address (include http:// or https://)</small>
+        </div>
+
+        <div class="preset-buttons">
+            <button class="preset-btn" onclick="setPreset('http://localhost:5000')">
+                <i class="fa-solid fa-laptop"></i> Local
+            </button>
+            <button class="preset-btn" onclick="setPreset('http://10.0.0.28:5000')">
+                <i class="fa-solid fa-wifi"></i> Local WiFi
+            </button>
+            <button class="preset-btn" onclick="setPreset('https://ngrok-url.ngrok.io')">
+                <i class="fa-solid fa-globe"></i> ngrok
+            </button>
+            <button class="preset-btn" onclick="setPreset('https://api.Coshin.com')">
+                <i class="fa-solid fa-cloud"></i> Cloud
+            </button>
+        </div>
+
+        <div style="margin-top: 20px;">
+            <label style="font-weight: 600; margin-bottom: 10px; display: block;">Connection Status</label>
+            <div class="connection-status">
+                <div class="status-indicator" id="statusIndicator"></div>
+                <span id="statusText">Checking connection...</span>
+            </div>
+        </div>
+
+        <div class="action-buttons">
+            <button class="btn btn-primary" onclick="saveSettings()">
+                <i class="fa-solid fa-check"></i> Save Settings
+            </button>
+            <button class="btn btn-secondary" onclick="testConnection()">
+                <i class="fa-solid fa-plug"></i> Test Connection
+            </button>
+        </div>
+
+        <div class="session-actions">
+            <button class="btn btn-danger" onclick="resetSession()">
+                <i class="fa-solid fa-right-from-bracket"></i> Reset Session
+            </button>
+        </div>
+    </div>
+
+    <!-- About Section -->
+    <div class="settings-section">
+        <h2><i class="fa-solid fa-info-circle"></i> About</h2>
+        <div style="font-size: 14px; color: #666; line-height: 1.6;">
+            <p><strong>Coshin.com Global Platform</strong></p>
+            <p>Version 1.0.0</p>
+            <p style="margin-top: 12px;">
+                This app supports:
+            </p>
+            <ul style="margin: 12px 0 12px 20px;">
+                <li>Local server (localhost:5000)</li>
+                <li>Local WiFi network (10.0.0.28:5000)</li>
+                <li>ngrok tunnels for global testing</li>
+                <li>Cloud deployments (Render, Heroku, etc.)</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Help Section -->
+    <div class="settings-section">
+        <h2><i class="fa-solid fa-question-circle"></i> Help</h2>
+        <div style="font-size: 14px; color: #666; line-height: 1.8;">
+            <p><strong>How to configure the API server?</strong></p>
+            <ol style="margin-left: 20px; margin-top: 8px;">
+                <li>Enter your API server URL above</li>
+                <li>Click "Test Connection" to verify it works</li>
+                <li>Click "Save Settings" to store your preference</li>
+            </ol>
+
+            <p style="margin-top: 16px;"><strong>Testing with ngrok?</strong></p>
+            <ol style="margin-left: 20px; margin-top: 8px;">
+                <li>Download ngrok from ngrok.com</li>
+                <li>Run: <code style="background: #f5f6f8; padding: 2px 6px; border-radius: 4px;">ngrok http 5000</code></li>
+                <li>Copy the HTTPS URL from ngrok output</li>
+                <li>Paste it above and save</li>
+            </ol>
+
+            <p style="margin-top: 16px;"><strong>Deploying to production?</strong></p>
+            <ol style="margin-left: 20px; margin-top: 8px;">
+                <li>See DEPLOYMENT_GUIDE.md for full instructions</li>
+                <li>Update this setting to your cloud backend URL</li>
+                <li>All users will use your production server</li>
+            </ol>
+        </div>
+    </div>
+</div>
+
+<footer>
+    <div class="footer">
+        <a href="index.html" class="footer-link" data-page="home" title="Home">
+            <i class="fa-solid fa-house"></i>
+            <span class="footer-tooltip">Home</span>
+        </a>
+        <a href="messages.html" class="footer-link" data-page="messages" title="Messages">
+            <i class="fa-solid fa-message"></i>
+            <span class="footer-tooltip">Messages</span>
+        </a>
+        <a href="coshinmarket.html" class="footer-link" data-page="coshinmarket" title="Shop">
+            <i class="fa-solid fa-shop"></i>
+            <span class="footer-tooltip">Shop</span>
+        </a>
+        <a href="reels.html" class="footer-link" data-page="reels" title="Reels">
+            <i class="fa-solid fa-tv"></i>
+            <span class="footer-tooltip">Reels</span>
+        </a>
+        <a href="account.html" class="footer-link" data-page="account" title="Account">
+            <i class="fa-solid fa-user"></i>
+            <span class="footer-tooltip">Account</span>
+        </a>
+    </div>
+</footer>
+
+<script src="coshin-api.js"></script>
+<script>
+    function normalizeApiBaseUrl(url) {
+        if (!url) return '';
+        let cleaned = url.trim();
+        if (!cleaned) return '';
+
+        if (!/^https?:\/\//i.test(cleaned)) {
+            if (cleaned.startsWith('/')) {
+                cleaned = `${window.location.origin}${cleaned}`;
+            } else if (/^(localhost|127\.0\.0\.1|\d{1,3}(?:\.\d{1,3}){3})(:\d+)?(\/|$)/i.test(cleaned)) {
+                cleaned = `http://${cleaned}`;
+            } else if (/^[a-z0-9.-]+\.[a-z]{2,}(:\d+)?(\/|$)/i.test(cleaned)) {
+                cleaned = `https://${cleaned}`;
+            }
+        }
+
+        try {
+            const parsed = new URL(cleaned);
+            const normalizedPath = parsed.pathname.replace(/\/$/, '');
+            parsed.pathname = normalizedPath.toLowerCase().endsWith('/api') ? normalizedPath : `${normalizedPath}/api`;
+            return parsed.toString().replace(/\/$/, '');
+        } catch {
+            return '';
+        }
+    }
+
+  // Load saved API URL on page load
+  window.addEventListener('DOMContentLoaded', function() {
+    const savedUrl = localStorage.getItem('customApiUrl');
+    const effectiveUrl = window.COSHIN_API_BASE_URL || 'http://localhost:5000/api';
+    
+    // Show the custom URL if user set one, otherwise show what's actually being used
+    if (savedUrl) {
+      document.getElementById('apiUrl').value = savedUrl;
+    } else {
+      document.getElementById('apiUrl').value = effectiveUrl;
+    }
+    checkConnection();
+  });
+
+  // Set preset URLs
+  function setPreset(url) {
+    document.getElementById('apiUrl').value = url;
+  }
+
+  // Test connection to API
+  async function testConnection() {
+        const apiUrl = normalizeApiBaseUrl(document.getElementById('apiUrl').value);
+    const statusEl = document.getElementById('statusMessage');
+    const statusIndicator = document.getElementById('statusIndicator');
+    const statusText = document.getElementById('statusText');
+
+    if (!apiUrl) {
+      showMessage('Please enter an API URL', 'error');
+      return;
+    }
+
+    showMessage('Testing connection...', 'info');
+
+    try {
+            // Test backend health endpoint
+            const response = await fetch(`${apiUrl}/health`, {
+        method: 'GET',
+        timeout: 5000
+      });
+
+      if (response.ok) {
+        showMessage('✓ Connection successful! API is responding.', 'success');
+        statusIndicator.classList.add('connected');
+        statusText.textContent = 'Connected';
+      } else {
+        showMessage('⚠ API responded but returned an error. Check your URL.', 'error');
+        statusIndicator.classList.remove('connected');
+        statusText.textContent = 'Error connecting';
+      }
+    } catch (error) {
+      showMessage(`✗ Connection failed: ${error.message}. Check your URL and try again.`, 'error');
+      statusIndicator.classList.remove('connected');
+      statusText.textContent = 'Disconnected';
+    }
+  }
+
+  // Check connection status
+  async function checkConnection() {
+        const apiUrl = normalizeApiBaseUrl(document.getElementById('apiUrl').value);
+    const statusIndicator = document.getElementById('statusIndicator');
+    const statusText = document.getElementById('statusText');
+
+        if (!apiUrl) {
+            statusIndicator.classList.remove('connected');
+            statusText.textContent = 'Disconnected';
+            return;
+        }
+
+    try {
+            const response = await fetch(`${apiUrl}/health`, {
+        method: 'GET',
+        timeout: 3000
+      });
+
+      if (response.ok) {
+        statusIndicator.classList.add('connected');
+        statusText.textContent = 'Connected';
+      } else {
+        statusIndicator.classList.remove('connected');
+        statusText.textContent = 'Disconnected';
+      }
+    } catch (error) {
+      statusIndicator.classList.remove('connected');
+      statusText.textContent = 'Disconnected';
+    }
+  }
+
+  // Save settings
+  function saveSettings() {
+        const rawUrl = document.getElementById('apiUrl').value.trim();
+        const apiUrl = normalizeApiBaseUrl(rawUrl);
+
+        if (!rawUrl) {
+      showMessage('Please enter an API URL', 'error');
+      return;
+    }
+
+        if (!apiUrl) {
+      showMessage('Invalid URL format. Please include http:// or https://', 'error');
+      return;
+    }
+
+    localStorage.setItem('customApiUrl', apiUrl);
+        document.getElementById('apiUrl').value = apiUrl;
+    showMessage('✓ Settings saved! Reload the page to apply changes.', 'success');
+  }
+
+    // Reset auth/session state for recovery from stale browser tokens
+    function resetSession() {
+        const proceed = confirm('Reset your session and sign in again? This will log you out on this browser.');
+        if (!proceed) return;
+
+        try {
+            if (window.coshinAPI && typeof window.coshinAPI.clearAuth === 'function') {
+                window.coshinAPI.clearAuth();
+            } else {
+                localStorage.removeItem('authToken');
+                localStorage.removeItem('currentUser');
+            }
+
+            showMessage('Session reset. Redirecting to login...', 'success');
+            setTimeout(() => {
+                window.location.href = 'login.html';
+            }, 500);
+        } catch (error) {
+            showMessage(`Failed to reset session: ${error.message}`, 'error');
+        }
+    }
+
+  // Show status messages
+  function showMessage(message, type) {
+    const statusEl = document.getElementById('statusMessage');
+    statusEl.textContent = message;
+    statusEl.className = `status-message ${type}`;
+
+    if (type !== 'info') {
+      setTimeout(() => {
+        statusEl.className = 'status-message';
+      }, 5000);
+    }
+  }
+
+  // Update footer active link
+  document.querySelectorAll('.footer-link').forEach(link => {
+    link.classList.remove('active');
+    if (link.getAttribute('data-page') === 'settings') {
+      link.classList.add('active');
+    }
+  });
+</script>
+</body>
+</html>

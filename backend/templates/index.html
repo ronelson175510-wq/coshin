@@ -1,0 +1,29 @@
+<!-- moved to backup_words_detector -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Words Detector</title>
+</head>
+<body>
+    <nav>
+        <a href="/">Home</a> |
+        <a href="/chat">Chat</a>
+    </nav>
+    <hr>
+    <h2>Text & File Detection</h2>
+    <h3>1. Text detection</h3>
+    <textarea id="textInput" rows="4" cols="60"></textarea><br>
+    <button onclick="runDetection()">Check text</button>
+    <pre id="textResult"></pre>
+    <h3>2. File upload detection</h3>
+    <form id="uploadForm">
+      <input type="file" name="file" id="fileInput">
+      <button type="submit">Upload & scan</button>
+    </form>
+    <pre id="fileResult"></pre>
+    <script src="/static/main.js"></script>
+<!-- moved to backup_words_detector -->
+</body>
+</html>

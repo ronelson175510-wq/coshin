@@ -1,0 +1,690 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Upload Photo</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <style>
+    .upload-page { max-width:980px; margin:32px auto; padding:20px; background:#fff; border-radius:12px; box-shadow:0 8px 28px rgba(16,24,40,0.06); }
+    .upload-form { display:flex; flex-direction:column; gap:12px; }
+    
+    /* Step visibility */
+    .step { display:none; }
+    .step.active { display:flex; flex-direction:column; gap:12px; }
+    
+    /* Camera/Source selection */
+    .camera-prompt { text-align:center; padding:40px 20px; }
+    .camera-prompt h2 { margin-bottom:20px; color:#111827; }
+    .source-actions { display:flex; gap:12px; flex-wrap:wrap; justify-content:center; }
+    .source-btn { padding:16px 24px; border:2px solid #0EA5E9; border-radius:12px; background:#fff; color:#0EA5E9; cursor:pointer; font-size:16px; font-weight:600; display:flex; align-items:center; gap:8px; transition:all 0.2s; }
+    .source-btn:hover { background:#0EA5E9; color:#fff; transform:translateY(-2px); box-shadow:0 4px 12px rgba(14,165,233,0.3); }
+    .source-btn i { font-size:20px; }
+    
+    .preview { width:100%; height:280px; background:#f4f6f8; border-radius:8px; display:flex; align-items:center; justify-content:center; overflow:hidden; position:relative; user-select:none; }
+    .preview img{ width:100%; height:100%; object-fit:cover; }
+    .overlay-drag { position:absolute; left:50%; top:50%; transform:translate(-50%, -50%); z-index:3; cursor:grab; font-weight:700; text-shadow:0 2px 6px rgba(0,0,0,0.6); max-width:86%; text-align:center; word-break:break-word; padding:4px 8px; border-radius:6px; background:rgba(0,0,0,0.15); border:1px dashed rgba(255,255,255,0.65); display:none; white-space:pre-line; line-height:1.2; backdrop-filter:none; -webkit-backdrop-filter:none; }
+    .overlay-drag.dragging { cursor:grabbing; background:rgba(0,0,0,0.25); }
+    .snap-toggle { display:flex; align-items:center; gap:8px; font-size:13px; color:#374151; font-weight:600; }
+    .snap-toggle input[type="checkbox"] { accent-color:#0EA5E9; width:16px; height:16px; cursor:pointer; }
+    .grid-guides { position:absolute; inset:0; pointer-events:none; z-index:2; display:none; }
+    .grid-guides.active { display:block; }
+    .guide-line { position:absolute; background:rgba(255,255,255,0.5); box-shadow:0 0 0 1px rgba(0,0,0,0.15); }
+    .guide-line.v-center { top:0; bottom:0; left:50%; width:1px; transform:translateX(-50%); }
+    .guide-line.h-center { left:0; right:0; top:50%; height:1px; transform:translateY(-50%); }
+    .guide-line.v-third-left { top:0; bottom:0; left:33.3333%; width:1px; }
+    .guide-line.v-third-right { top:0; bottom:0; left:66.6667%; width:1px; }
+    .guide-line.h-third-top { left:0; right:0; top:33.3333%; height:1px; }
+    .guide-line.h-third-bottom { left:0; right:0; top:66.6667%; height:1px; }
+    .text-editor { background:#f9fafb; border:1px solid #e5e7eb; border-radius:10px; padding:14px; display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+    .text-editor .full { grid-column:1 / -1; }
+    .range-wrap { display:flex; align-items:center; gap:10px; }
+    .range-wrap span { min-width:42px; font-size:13px; font-weight:600; color:#4b5563; }
+    .clear-btn { width:max-content; border:1px solid #ef4444; color:#ef4444; background:#fff; border-radius:8px; padding:8px 12px; cursor:pointer; font-weight:600; }
+    .clear-btn:hover { background:#fef2f2; }
+    
+    /* Gift acceptance toggle */
+    .gift-toggle { display:flex; align-items:center; gap:12px; padding:16px; background:#f0f9ff; border:2px solid #0EA5E9; border-radius:10px; }
+    .gift-toggle input[type="checkbox"] { accent-color:#0EA5E9; width:20px; height:20px; cursor:pointer; }
+    .gift-toggle label { font-size:15px; font-weight:600; color:#0c4a6e; cursor:pointer; display:flex; align-items:center; gap:8px; }
+    .gift-toggle label i { font-size:18px; color:#0EA5E9; }
+    
+    .next-btn { padding:14px 24px; background:#0EA5E9; color:#fff; border:none; border-radius:10px; font-size:16px; font-weight:600; cursor:pointer; transition:all 0.2s; }
+    .next-btn:hover { background:#0284c7; transform:translateY(-1px); box-shadow:0 4px 12px rgba(14,165,233,0.3); }
+    .next-btn:disabled { background:#9ca3af; cursor:not-allowed; transform:none; }
+
+    @media(max-width:640px){ .text-editor{grid-template-columns:1fr;} .source-actions{flex-direction:column;} }
+    @media(max-width:420px){ .preview{height:180px} }
+  </style>
+  <!-- MySQL API Client -->
+  <script src="coshin-api.js"></script>
+
+</head>
+<body>
+  <main class="upload-page">
+    <a href="account.html">← Back to Profile</a>
+    <h1>Upload Photo</h1>
+    
+    <form id="photoForm" class="upload-form">
+      <!-- Step 1: Camera/Source Selection -->
+      <div id="step1" class="step active">
+        <div class="camera-prompt">
+          <h2>Take or Select a Photo</h2>
+          <div class="source-actions">
+            <button type="button" class="source-btn" id="useCameraBtn">
+              <i class="fa-solid fa-camera"></i> Take Photo
+            </button>
+            <button type="button" class="source-btn" id="chooseGalleryBtn">
+              <i class="fa-solid fa-images"></i> Choose from Gallery
+            </button>
+            <button type="button" class="source-btn" id="chooseFileBtn">
+              <i class="fa-solid fa-file-image"></i> Choose File
+            </button>
+          </div>
+        </div>
+        <input id="photoFile" type="file" accept="image/*" style="display:none;">
+        <input id="photoCameraFile" type="file" accept="image/*" capture="environment" style="display:none;">
+      </div>
+
+      <!-- Step 2: Photo Preview & Description -->
+      <div id="step2" class="step">
+        <div class="preview" id="photoPreview">No image selected</div>
+        <button type="button" class="next-btn" onclick="changePhoto()">Change Photo</button>
+        
+        <label for="photoDesc" style="font-weight:600; color:#374151;">Add Description (Optional)</label>
+        <textarea id="photoDesc" placeholder="Write something about your photo..." rows="4"></textarea>
+        
+        <button type="button" class="next-btn" id="continueToTextBtn">Continue →</button>
+      </div>
+
+      <!-- Step 3: Text Overlay Options (Optional) -->
+      <div id="step3" class="step">
+        <div class="preview" id="photoPreview2">No image selected</div>
+        
+        <div class="text-editor">
+          <div class="full">
+            <label for="photoTextOverlay">Add Text On Photo (Optional)</label>
+            <textarea id="photoTextOverlay" rows="3" maxlength="300" placeholder="Write text for the photo (multi-line supported)"></textarea>
+          </div>
+          <div>
+            <label for="photoFontOverlay">Font</label>
+            <select id="photoFontOverlay">
+              <option value="Arial, sans-serif">Arial</option>
+              <option value="Verdana, sans-serif">Verdana</option>
+              <option value="Tahoma, sans-serif">Tahoma</option>
+              <option value="Trebuchet MS, sans-serif">Trebuchet MS</option>
+              <option value="Georgia, serif">Georgia</option>
+              <option value="Times New Roman, serif">Times New Roman</option>
+              <option value="Courier New, monospace">Courier New</option>
+              <option value="Impact, sans-serif">Impact</option>
+              <option value="Comic Sans MS, cursive">Comic Sans MS</option>
+              <option value="Lucida Console, monospace">Lucida Console</option>
+              <option value="Brush Script MT, cursive">Brush Script MT</option>
+            </select>
+          </div>
+          <div>
+            <label for="photoTextPosition">Position</label>
+            <select id="photoTextPosition">
+              <option value="top">Top</option>
+              <option value="center" selected>Center</option>
+              <option value="bottom">Bottom</option>
+            </select>
+          </div>
+          <div>
+            <label for="photoTextColor">Color</label>
+            <input id="photoTextColor" type="color" value="#ffffff">
+          </div>
+          <div>
+            <label for="photoTextSize">Size</label>
+            <div class="range-wrap">
+              <input id="photoTextSize" type="range" min="20" max="96" value="42" style="width:100%;">
+              <span id="photoTextSizeValue">42px</span>
+            </div>
+          </div>
+          <div>
+            <label for="photoTextOutline">Outline Strength</label>
+            <div class="range-wrap">
+              <input id="photoTextOutline" type="range" min="0" max="10" value="4" style="width:100%;">
+              <span id="photoTextOutlineValue">4</span>
+            </div>
+          </div>
+          <div>
+            <label for="photoTextBgStyle">Text Background</label>
+            <select id="photoTextBgStyle">
+              <option value="none">None</option>
+              <option value="shadow" selected>Shadow Chip</option>
+              <option value="solid-dark">Solid Dark</option>
+              <option value="solid-light">Solid Light</option>
+              <option value="blur">Glass Blur</option>
+            </select>
+          </div>
+          <div>
+            <label for="photoSnapStrength">Magnet Strength</label>
+            <div class="range-wrap">
+              <input id="photoSnapStrength" type="range" min="1" max="10" value="4" style="width:100%;">
+              <span id="photoSnapStrengthValue">4</span>
+            </div>
+          </div>
+          <button type="button" class="clear-btn full" id="clearPhotoTextBtn"><i class="fa-solid fa-eraser"></i> Clear Text</button>
+          <div class="snap-toggle full">
+            <input type="checkbox" id="photoSnapGrid" checked>
+            <label for="photoSnapGrid">Snap to grid (center + rule of thirds)</label>
+          </div>
+        </div>
+        <small style="color:#6b7280;">Tip: drag the text on the preview to position it anywhere.</small>
+        
+        <div style="display:flex; gap:12px;">
+          <button type="button" class="next-btn" id="skipTextBtn" style="background:#6b7280; flex:1;">Skip Text →</button>
+          <button type="button" class="next-btn" id="continueToPostBtn" style="flex:1;">Continue to Post →</button>
+        </div>
+      </div>
+
+      <!-- Step 4: Post Options -->
+      <div id="step4" class="step">
+        <div class="preview" id="photoPreview3">No image selected</div>
+        
+        <h2 style="margin-top:20px; color:#111827;">Post Options</h2>
+        
+        <div class="gift-toggle">
+          <input type="checkbox" id="acceptGifts" checked>
+          <label for="acceptGifts">
+            <i class="fa-solid fa-gift"></i>
+            Accept gifts on this post
+          </label>
+        </div>
+        
+        <button type="button" class="next-btn" id="uploadPhotoBtn" style="background:#10b981;">
+          <i class="fa-solid fa-cloud-arrow-up"></i> Post Photo
+        </button>
+      </div>
+    </form>
+  </main>
+  <script>
+    // Step navigation
+    let currentStep = 1;
+    
+    function showStep(stepNumber) {
+      document.querySelectorAll('.step').forEach(step => step.classList.remove('active'));
+      document.getElementById('step' + stepNumber).classList.add('active');
+      currentStep = stepNumber;
+      
+      // Update all previews when step changes
+      if (originalPhotoSrc) {
+        syncAllPreviews();
+      }
+    }
+    
+    function changePhoto() {
+      showStep(1);
+    }
+    
+    const photoFile = document.getElementById('photoFile');
+    const photoCameraFile = document.getElementById('photoCameraFile');
+    const photoPreview = document.getElementById('photoPreview');
+    const photoPreview2 = document.getElementById('photoPreview2');
+    const photoPreview3 = document.getElementById('photoPreview3');
+    const photoTextOverlay = document.getElementById('photoTextOverlay');
+    const photoFontOverlay = document.getElementById('photoFontOverlay');
+    const photoTextPosition = document.getElementById('photoTextPosition');
+    const photoTextColor = document.getElementById('photoTextColor');
+    const photoTextSize = document.getElementById('photoTextSize');
+    const photoTextSizeValue = document.getElementById('photoTextSizeValue');
+    const photoTextOutline = document.getElementById('photoTextOutline');
+    const photoTextOutlineValue = document.getElementById('photoTextOutlineValue');
+    const photoTextBgStyle = document.getElementById('photoTextBgStyle');
+    const clearPhotoTextBtn = document.getElementById('clearPhotoTextBtn');
+    const photoSnapGrid = document.getElementById('photoSnapGrid');
+    const photoSnapStrength = document.getElementById('photoSnapStrength');
+    const photoSnapStrengthValue = document.getElementById('photoSnapStrengthValue');
+    let originalPhotoSrc = '';
+    let overlayX = 50;
+    let overlayY = 50;
+    let isDraggingOverlay = false;
+    let overlayHandle = null;
+    let gridGuides = null;
+    
+    // Source button handlers
+    document.getElementById('useCameraBtn').addEventListener('click', () => {
+      photoCameraFile.click();
+    });
+    
+    document.getElementById('chooseGalleryBtn').addEventListener('click', () => {
+      photoFile.click();
+    });
+    
+    document.getElementById('chooseFileBtn').addEventListener('click', () => {
+      photoFile.click();
+    });
+    
+    // Step navigation handlers
+    document.getElementById('continueToTextBtn').addEventListener('click', () => {
+      showStep(3);
+    });
+    
+    document.getElementById('skipTextBtn').addEventListener('click', () => {
+      showStep(4);
+    });
+    
+    document.getElementById('continueToPostBtn').addEventListener('click', () => {
+      showStep(4);
+    });
+    
+    function syncAllPreviews() {
+      const src = photoPreview.dataset.src;
+      if (src) {
+        // Sync preview images
+        [photoPreview, photoPreview2, photoPreview3].forEach(preview => {
+          if (!preview.querySelector('img')) {
+            const img = document.createElement('img');
+            preview.innerHTML = '';
+            preview.appendChild(img);
+          }
+          preview.querySelector('img').src = src;
+          preview.dataset.src = src;
+        });
+        
+        // Ensure overlay handles and guides exist for draggable previews
+        if (currentStep === 3) {
+          ensureOverlayHandle();
+          ensureGridGuides();
+          updateGuidesVisibility();
+        }
+      }
+    }
+
+    function ensureOverlayHandle() {
+      const activePreview = photoPreview2; // Step 3 uses photoPreview2 for text editing
+      if (overlayHandle && overlayHandle.parentElement === activePreview) return;
+      overlayHandle = document.createElement('div');
+      overlayHandle.className = 'overlay-drag';
+      activePreview.appendChild(overlayHandle);
+    }
+
+    function ensureGridGuides() {
+      const activePreview = photoPreview2; // Step 3 uses photoPreview2 for text editing
+      if (gridGuides && gridGuides.parentElement === activePreview) return;
+      gridGuides = document.createElement('div');
+      gridGuides.className = 'grid-guides';
+      gridGuides.innerHTML =
+        '<span class="guide-line v-center"></span>' +
+        '<span class="guide-line h-center"></span>' +
+        '<span class="guide-line v-third-left"></span>' +
+        '<span class="guide-line v-third-right"></span>' +
+        '<span class="guide-line h-third-top"></span>' +
+        '<span class="guide-line h-third-bottom"></span>';
+      activePreview.appendChild(gridGuides);
+    }
+
+    function updateGuidesVisibility() {
+      ensureGridGuides();
+      const hasImage = Boolean(photoPreview2.dataset.src);
+      const showGuides = hasImage && photoSnapGrid.checked;
+      gridGuides.classList.toggle('active', showGuides);
+    }
+
+    function snapAxis(value) {
+      if (!photoSnapGrid.checked) return value;
+      const points = [16.6667, 33.3333, 50, 66.6667, 83.3333];
+      const threshold = parseInt(photoSnapStrength.value, 10) || 4;
+      let snapped = value;
+      let nearestDiff = threshold + 1;
+      points.forEach((point) => {
+        const diff = Math.abs(value - point);
+        if (diff < nearestDiff && diff <= threshold) {
+          snapped = point;
+          nearestDiff = diff;
+        }
+      });
+      return snapped;
+    }
+
+    function setOverlayPreset(position) {
+      overlayX = 50;
+      if (position === 'top') {
+        overlayY = 16;
+      } else if (position === 'bottom') {
+        overlayY = 84;
+      } else {
+        overlayY = 50;
+      }
+    }
+
+    function updateOverlayHandle() {
+      ensureOverlayHandle();
+      const text = (photoTextOverlay.value || '').trim();
+      if (!text || !photoPreview.dataset.src) {
+        overlayHandle.style.display = 'none';
+        return;
+      }
+      overlayHandle.style.display = 'block';
+      overlayHandle.textContent = text;
+      overlayHandle.style.fontFamily = photoFontOverlay.value;
+      overlayHandle.style.fontSize = photoTextSize.value + 'px';
+      overlayHandle.style.color = photoTextColor.value || '#ffffff';
+      overlayHandle.style.webkitTextStroke = photoTextOutline.value + 'px rgba(0,0,0,0.65)';
+      overlayHandle.style.left = overlayX + '%';
+      overlayHandle.style.top = overlayY + '%';
+      overlayHandle.style.border = '1px dashed rgba(255,255,255,0.65)';
+      overlayHandle.style.background = 'rgba(0,0,0,0.15)';
+      overlayHandle.style.backdropFilter = 'none';
+      overlayHandle.style.webkitBackdropFilter = 'none';
+
+      if (photoTextBgStyle.value === 'none') {
+        overlayHandle.style.background = 'transparent';
+        overlayHandle.style.border = '1px dashed rgba(255,255,255,0.65)';
+      } else if (photoTextBgStyle.value === 'shadow') {
+        overlayHandle.style.background = 'rgba(0,0,0,0.28)';
+        overlayHandle.style.border = '1px dashed rgba(255,255,255,0.65)';
+      } else if (photoTextBgStyle.value === 'solid-dark') {
+        overlayHandle.style.background = 'rgba(17,24,39,0.72)';
+        overlayHandle.style.border = '1px solid rgba(255,255,255,0.2)';
+      } else if (photoTextBgStyle.value === 'solid-light') {
+        overlayHandle.style.background = 'rgba(255,255,255,0.75)';
+        overlayHandle.style.border = '1px solid rgba(17,24,39,0.12)';
+      } else if (photoTextBgStyle.value === 'blur') {
+        overlayHandle.style.background = 'rgba(255,255,255,0.18)';
+        overlayHandle.style.border = '1px solid rgba(255,255,255,0.28)';
+        overlayHandle.style.backdropFilter = 'blur(5px)';
+        overlayHandle.style.webkitBackdropFilter = 'blur(5px)';
+      }
+
+      updateGuidesVisibility();
+    }
+
+    function getPointerPos(event) {
+      if (event.touches && event.touches.length) {
+        return { x: event.touches[0].clientX, y: event.touches[0].clientY };
+      }
+      if (event.changedTouches && event.changedTouches.length) {
+        return { x: event.changedTouches[0].clientX, y: event.changedTouches[0].clientY };
+      }
+      return { x: event.clientX, y: event.clientY };
+    }
+
+    function moveOverlayFromEvent(event) {
+      if (!overlayHandle || overlayHandle.style.display === 'none') return;
+      const activePreview = photoPreview2; // Text editing happens in step 3
+      const rect = activePreview.getBoundingClientRect();
+      const point = getPointerPos(event);
+      const x = ((point.x - rect.left) / rect.width) * 100;
+      const y = ((point.y - rect.top) / rect.height) * 100;
+      const boundedX = Math.max(8, Math.min(92, x));
+      const boundedY = Math.max(10, Math.min(90, y));
+      overlayX = snapAxis(boundedX);
+      overlayY = snapAxis(boundedY);
+      updateOverlayHandle();
+    }
+
+    function renderPreview(src) {
+      // Update all preview elements
+      [photoPreview, photoPreview2, photoPreview3].forEach(preview => {
+        preview.innerHTML = '<img src="' + src + '">';
+        preview.dataset.src = src;
+      });
+      
+      // Setup overlay for text editing preview (step 3)
+      if (currentStep === 3) {
+        ensureOverlayHandle();
+        updateOverlayHandle();
+        ensureGridGuides();
+        updateGuidesVisibility();
+      }
+    }
+
+    function applyPhotoText() {
+      if (!originalPhotoSrc) return;
+      const img = new Image();
+      img.onload = () => {
+        const canvas = document.createElement('canvas');
+        canvas.width = img.naturalWidth;
+        canvas.height = img.naturalHeight;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0);
+
+        const text = (photoTextOverlay.value || '').trim();
+        if (text) {
+          const size = parseInt(photoTextSize.value, 10) || 42;
+          const textColor = photoTextColor.value || '#ffffff';
+          const bgStyle = photoTextBgStyle.value;
+          ctx.font = '700 ' + size + 'px ' + photoFontOverlay.value;
+          ctx.textAlign = 'center';
+          ctx.textBaseline = 'top';
+          ctx.fillStyle = textColor;
+          ctx.strokeStyle = 'rgba(0,0,0,0.55)';
+          ctx.lineWidth = parseInt(photoTextOutline.value, 10) || 0;
+
+          const x = (overlayX / 100) * canvas.width;
+          const y = (overlayY / 100) * canvas.height;
+
+          const maxW = canvas.width * 0.88;
+          const lineHeight = Math.round(size * 1.2);
+
+          function wrapParagraph(paragraph) {
+            const words = paragraph.split(/\s+/).filter(Boolean);
+            if (!words.length) return [''];
+            const lines = [];
+            let current = words[0];
+            for (let i = 1; i < words.length; i += 1) {
+              const test = current + ' ' + words[i];
+              if (ctx.measureText(test).width <= maxW) {
+                current = test;
+              } else {
+                lines.push(current);
+                current = words[i];
+              }
+            }
+            lines.push(current);
+            return lines;
+          }
+
+          const lines = [];
+          text.split('\n').forEach((paragraph) => {
+            if (!paragraph.trim()) {
+              lines.push('');
+            } else {
+              wrapParagraph(paragraph).forEach((line) => lines.push(line));
+            }
+          });
+
+          const maxLines = 8;
+          const clipped = lines.slice(0, maxLines);
+          if (lines.length > maxLines && clipped.length) {
+            clipped[maxLines - 1] = clipped[maxLines - 1] + '...';
+          }
+
+          const widths = clipped.map((line) => ctx.measureText(line || ' ').width);
+          const blockW = Math.min(maxW, Math.max(...widths, 0));
+          const blockH = clipped.length * lineHeight;
+          const startY = y - (blockH / 2);
+
+          if (bgStyle !== 'none') {
+            const padX = Math.round(size * 0.35);
+            const padY = Math.round(size * 0.22);
+            const left = x - (blockW / 2) - padX;
+            const top = startY - padY;
+            const width = blockW + (padX * 2);
+            const height = blockH + (padY * 2);
+            const radius = Math.max(10, Math.round(size * 0.3));
+
+            function drawRoundedRect() {
+              ctx.beginPath();
+              ctx.moveTo(left + radius, top);
+              ctx.lineTo(left + width - radius, top);
+              ctx.quadraticCurveTo(left + width, top, left + width, top + radius);
+              ctx.lineTo(left + width, top + height - radius);
+              ctx.quadraticCurveTo(left + width, top + height, left + width - radius, top + height);
+              ctx.lineTo(left + radius, top + height);
+              ctx.quadraticCurveTo(left, top + height, left, top + height - radius);
+              ctx.lineTo(left, top + radius);
+              ctx.quadraticCurveTo(left, top, left + radius, top);
+              ctx.closePath();
+            }
+
+            if (bgStyle === 'shadow') {
+              ctx.fillStyle = 'rgba(0,0,0,0.32)';
+              drawRoundedRect();
+              ctx.fill();
+            } else if (bgStyle === 'solid-dark') {
+              ctx.fillStyle = 'rgba(17,24,39,0.72)';
+              drawRoundedRect();
+              ctx.fill();
+            } else if (bgStyle === 'solid-light') {
+              ctx.fillStyle = 'rgba(255,255,255,0.8)';
+              drawRoundedRect();
+              ctx.fill();
+            } else if (bgStyle === 'blur') {
+              ctx.fillStyle = 'rgba(255,255,255,0.25)';
+              drawRoundedRect();
+              ctx.fill();
+            }
+
+            ctx.fillStyle = textColor;
+          }
+
+          clipped.forEach((line, idx) => {
+            const lineY = startY + (idx * lineHeight);
+            const content = line || ' ';
+            if (bgStyle === 'none' || bgStyle === 'shadow') {
+              ctx.strokeText(content, x, lineY, maxW);
+            }
+            ctx.fillText(content, x, lineY, maxW);
+          });
+        }
+
+        renderPreview(canvas.toDataURL('image/jpeg', 0.92));
+      };
+      img.src = originalPhotoSrc;
+    }
+
+    function handlePhotoFile(f) {
+      if (!f || !f.type.startsWith('image/')) {
+        alert('Please select a valid image file');
+        return;
+      }
+      const r = new FileReader();
+      r.onload = ev => {
+        originalPhotoSrc = ev.target.result;
+        setOverlayPreset(photoTextPosition.value);
+        applyPhotoText();
+        // Move to step 2 after photo is loaded
+        showStep(2);
+      };
+      r.readAsDataURL(f);
+    }
+
+    photoFile.addEventListener('change', e => handlePhotoFile(e.target.files[0]));
+    photoCameraFile.addEventListener('change', e => handlePhotoFile(e.target.files[0]));
+    
+    // Auto-trigger camera when page loads
+    setTimeout(() => {
+      photoCameraFile.click();
+    }, 300);
+    
+    photoTextOverlay.addEventListener('input', () => {
+      updateOverlayHandle();
+      applyPhotoText();
+    });
+    photoFontOverlay.addEventListener('change', () => {
+      updateOverlayHandle();
+      applyPhotoText();
+    });
+    photoTextBgStyle.addEventListener('change', () => {
+      updateOverlayHandle();
+      applyPhotoText();
+    });
+    photoTextPosition.addEventListener('change', () => {
+      setOverlayPreset(photoTextPosition.value);
+      updateOverlayHandle();
+      applyPhotoText();
+    });
+    photoTextColor.addEventListener('input', () => {
+      updateOverlayHandle();
+      applyPhotoText();
+    });
+    photoTextSize.addEventListener('input', () => {
+      photoTextSizeValue.textContent = photoTextSize.value + 'px';
+      updateOverlayHandle();
+      applyPhotoText();
+    });
+    photoTextOutline.addEventListener('input', () => {
+      photoTextOutlineValue.textContent = photoTextOutline.value;
+      updateOverlayHandle();
+      applyPhotoText();
+    });
+    clearPhotoTextBtn.addEventListener('click', () => {
+      photoTextOverlay.value = '';
+      setOverlayPreset(photoTextPosition.value);
+      updateOverlayHandle();
+      applyPhotoText();
+    });
+
+    photoSnapGrid.addEventListener('change', () => {
+      updateGuidesVisibility();
+      applyPhotoText();
+    });
+
+    photoSnapStrength.addEventListener('input', () => {
+      photoSnapStrengthValue.textContent = photoSnapStrength.value;
+      applyPhotoText();
+    });
+
+    photoPreview2.addEventListener('mousedown', (event) => {
+      if (!overlayHandle || event.target !== overlayHandle) return;
+      isDraggingOverlay = true;
+      overlayHandle.classList.add('dragging');
+      event.preventDefault();
+    });
+
+    photoPreview2.addEventListener('touchstart', (event) => {
+      if (!overlayHandle || event.target !== overlayHandle) return;
+      isDraggingOverlay = true;
+      overlayHandle.classList.add('dragging');
+      event.preventDefault();
+    }, { passive: false });
+
+    document.addEventListener('mousemove', (event) => {
+      if (!isDraggingOverlay) return;
+      moveOverlayFromEvent(event);
+    });
+
+    document.addEventListener('touchmove', (event) => {
+      if (!isDraggingOverlay) return;
+      moveOverlayFromEvent(event);
+      event.preventDefault();
+    }, { passive: false });
+
+    function stopOverlayDrag() {
+      if (!isDraggingOverlay) return;
+      isDraggingOverlay = false;
+      if (overlayHandle) {
+        overlayHandle.classList.remove('dragging');
+      }
+      applyPhotoText();
+    }
+
+    document.addEventListener('mouseup', stopOverlayDrag);
+    document.addEventListener('touchend', stopOverlayDrag);
+
+    document.getElementById('uploadPhotoBtn').addEventListener('click', async ()=>{
+      const desc = document.getElementById('photoDesc').value.trim();
+      const acceptGifts = document.getElementById('acceptGifts').checked;
+      const src = photoPreview3.dataset.src || photoPreview.dataset.src || null;
+      
+      if(!src) return alert('Please select a photo first');
+      
+      try {
+        // Use description as title if provided, otherwise use a default
+        const title = desc || 'Photo Post';
+        await coshinAPI.uploadPhoto(title, desc, src, acceptGifts);
+        alert('Photo posted successfully!');
+        window.location.href = 'account.html';
+      } catch (error) {
+        console.error('Photo upload error:', error);
+        alert('Photo upload failed: ' + error.message);
+      }
+    });
+  </script>
+  <script src="title-fixer.js"></script>
+</body>
+</html>

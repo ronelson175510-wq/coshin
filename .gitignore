@@ -1,0 +1,30 @@
+# Environment secrets
+backend/.env
+.env
+
+# Dependencies
+node_modules/
+__pycache__/
+*.pyc
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Build outputs
+dist/
+build/
+
+# Certificates & keys
+*.pem
+*.key
+*.crt
+
+# Local tools
+ngrok/

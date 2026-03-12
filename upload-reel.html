@@ -1,0 +1,1907 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Create Reel</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <style>
+    body {
+      background: linear-gradient(135deg, #1a1a1a 0%, #2d1b69 100%);
+      min-height: 100vh;
+      margin: 0;
+      padding: 20px;
+      font-family: Helvetica, Arial, sans-serif;
+      font-size: 14px;
+      line-height: 1.34;
+      font-weight: 400;
+      color: #1c1e21;
+    }
+
+    .upload-page { 
+      max-width: 600px; 
+      margin: 32px auto; 
+      padding: 30px; 
+      background: #fff; 
+      border-radius: 16px; 
+      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.3); 
+    }
+
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      color: #0EA5E9;
+      text-decoration: none;
+      font-weight: 600;
+      margin-bottom: 20px;
+      transition: all 0.3s ease;
+    }
+
+    .back-link:hover {
+      transform: translateX(-4px);
+      color: #FF6B6B;
+    }
+
+    h1 {
+      color: #333;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    h1 i {
+      color: #0EA5E9;
+      font-size: 32px;
+    }
+
+    .subtitle {
+      color: #666;
+      margin-bottom: 30px;
+      font-size: 14px;
+    }
+
+    .upload-form { 
+      display: flex; 
+      flex-direction: column; 
+      gap: 18px; 
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .form-label {
+      font-weight: 600;
+      color: #333;
+      font-size: 14px;
+    }
+
+    input, textarea {
+      padding: 12px 16px;
+      border: 2px solid #e0e0e0;
+      border-radius: 10px;
+      font-size: 15px;
+      font-family: inherit;
+      transition: all 0.3s ease;
+    }
+
+    input:focus, textarea:focus {
+      outline: none;
+      border-color: #0EA5E9;
+      box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.1);
+    }
+
+    textarea {
+      resize: vertical;
+      min-height: 100px;
+    }
+
+
+
+    .hint { 
+      color: #666; 
+      font-size: 13px;
+      background: #f5f5f5;
+      padding: 12px;
+      border-radius: 8px;
+      border-left: 3px solid #0EA5E9;
+    }
+
+    .upload-btn {
+      background: linear-gradient(135deg, #0EA5E9, #FF6B6B);
+      color: white;
+      border: none;
+      padding: 14px 28px;
+      border-radius: 12px;
+      font-size: 16px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      box-shadow: 0 4px 16px rgba(14, 165, 233, 0.3);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      margin-top: 10px;
+    }
+
+    .upload-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(14, 165, 233, 0.4);
+    }
+
+    .upload-btn:active {
+      transform: translateY(0);
+    }
+
+    .file-upload-area {
+      border: 2px dashed #0EA5E9;
+      border-radius: 12px;
+      padding: 30px;
+      text-align: center;
+      background: rgba(14, 165, 233, 0.05);
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .file-upload-area:hover {
+      background: rgba(14, 165, 233, 0.1);
+      border-color: #FF6B6B;
+    }
+
+    .file-upload-area i {
+      font-size: 48px;
+      color: #0EA5E9;
+      margin-bottom: 12px;
+    }
+
+    .file-name {
+      margin-top: 12px;
+      color: #0EA5E9;
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    #videoFile {
+      display: none;
+    }
+
+    .video-preview {
+      margin-top: 16px;
+      border-radius: 12px;
+      overflow: hidden;
+      max-width: 300px;
+      margin-left: auto;
+      margin-right: auto;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+      display: none;
+    }
+
+    .video-preview video {
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+
+    .video-preview.active {
+      display: block;
+    }
+
+    .shop-section {
+      background: linear-gradient(135deg, rgba(14, 165, 233, 0.05), rgba(255, 107, 107, 0.05));
+      border: 2px solid rgba(14, 165, 233, 0.2);
+      border-radius: 12px;
+      padding: 16px;
+      margin-top: 8px;
+    }
+
+    .toggle-container {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .toggle-switch {
+      position: relative;
+      display: inline-block;
+      width: 52px;
+      height: 28px;
+    }
+
+    .toggle-switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    .toggle-slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: #ccc;
+      transition: 0.4s;
+      border-radius: 28px;
+    }
+
+    .toggle-slider:before {
+      position: absolute;
+      content: "";
+      height: 20px;
+      width: 20px;
+      left: 4px;
+      bottom: 4px;
+      background-color: white;
+      transition: 0.4s;
+      border-radius: 50%;
+    }
+
+    .toggle-switch input:checked + .toggle-slider {
+      background: linear-gradient(135deg, #0EA5E9, #FF6B6B);
+    }
+
+    .toggle-switch input:checked + .toggle-slider:before {
+      transform: translateX(24px);
+    }
+
+    .toggle-label {
+      font-weight: 600;
+      color: #333;
+      font-size: 15px;
+    }
+
+    .shop-fields {
+      display: none;
+      gap: 12px;
+      flex-direction: column;
+    }
+
+    .shop-fields.active {
+      display: flex;
+    }
+
+    /* Camera Styles - TikTok/Snapchat Style */
+    .camera-modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: #000;
+      z-index: 2000;
+    }
+
+    .camera-modal.active {
+      display: block;
+    }
+
+    .camera-modal-content {
+      position: relative;
+      width: 100%;
+      height: 100vh;
+      background: #000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    /* Camera Preview - Full Screen */
+    .camera-preview {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      width: 100%;
+      height: 100%;
+      background: #000;
+    }
+
+    .camera-video,
+    .camera-canvas {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    /* Top Controls Bar */
+    .camera-top-bar {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      padding: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: linear-gradient(to bottom, rgba(0,0,0,0.6) 0%, rgba(0,0,0,0) 100%);
+      z-index: 10;
+    }
+
+    .close-camera-btn {
+      background: rgba(255, 255, 255, 0.2);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      color: white;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      transition: all 0.3s ease;
+    }
+
+    .close-camera-btn:hover {
+      background: rgba(255, 255, 255, 0.3);
+      transform: scale(1.1);
+    }
+
+    .camera-top-controls {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+    }
+
+    .camera-icon-btn {
+      background: rgba(255, 255, 255, 0.2);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      color: white;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      transition: all 0.3s ease;
+    }
+
+    .camera-icon-btn:hover,
+    .camera-icon-btn.active {
+      background: rgba(255, 107, 107, 0.9);
+      border-color: rgba(255, 107, 107, 1);
+      transform: scale(1.1);
+    }
+
+    /* Side Filter Bar */
+    .camera-filters-bar {
+      position: absolute;
+      right: 15px;
+      top: 50%;
+      transform: translateY(-50%);
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      z-index: 10;
+      max-height: 70vh;
+      overflow-y: auto;
+      padding: 10px 0;
+    }
+
+    .camera-filters-bar::-webkit-scrollbar {
+      width: 4px;
+    }
+
+    .camera-filters-bar::-webkit-scrollbar-thumb {
+      background: rgba(255, 255, 255, 0.3);
+      border-radius: 2px;
+    }
+
+    .filter-thumb {
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      cursor: pointer;
+      border: 3px solid rgba(255, 255, 255, 0.3);
+      background-size: cover;
+      background-position: center;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 11px;
+      font-weight: 600;
+      text-align: center;
+      backdrop-filter: blur(5px);
+      background-color: rgba(0, 0, 0, 0.5);
+      text-shadow: 0 1px 3px rgba(0,0,0,0.8);
+    }
+
+    .filter-thumb:hover,
+    .filter-thumb.active {
+      border-color: #FF6B6B;
+      transform: scale(1.15);
+      box-shadow: 0 0 20px rgba(255, 107, 107, 0.6);
+    }
+
+    /* Bottom Controls */
+    .camera-bottom-bar {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      padding: 30px 20px;
+      background: linear-gradient(to top, rgba(0,0,0,0.6) 0%, rgba(0,0,0,0) 100%);
+      z-index: 10;
+    }
+
+    .camera-main-controls {
+      display: flex;
+      align-items: center;
+      justify-content: space-around;
+      margin-bottom: 20px;
+    }
+
+    /* Record/Capture Button - TikTok Style */
+    .camera-record-btn {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      background: radial-gradient(circle, #FF6B6B 0%, #FF3B3B 100%);
+      border: 6px solid rgba(255, 255, 255, 0.9);
+      cursor: pointer;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 20px rgba(255, 107, 107, 0.5);
+      position: relative;
+    }
+
+    .camera-record-btn:hover {
+      transform: scale(1.1);
+      box-shadow: 0 6px 30px rgba(255, 107, 107, 0.7);
+    }
+
+    .camera-record-btn:active {
+      transform: scale(0.95);
+    }
+
+    .camera-record-btn.recording {
+      animation: pulse-record 1.5s ease-in-out infinite;
+      border-radius: 20px;
+    }
+
+    @keyframes pulse-record {
+      0%, 100% { box-shadow: 0 4px 20px rgba(255, 107, 107, 0.5); }
+      50% { box-shadow: 0 4px 40px rgba(255, 107, 107, 0.9); }
+    }
+
+    .camera-side-btn {
+      background: rgba(255, 255, 255, 0.2);
+      backdrop-filter: blur(10px);
+      border: 2px solid rgba(255, 255, 255, 0.4);
+      color: white;
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      transition: all 0.3s ease;
+      gap: 2px;
+    }
+
+    .camera-side-btn span {
+      font-size: 10px;
+      font-weight: 600;
+    }
+
+    .camera-side-btn:hover {
+      background: rgba(255, 255, 255, 0.3);
+      transform: scale(1.1);
+    }
+
+    /* Recording Timer */
+    .recording-timer {
+      position: absolute;
+      top: 80px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(255, 59, 59, 0.9);
+      backdrop-filter: blur(10px);
+      color: white;
+      padding: 8px 20px;
+      border-radius: 20px;
+      font-weight: 700;
+      font-size: 16px;
+      display: none;
+      align-items: center;
+      gap: 8px;
+      z-index: 11;
+      animation: fade-in 0.3s ease;
+    }
+
+    .recording-timer.active {
+      display: flex;
+    }
+
+    .recording-timer::before {
+      content: '';
+      width: 10px;
+      height: 10px;
+      background: white;
+      border-radius: 50%;
+      animation: blink 1s ease-in-out infinite;
+    }
+
+    @keyframes blink {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.3; }
+    }
+
+    @keyframes fade-in {
+      from { opacity: 0; transform: translateX(-50%) translateY(-10px); }
+      to { opacity: 1; transform: translateX(-50%) translateY(0); }
+    }
+
+    /* Beauty/Effects Panel */
+    .camera-effects-panel {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: rgba(0, 0, 0, 0.85);
+      backdrop-filter: blur(20px);
+      padding: 20px;
+      transform: translateY(100%);
+      transition: transform 0.3s ease;
+      z-index: 15;
+      max-height: 50vh;
+      overflow-y: auto;
+    }
+
+    .camera-effects-panel.active {
+      transform: translateY(0);
+    }
+
+    .effects-panel-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 15px;
+    }
+
+    .effects-panel-header h3 {
+      color: white;
+      margin: 0;
+      font-size: 16px;
+      font-weight: 600;
+    }
+
+    .effects-close-btn {
+      background: none;
+      border: none;
+      color: white;
+      font-size: 24px;
+      cursor: pointer;
+      width: 32px;
+      height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0.7;
+      transition: opacity 0.3s ease;
+    }
+
+    .effects-close-btn:hover {
+      opacity: 1;
+    }
+
+    .effect-slider {
+      margin-bottom: 20px;
+    }
+
+    .effect-slider label {
+      color: white;
+      font-size: 13px;
+      font-weight: 600;
+      margin-bottom: 8px;
+      display: block;
+    }
+
+    .slider-container {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .slider-container input[type="range"] {
+      flex: 1;
+      height: 6px;
+      border-radius: 3px;
+      background: rgba(255, 255, 255, 0.2);
+      outline: none;
+      -webkit-appearance: none;
+    }
+
+    .slider-container input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #FF6B6B, #0EA5E9);
+      cursor: pointer;
+      box-shadow: 0 2px 8px rgba(255, 107, 107, 0.5);
+    }
+
+    .slider-container input[type="range"]::-moz-range-thumb {
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #FF6B6B, #0EA5E9);
+      cursor: pointer;
+      border: none;
+      box-shadow: 0 2px 8px rgba(255, 107, 107, 0.5);
+    }
+
+    .slider-value {
+      color: #0EA5E9;
+      font-weight: 700;
+      font-size: 14px;
+      min-width: 50px;
+      text-align: right;
+    }
+
+    /* Speed Control */
+    .speed-controls {
+      display: flex;
+      gap: 8px;
+      justify-content: center;
+      margin-bottom: 15px;
+    }
+
+    .speed-btn {
+      background: rgba(255, 255, 255, 0.1);
+      border: 2px solid rgba(255, 255, 255, 0.3);
+      color: white;
+      padding: 6px 14px;
+      border-radius: 20px;
+      cursor: pointer;
+      font-size: 13px;
+      font-weight: 600;
+      transition: all 0.3s ease;
+    }
+
+    .speed-btn:hover,
+    .speed-btn.active {
+      background: linear-gradient(135deg, #FF6B6B, #0EA5E9);
+      border-color: transparent;
+      transform: scale(1.05);
+    }
+
+    .camera-error {
+      position: absolute;
+      top: 100px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(255, 59, 59, 0.95);
+      backdrop-filter: blur(10px);
+      color: white;
+      padding: 12px 24px;
+      border-radius: 12px;
+      font-size: 14px;
+      font-weight: 600;
+      display: none;
+      z-index: 20;
+      max-width: 80%;
+      text-align: center;
+      box-shadow: 0 4px 20px rgba(255, 59, 59, 0.4);
+    }
+      transition: all 0.3s ease;
+    }
+
+    .preset-filter:hover,
+    .preset-filter.active {
+      border-color: #0EA5E9;
+      background: rgba(14, 165, 233, 0.1);
+      color: #0EA5E9;
+    }
+
+    .filter-slider {
+      margin-bottom: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .filter-slider label {
+      font-size: 12px;
+      font-weight: 600;
+      color: #333;
+    }
+
+    .filter-slider input[type="range"] {
+      width: 100%;
+      height: 5px;
+      border-radius: 5px;
+      background: #ddd;
+      outline: none;
+      -webkit-appearance: none;
+    }
+
+    .filter-slider input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #0EA5E9, #FF6B6B);
+      cursor: pointer;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+    }
+
+    .filter-slider input[type="range"]::-moz-range-thumb {
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #0EA5E9, #FF6B6B);
+      cursor: pointer;
+      border: none;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+    }
+
+    .filter-slider span {
+      font-size: 12px;
+      color: #666;
+      text-align: right;
+    }
+
+    .camera-form-actions {
+      display: flex;
+      gap: 10px;
+      padding: 15px 20px;
+      border-top: 1px solid #e0e0e0;
+      background: #f9f9f9;
+    }
+
+    .camera-form-actions button {
+      flex: 1;
+      padding: 12px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 14px;
+      transition: all 0.3s ease;
+    }
+
+    .camera-cancel-btn {
+      background: #f0f0f0;
+      color: #333;
+    }
+
+    .camera-cancel-btn:hover {
+      background: #e0e0e0;
+    }
+
+    .camera-submit-btn {
+      background: linear-gradient(135deg, #0EA5E9, #FF6B6B);
+      color: white;
+      display: none;
+    }
+
+    .camera-submit-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(14, 165, 233, 0.3);
+    }
+
+    @media (max-width: 768px) {
+      .upload-page {
+        padding: 20px;
+        margin: 16px;
+      }
+
+      h1 {
+        font-size: 24px;
+      }
+
+      .camera-modal-content {
+        width: 95%;
+        max-height: 95vh;
+      }
+
+      .preset-filters {
+        grid-template-columns: repeat(3, 1fr);
+      }
+    }
+  </style>
+  <!-- MySQL API Client -->
+  <script src="coshin-api.js"></script>
+
+</head>
+<body>
+  <main class="upload-page">
+    <a href="reels.html" class="back-link">
+      <i class="fa-solid fa-arrow-left"></i> Back to Reels
+    </a>
+    <h1><i class="fa-solid fa-video"></i> Create Reel</h1>
+    <p class="subtitle">Share a short, engaging video with your audience</p>
+    
+    <form id="reelForm" class="upload-form">
+      <div class="form-group">
+        <label class="form-label" for="reelTitle">Title *</label>
+        <input id="reelTitle" type="text" placeholder="Give your reel a catchy title" required>
+
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="reelDescription">Description</label>
+        <textarea id="reelDescription" placeholder="Add description, hashtags, and emojis... ✨"></textarea>
+
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="reelMusic">Music/Audio</label>
+        <input id="reelMusic" type="text" placeholder="e.g., Original Audio, Trending Song">
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Video Source</label>
+        <div class="file-upload-area" onclick="document.getElementById('videoFile').click()">
+          <i class="fa-solid fa-cloud-arrow-up"></i>
+          <p style="margin: 8px 0 4px 0; font-weight: 600; color: #333;">Click to upload video</p>
+          <p style="margin: 0; font-size: 13px; color: #666;">MP4, WebM, or MOV • Record or choose from gallery</p>
+          <p class="file-name" id="fileName"></p>
+        </div>
+        <input id="videoFile" type="file" accept="video/*" capture="user">
+        <button type="button" class="camera-toggle-btn" onclick="openCameraModal()" style="width: 100%; margin-top: 10px;">
+          <i class="fa-solid fa-video"></i> 📹 Record with Camera
+        </button>
+        <p style="text-align: center; margin: 12px 0 8px 0; color: #999; font-size: 13px; font-weight: 600;">OR</p>
+        <input id="reelUrl" type="text" placeholder="Paste video URL (YouTube, Vimeo, or direct link)">
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">
+          <i class="fa-solid fa-shopping-bag"></i> Add Shop Button (Optional)
+        </label>
+        <div class="shop-section">
+          <div class="toggle-container">
+            <label class="toggle-switch">
+              <input type="checkbox" id="enableShopBtn">
+              <span class="toggle-slider"></span>
+            </label>
+            <span class="toggle-label">Enable shop button in reel</span>
+          </div>
+          
+          <div class="shop-fields" id="shopFields">
+            <div>
+              <label class="form-label" for="shopBtnText" style="font-size: 13px; margin-bottom: 6px;">Button Text</label>
+              <input id="shopBtnText" type="text" placeholder="e.g., Shop Now, View Product, Visit Store">
+            </div>
+            <div>
+              <label class="form-label" for="shopBtnLink" style="font-size: 13px; margin-bottom: 6px;">Link URL</label>
+              <input id="shopBtnLink" type="url" placeholder="https://yourstore.com/product">
+            </div>
+            <p style="font-size: 12px; color: #666; margin: 0;">
+              <i class="fa-solid fa-lightbulb"></i> This button will appear alongside like, comment, and share buttons
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <p class="hint">
+        <i class="fa-solid fa-circle-info"></i> <strong>Tip:</strong> On mobile, you can record a new video or choose from your gallery. For best results, use vertical videos (9:16 ratio).
+      </p>
+
+      <button type="button" class="upload-btn" id="uploadReelBtn">
+        <i class="fa-solid fa-upload"></i> Publish Reel
+      </button>
+    </form>
+
+    <div class="video-preview" id="videoPreview">
+      <video id="previewVideo" controls playsinline></video>
+    </div>
+
+    <!-- Camera Permission Modal -->
+    <div id="cameraPermissionModal" class="camera-modal">
+      <div class="camera-modal-content" style="max-width: 450px;">
+        <div class="camera-modal-header">
+          <h2>📷 Camera Access</h2>
+          <button class="close-camera-btn" onclick="closeCameraPermissionModal()">&times;</button>
+        </div>
+
+        <div id="permissionError" class="camera-error" style="display: none; margin: 12px;"></div>
+
+        <div class="camera-container" style="padding: 25px; text-align: center;">
+          <i class="fa-solid fa-camera" style="font-size: 48px; color: #0EA5E9; margin-bottom: 15px; display: block;"></i>
+          
+          <h3 style="margin: 0 0 12px 0; color: #333; font-size: 18px;">We need camera access</h3>
+          
+          <p style="margin: 0 0 20px 0; color: #666; font-size: 14px; line-height: 1.6;">
+            To record videos with beautiful filters, we need permission to access your camera. Your privacy is important—we never store or share camera data.
+          </p>
+
+          <div style="background: #f5f5f5; border-left: 4px solid #0EA5E9; padding: 12px 15px; margin-bottom: 20px; text-align: left; border-radius: 4px;">
+            <p style="margin: 0; font-size: 13px; color: #333; font-weight: 600; margin-bottom: 8px;">
+              ✓ We will:
+            </p>
+            <ul style="margin: 0; padding-left: 16px; font-size: 12px; color: #666;">
+              <li>Only access your camera when you choose to record</li>
+              <li>Never store or share camera footage</li>
+              <li>Respect your privacy settings</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="camera-form-actions">
+          <button class="camera-cancel-btn" type="button" onclick="closeCameraPermissionModal()">Cancel</button>
+          <button class="camera-submit-btn" type="button" onclick="requestCameraPermission()" style="display: inline-block;">Allow Camera Access</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Camera Modal -->
+    <div id="cameraModal" class="camera-modal">
+      <div class="camera-modal-content">
+        <!-- Full Screen Camera Preview -->
+        <div class="camera-preview">
+          <video id="cameraVideo" class="camera-video" autoplay playsinline muted></video>
+          <canvas id="cameraCanvas" class="camera-canvas" style="display: none;"></canvas>
+        </div>
+
+        <!-- Error Message -->
+        <div id="cameraError" class="camera-error"></div>
+
+        <!-- Recording Timer -->
+        <div id="recordingTimer" class="recording-timer">
+          <span id="timerDisplay">0:00</span>
+        </div>
+
+        <!-- Top Bar with Controls -->
+        <div class="camera-top-bar">
+          <button class="close-camera-btn" onclick="closeCameraModal()" title="Close">
+            <i class="fa-solid fa-xmark"></i>
+          </button>
+          
+          <div class="camera-top-controls">
+            <button class="camera-icon-btn" id="flashBtn" onclick="toggleFlash()" title="Flash">
+              <i class="fa-solid fa-bolt"></i>
+            </button>
+            <button class="camera-icon-btn" id="timerBtn" onclick="toggleTimer()" title="Timer">
+              <i class="fa-solid fa-clock"></i>
+            </button>
+            <button class="camera-icon-btn" onclick="switchCamera()" title="Flip Camera">
+              <i class="fa-solid fa-camera-rotate"></i>
+            </button>
+          </div>
+        </div>
+
+        <!-- Side Filter Bar -->
+        <div class="camera-filters-bar">
+          <div class="filter-thumb active" onclick="applyFilter('normal')" data-filter="normal">
+            Normal
+          </div>
+          <div class="filter-thumb" onclick="applyFilter('vintage')" data-filter="vintage">
+            Vintage
+          </div>
+          <div class="filter-thumb" onclick="applyFilter('sepia')" data-filter="sepia">
+            Sepia
+          </div>
+          <div class="filter-thumb" onclick="applyFilter('bw')" data-filter="bw">
+            B&W
+          </div>
+          <div class="filter-thumb" onclick="applyFilter('warm')" data-filter="warm">
+            Warm
+          </div>
+          <div class="filter-thumb" onclick="applyFilter('cool')" data-filter="cool">
+            Cool
+          </div>
+          <div class="filter-thumb" onclick="applyFilter('vivid')" data-filter="vivid">
+            Vivid
+          </div>
+          <div class="filter-thumb" onclick="applyFilter('blur')" data-filter="blur">
+            Blur
+          </div>
+          <div class="filter-thumb" onclick="toggleEffectsPanel()" data-filter="effects">
+            <i class="fa-solid fa-wand-magic-sparkles"></i>
+          </div>
+        </div>
+
+        <!-- Bottom Controls -->
+        <div class="camera-bottom-bar">
+          <!-- Speed Controls -->
+          <div class="speed-controls">
+            <button class="speed-btn" onclick="setSpeed(0.5)" data-speed="0.5">0.5x</button>
+            <button class="speed-btn active" onclick="setSpeed(1)" data-speed="1">1x</button>
+            <button class="speed-btn" onclick="setSpeed(1.5)" data-speed="1.5">1.5x</button>
+            <button class="speed-btn" onclick="setSpeed(2)" data-speed="2">2x</button>
+          </div>
+
+          <!-- Main Controls -->
+          <div class="camera-main-controls">
+            <!-- Gallery/Upload Button -->
+            <button class="camera-side-btn" onclick="document.getElementById('reelUpload').click()" title="Upload">
+              <i class="fa-solid fa-images"></i>
+              <span>Gallery</span>
+            </button>
+
+            <!-- Record/Capture Button -->
+            <button id="recordBtn" class="camera-record-btn" onclick="toggleRecording()" title="Record">
+            </button>
+
+            <!-- Effects Button -->
+            <button class="camera-side-btn" onclick="toggleEffectsPanel()" title="Effects">
+              <i class="fa-solid fa-sparkles"></i>
+              <span>Effects</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Beauty/Effects Panel (Slides from bottom) -->
+        <div id="effectsPanel" class="camera-effects-panel">
+          <div class="effects-panel-header">
+            <h3>✨ Beauty & Effects</h3>
+            <button class="effects-close-btn" onclick="toggleEffectsPanel()">×</button>
+          </div>
+
+          <div class="effect-slider">
+            <label for="brightnessSlider">Brightness</label>
+            <div class="slider-container">
+              <input type="range" id="brightnessSlider" min="0.5" max="2" step="0.1" value="1" oninput="updateEffect('brightness', this.value)">
+              <span id="brightnessValue" class="slider-value">100%</span>
+            </div>
+          </div>
+
+          <div class="effect-slider">
+            <label for="contrastSlider">Contrast</label>
+            <div class="slider-container">
+              <input type="range" id="contrastSlider" min="0.5" max="2" step="0.1" value="1" oninput="updateEffect('contrast', this.value)">
+              <span id="contrastValue" class="slider-value">100%</span>
+            </div>
+          </div>
+
+          <div class="effect-slider">
+            <label for="saturationSlider">Saturation</label>
+            <div class="slider-container">
+              <input type="range" id="saturationSlider" min="0" max="2" step="0.1" value="1" oninput="updateEffect('saturation', this.value)">
+              <span id="saturationValue" class="slider-value">100%</span>
+            </div>
+          </div>
+
+          <div class="effect-slider">
+            <label for="beautySlider">✨ Beauty</label>
+            <div class="slider-container">
+              <input type="range" id="beautySlider" min="0" max="100" step="5" value="0" oninput="updateEffect('beauty', this.value)">
+              <span id="beautyValue" class="slider-value">0%</span>
+            </div>
+          </div>
+
+          <div class="effect-slider">
+            <label for="blurSlider">Background Blur</label>
+            <div class="slider-container">
+              <input type="range" id="blurSlider" min="0" max="10" step="1" value="0" oninput="updateEffect('blur', this.value)">
+              <span id="blurValue" class="slider-value">0px</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    let videoData = null; // Store video file data or URL
+
+    // Handle shop button toggle
+    const enableShopBtn = document.getElementById('enableShopBtn');
+    const shopFields = document.getElementById('shopFields');
+    
+    enableShopBtn.addEventListener('change', (e) => {
+      if (e.target.checked) {
+        shopFields.classList.add('active');
+      } else {
+        shopFields.classList.remove('active');
+      }
+    });
+
+    // Handle file selection
+    document.getElementById('videoFile').addEventListener('change', (event) => {
+      const file = event.target.files[0];
+      if (file) {
+        // Validate file is a video
+        if (!file.type.startsWith('video/')) {
+          alert('⚠️ Please select a valid video file');
+          return;
+        }
+
+        // Check file size (warn if > 50MB, but still allow)
+        const sizeMB = (file.size / (1024 * 1024)).toFixed(2);
+        if (file.size > 50 * 1024 * 1024) {
+          if (!confirm(`File size is ${sizeMB}MB. Large files may take time to process. Continue?`)) {
+            event.target.value = '';
+            return;
+          }
+        }
+
+        // Show file name
+        document.getElementById('fileName').textContent = `✓ ${file.name} (${sizeMB}MB)`;
+
+        // Read file as data URL
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          videoData = e.target.result;
+          
+          // Show preview
+          const preview = document.getElementById('videoPreview');
+          const previewVideo = document.getElementById('previewVideo');
+          previewVideo.src = videoData;
+          preview.classList.add('active');
+        };
+        reader.readAsDataURL(file);
+      }
+    });
+
+    document.getElementById('uploadReelBtn').addEventListener('click', () => {
+      const title = document.getElementById('reelTitle').value.trim();
+      const description = document.getElementById('reelDescription').value.trim();
+      const music = document.getElementById('reelMusic').value.trim() || 'Original Audio';
+      const url = document.getElementById('reelUrl').value.trim();
+
+      if (!title) {
+        alert('⚠️ Please add a title for your reel');
+        return;
+      }
+
+      // Check if either video file or URL is provided
+      if (!videoData && !url) {
+        alert('⚠️ Please upload a video file or provide a video URL');
+        return;
+      }
+
+      // Get shop button data if enabled
+      const shopEnabled = document.getElementById('enableShopBtn').checked;
+      let shopData = null;
+      
+      if (shopEnabled) {
+        const shopText = document.getElementById('shopBtnText').value.trim();
+        const shopLink = document.getElementById('shopBtnLink').value.trim();
+        
+        if (!shopText || !shopLink) {
+          alert('⚠️ Please fill in shop button text and link, or disable the shop button');
+          return;
+        }
+        
+        shopData = {
+          text: shopText,
+          link: shopLink
+        };
+      }
+
+      // Get existing reels from localStorage
+      const reels = JSON.parse(localStorage.getItem('userReels') || '[]');
+      
+      // Get profile picture and name
+      const profilePicture = localStorage.getItem('profilePicture') || './COSHIN Assets/profile silhouette 2.jpg';
+      const profileData = JSON.parse(localStorage.getItem('userProfile') || '{}');
+      const userName = profileData.name || 'Your Name';
+      
+      // New reels should start with zero engagement
+      const newReel = {
+        id: Date.now(),
+        username: userName,
+        avatar: 'YN',
+        profilePicture: profilePicture,
+        description: description || title,
+        likes: 0,
+        comments: 0,
+        shares: 0,
+        music: music,
+        videoData: videoData || null, // Store video file data if uploaded
+        url: url || '', // Store URL if provided
+        uploadDate: new Date().toISOString(),
+        shop: shopData // Include shop button data if enabled
+      };
+
+      reels.unshift(newReel); // Add to beginning
+      
+      try {
+        localStorage.setItem('userReels', JSON.stringify(reels));
+        alert('🎉 Reel published successfully!');
+        window.location.href = 'reels.html';
+      } catch (e) {
+        if (e.name === 'QuotaExceededError') {
+          alert('⚠️ Storage limit exceeded. The video file is too large for browser storage. Please use a video URL instead or try a smaller file.');
+        } else {
+          alert('⚠️ Error saving reel: ' + e.message);
+        }
+      }
+    });
+
+    // Allow Enter key to trigger upload in input fields
+    document.querySelectorAll('input[type="text"]').forEach(input => {
+      input.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+          e.preventDefault();
+          document.getElementById('uploadReelBtn').click();
+        }
+      });
+    });
+
+    // ============ CAMERA FUNCTIONALITY ============
+    let cameraStream = null;
+    let currentFilter = 'normal';
+    let currentCameraMode = 'user';
+    let recordingChunks = [];
+    let mediaRecorder = null;
+    let capturedVideoData = null;
+    let cameraPermissionRequested = localStorage.getItem('cameraPermissionRequested') === 'true';
+
+    function openCameraPermissionModal() {
+      document.getElementById('cameraPermissionModal').classList.add('active');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeCameraPermissionModal() {
+      document.getElementById('cameraPermissionModal').classList.remove('active');
+      document.body.style.overflow = '';
+    }
+
+    async function requestCameraPermission() {
+      try {
+        // Request camera permission
+        const stream = await navigator.mediaDevices.getUserMedia({ 
+          video: { width: { ideal: 1280 }, height: { ideal: 720 } }, 
+          audio: true 
+        });
+        
+        // Permission granted, stop the test stream and mark as requested
+        stream.getTracks().forEach(track => track.stop());
+        
+        localStorage.setItem('cameraPermissionRequested', 'true');
+        cameraPermissionRequested = true;
+        closeCameraPermissionModal();
+        
+        // Now proceed to actually open the camera
+        setTimeout(startCamera, 100);
+      } catch (error) {
+        let errorMessage = 'Camera access error: ';
+        if (error.name === 'NotAllowedError') {
+          errorMessage = 'Permission denied. Please allow camera access in your browser settings.';
+        } else if (error.name === 'NotFoundError') {
+          errorMessage = 'No camera device found on your device.';
+        } else {
+          errorMessage = 'Error accessing camera: ' + error.message;
+        }
+        
+        // Show error in permission modal
+        const permissionError = document.getElementById('permissionError');
+        if (permissionError) {
+          permissionError.textContent = errorMessage;
+          permissionError.style.display = 'block';
+        } else {
+          alert(errorMessage);
+        }
+      }
+    }
+
+    function openCameraModal() {
+      // Check if permission was already requested
+      if (!cameraPermissionRequested) {
+        openCameraPermissionModal();
+      } else {
+        document.getElementById('cameraModal').classList.add('active');
+        document.body.style.overflow = 'hidden';
+      }
+    }
+
+    // Auto-open camera if URL parameter is present
+    window.addEventListener('DOMContentLoaded', function() {
+      const urlParams = new URLSearchParams(window.location.search);
+      if (urlParams.get('camera') === 'true') {
+        // Small delay to ensure everything is loaded
+        setTimeout(() => {
+          openCameraModal();
+        }, 300);
+      }
+    });
+
+    function closeCameraModal() {
+      document.getElementById('cameraModal').classList.remove('active');
+      document.body.style.overflow = '';
+      stopCamera();
+      clearCameraError();
+    }
+
+    function showCameraError(message) {
+      const errorDiv = document.getElementById('cameraError');
+      errorDiv.textContent = message;
+      errorDiv.style.display = 'block';
+    }
+
+    function clearCameraError() {
+      document.getElementById('cameraError').style.display = 'none';
+    }
+
+    function switchCameraMode(mode) {
+      const captureMode = document.getElementById('captureMode');
+      const filterMode = document.getElementById('filterMode');
+      const buttons = document.querySelectorAll('.camera-toggle-btn');
+
+      buttons.forEach(btn => btn.classList.remove('active'));
+      event.target.classList.add('active');
+
+      if (mode === 'capture') {
+        captureMode.style.display = 'block';
+        filterMode.style.display = 'none';
+      } else {
+        captureMode.style.display = 'none';
+        filterMode.style.display = 'block';
+        if (capturedVideoData) {
+          displayCapturedImageInBeauty();
+        }
+      }
+    }
+
+    // ==================== LEGACY CAMERA FUNCTIONS (Kept for compatibility) ====================
+    
+    let cameraStream = null;
+    let currentCameraMode = 'user';
+    let recordingChunks = [];
+    let capturedVideoData = null;
+
+    function snapPhoto() {
+      const video = document.getElementById('cameraVideo');
+      const canvas = document.getElementById('cameraCanvas');
+      const ctx = canvas.getContext('2d');
+
+      if (!video || !video.srcObject) {
+        showCameraError('Please start the camera first');
+        return;
+      }
+
+      canvas.width = video.videoWidth;
+      canvas.height = video.videoHeight;
+      ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+      capturedVideoData = {
+        canvas: canvas,
+        imageData: canvas.toDataURL('image/jpeg', 0.95)
+      };
+
+      showCameraError('✓ Photo captured!');
+      setTimeout(() => {
+        closeCameraModal();
+      }, 1000);
+    }
+
+    function applyCanvasFilter(ctx, canvas, filter) {
+      const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+      const data = imageData.data;
+
+      switch (filter) {
+        case 'vintage':
+          applyVintageFilter(data);
+          break;
+        case 'sepia':
+          applySepiaFilter(data);
+          break;
+        case 'bw':
+          applyBWFilter(data);
+          break;
+        case 'warm':
+          applyWarmFilter(data);
+          break;
+        case 'cool':
+          applyCoolFilter(data);
+          break;
+        case 'vivid':
+          applyVividFilter(data);
+          break;
+        case 'blur':
+          applyBlurFilter(ctx, canvas);
+          return;
+        case 'normal':
+        default:
+          break;
+      }
+
+      ctx.putImageData(imageData, 0, 0);
+    }
+
+    function applySepiaFilter(data) {
+      for (let i = 0; i < data.length; i += 4) {
+        const r = data[i], g = data[i + 1], b = data[i + 2];
+        data[i] = Math.min(255, r * 0.393 + g * 0.769 + b * 0.189);
+        data[i + 1] = Math.min(255, r * 0.349 + g * 0.686 + b * 0.168);
+        data[i + 2] = Math.min(255, r * 0.272 + g * 0.534 + b * 0.131);
+      }
+    }
+
+    function applyBWFilter(data) {
+      for (let i = 0; i < data.length; i += 4) {
+        const gray = data[i] * 0.299 + data[i + 1] * 0.587 + data[i + 2] * 0.114;
+        data[i] = gray;
+        data[i + 1] = gray;
+        data[i + 2] = gray;
+      }
+    }
+
+    function applyWarmFilter(data) {
+      for (let i = 0; i < data.length; i += 4) {
+        data[i] = Math.min(255, data[i] * 1.1);
+        data[i + 2] = Math.max(0, data[i + 2] * 0.8);
+      }
+    }
+
+    function applyCoolFilter(data) {
+      for (let i = 0; i < data.length; i += 4) {
+        data[i] = Math.max(0, data[i] * 0.8);
+        data[i + 2] = Math.min(255, data[i + 2] * 1.1);
+      }
+    }
+
+    function applyVividFilter(data) {
+      for (let i = 0; i < data.length; i += 4) {
+        const r = data[i], g = data[i + 1], b = data[i + 2];
+        data[i] = Math.min(255, r * 1.2);
+        data[i + 1] = Math.min(255, g * 1.2);
+        data[i + 2] = Math.min(255, b * 1.2);
+      }
+    }
+
+    function applyVintageFilter(data) {
+      for (let i = 0; i < data.length; i += 4) {
+        const r = data[i], g = data[i + 1], b = data[i + 2];
+        data[i] = Math.min(255, r * 1.1 + 30);
+        data[i + 1] = Math.min(255, g * 1.0 + 20);
+        data[i + 2] = Math.max(0, b * 0.9 - 10);
+      }
+    }
+
+    function applyBlurFilter(ctx, canvas) {
+      ctx.filter = 'blur(3px)';
+      ctx.drawImage(canvas, 0, 0);
+    }
+
+    function applyFilter(filterName) {
+      currentFilter = filterName;
+      const buttons = document.querySelectorAll('.preset-filter');
+      buttons.forEach(btn => btn.classList.remove('active'));
+      event.target.classList.add('active');
+
+      if (capturedVideoData) {
+        const canvas = document.getElementById('cameraCanvas');
+        const ctx = canvas.getContext('2d');
+        const video = document.getElementById('cameraVideo');
+
+        if (video && video.srcObject) {
+          canvas.width = video.videoWidth;
+          canvas.height = video.videoHeight;
+          ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+          applyCanvasFilter(ctx, canvas, currentFilter);
+        }
+      }
+    }
+
+    function displayCapturedImageInBeauty() {
+      if (!capturedVideoData) return;
+
+      const canvas = document.getElementById('beautyCanvas');
+      const ctx = canvas.getContext('2d');
+      const img = new Image();
+
+      img.onload = () => {
+        canvas.width = img.width;
+        canvas.height = img.height;
+        ctx.drawImage(img, 0, 0);
+        updateBeautyFilter();
+      };
+
+      img.src = typeof capturedVideoData === 'string' ? capturedVideoData : capturedVideoData.imageData;
+    }
+
+    function updateBeautyFilter() {
+      if (!capturedVideoData) return;
+
+      const canvas = document.getElementById('beautyCanvas');
+      const ctx = canvas.getContext('2d');
+      const img = new Image();
+
+      const brightness = parseFloat(document.getElementById('brightnessSlider').value);
+      const contrast = parseFloat(document.getElementById('contrastSlider').value);
+      const saturation = parseFloat(document.getElementById('saturationSlider').value);
+      const hue = parseFloat(document.getElementById('hueSlider').value);
+      const blur = parseFloat(document.getElementById('blurSlider').value);
+      const opacity = parseFloat(document.getElementById('opacitySlider').value);
+
+      document.getElementById('brightnessValue').textContent = Math.round(brightness * 100) + '%';
+      document.getElementById('contrastValue').textContent = Math.round(contrast * 100) + '%';
+      document.getElementById('saturationValue').textContent = Math.round(saturation * 100) + '%';
+      document.getElementById('hueValue').textContent = hue + '°';
+      document.getElementById('blurValue').textContent = blur + 'px';
+      document.getElementById('opacityValue').textContent = Math.round(opacity * 100) + '%';
+
+      img.onload = () => {
+        canvas.width = img.width;
+        canvas.height = img.height;
+
+        let filterString = `brightness(${brightness}) contrast(${contrast}) saturate(${saturation}) hue-rotate(${hue}deg)`;
+        if (blur > 0) {
+          filterString += ` blur(${blur}px)`;
+        }
+
+        ctx.filter = filterString;
+        ctx.globalAlpha = opacity;
+        ctx.drawImage(img, 0, 0);
+        ctx.globalAlpha = 1;
+      };
+
+      img.src = typeof capturedVideoData === 'string' ? capturedVideoData : capturedVideoData.imageData;
+    }
+
+    function useCameraVideo() {
+      if (!capturedVideoData) {
+        showCameraError('No video captured');
+        return;
+      }
+
+      localStorage.setItem('cameraVideo', typeof capturedVideoData === 'string' ? capturedVideoData : capturedVideoData.imageData);
+      showCameraError('✓ Video saved! Ready to upload.');
+      setTimeout(() => {
+        closeCameraModal();
+      }, 1000);
+    }
+
+    // ==================== NEW TIKTOK-STYLE CAMERA FEATURES ====================
+    
+    let isRecording = false;
+    let mediaRecorder = null;
+    let recordedChunks = [];
+    let recordingTimer = null;
+    let recordingSeconds = 0;
+    let currentSpeed = 1;
+    let flashEnabled = false;
+    let timerSeconds = 0;
+    let currentEffects = {
+      brightness: 1,
+      contrast: 1,
+      saturation: 1,
+      beauty: 0,
+      blur: 0
+    };
+
+    // Toggle recording
+    async function toggleRecording() {
+      if (!isRecording) {
+        await startRecording();
+      } else {
+        stopRecording();
+      }
+    }
+
+    // Start recording
+    async function startRecording() {
+      const video = document.getElementById('cameraVideo');
+      const stream = video.srcObject;
+      
+      if (!stream) {
+        // Auto-start camera if not started
+        await startCamera();
+        return;
+      }
+
+      try {
+        recordedChunks = [];
+        const options = { mimeType: 'video/webm;codecs=vp9' };
+        
+        if (!MediaRecorder.isTypeSupported(options.mimeType)) {
+          options.mimeType = 'video/webm';
+        }
+
+        mediaRecorder = new MediaRecorder(stream, options);
+
+        mediaRecorder.ondataavailable = (event) => {
+          if (event.data && event.data.size > 0) {
+            recordedChunks.push(event.data);
+          }
+        };
+
+        mediaRecorder.onstop = () => {
+          const blob = new Blob(recordedChunks, { type: 'video/webm' });
+          capturedVideoData = { blob, imageData: URL.createObjectURL(blob) };
+          videoData = { file: blob, url: URL.createObjectURL(blob) };
+          
+          // Show success message
+          showCameraError('✓ Video recorded successfully!');
+          setTimeout(() => {
+            closeCameraModal();
+          }, 1500);
+        };
+
+        mediaRecorder.start();
+        isRecording = true;
+        recordingSeconds = 0;
+
+        // Update UI
+        const recordBtn = document.getElementById('recordBtn');
+        recordBtn.classList.add('recording');
+        document.getElementById('recordingTimer').classList.add('active');
+
+        // Start timer
+        recordingTimer = setInterval(() => {
+          recordingSeconds++;
+          const minutes = Math.floor(recordingSeconds / 60);
+          const seconds = recordingSeconds % 60;
+          document.getElementById('timerDisplay').textContent = 
+            `${minutes}:${seconds.toString().padStart(2, '0')}`;
+        }, 1000);
+
+      } catch (error) {
+        showCameraError('Error starting recording: ' + error.message);
+      }
+    }
+
+    // Stop recording
+    function stopRecording() {
+      if (mediaRecorder && mediaRecorder.state !== 'inactive') {
+        mediaRecorder.stop();
+      }
+
+      isRecording = false;
+
+      // Update UI
+      const recordBtn = document.getElementById('recordBtn');
+      recordBtn.classList.remove('recording');
+      document.getElementById('recordingTimer').classList.remove('active');
+
+      // Stop timer
+      if (recordingTimer) {
+        clearInterval(recordingTimer);
+        recordingTimer = null;
+      }
+    }
+
+    // Toggle effects panel
+    function toggleEffectsPanel() {
+      const panel = document.getElementById('effectsPanel');
+      panel.classList.toggle('active');
+    }
+
+    // Update live effects
+    function updateEffect(type, value) {
+      const video = document.getElementById('cameraVideo');
+      
+      switch(type) {
+        case 'brightness':
+          currentEffects.brightness = value;
+          document.getElementById('brightnessValue').textContent = Math.round(value * 100) + '%';
+          break;
+        case 'contrast':
+          currentEffects.contrast = value;
+          document.getElementById('contrastValue').textContent = Math.round(value * 100) + '%';
+          break;
+        case 'saturation':
+          currentEffects.saturation = value;
+          document.getElementById('saturationValue').textContent = Math.round(value * 100) + '%';
+          break;
+        case 'beauty':
+          currentEffects.beauty = value;
+          document.getElementById('beautyValue').textContent = value + '%';
+          break;
+        case 'blur':
+          currentEffects.blur = value;
+          document.getElementById('blurValue').textContent = value + 'px';
+          break;
+      }
+
+      // Apply CSS filters to video
+      video.style.filter = `
+        brightness(${currentEffects.brightness})
+        contrast(${currentEffects.contrast})
+        saturate(${currentEffects.saturation})
+        blur(${currentEffects.blur}px)
+      `;
+    }
+
+    // Set playback speed
+    function setSpeed(speed) {
+      currentSpeed = speed;
+      
+      // Update active button
+      document.querySelectorAll('.speed-btn').forEach(btn => {
+        btn.classList.remove('active');
+        if (parseFloat(btn.dataset.speed) === speed) {
+          btn.classList.add('active');
+        }
+      });
+    }
+
+    // Toggle flash
+    function toggleFlash() {
+      flashEnabled = !flashEnabled;
+      const flashBtn = document.getElementById('flashBtn');
+      
+      if (flashEnabled) {
+        flashBtn.classList.add('active');
+      } else {
+        flashBtn.classList.remove('active');
+      }
+    }
+
+    // Toggle timer
+    function toggleTimer() {
+      const timerBtn = document.getElementById('timerBtn');
+      
+      if (timerSeconds === 0) {
+        timerSeconds = 3;
+      } else if (timerSeconds === 3) {
+        timerSeconds = 10;
+      } else {
+        timerSeconds = 0;
+      }
+
+      if (timerSeconds > 0) {
+        timerBtn.classList.add('active');
+        timerBtn.innerHTML = `<i class="fa-solid fa-clock"></i> ${timerSeconds}s`;
+      } else {
+        timerBtn.classList.remove('active');
+        timerBtn.innerHTML = '<i class="fa-solid fa-clock"></i>';
+      }
+    }
+
+    // Update filter selection UI
+    function applyFilter(filterName) {
+      currentFilter = filterName;
+      
+      // Update active filter thumb
+      document.querySelectorAll('.filter-thumb').forEach(thumb => {
+        thumb.classList.remove('active');
+        if (thumb.dataset.filter === filterName) {
+          thumb.classList.add('active');
+        }
+      });
+
+      const video = document.getElementById('cameraVideo');
+      
+      // Reset filters first
+      video.style.filter = '';
+      
+      // Apply selected filter
+      switch(filterName) {
+        case 'normal':
+          video.style.filter = '';
+          break;
+        case 'vintage':
+          video.style.filter = 'sepia(0.5) brightness(1.1) contrast(0.9)';
+          break;
+        case 'sepia':
+          video.style.filter = 'sepia(1)';
+          break;
+        case 'bw':
+          video.style.filter = 'grayscale(1)';
+          break;
+        case 'warm':
+          video.style.filter = 'sepia(0.3) saturate(1.4)';
+          break;
+        case 'cool':
+          video.style.filter = 'hue-rotate(180deg) saturate(1.2)';
+          break;
+        case 'vivid':
+          video.style.filter = 'saturate(1.8) contrast(1.2)';
+          break;
+        case 'blur':
+          video.style.filter = 'blur(3px)';
+          break;
+      }
+    }
+
+    // Auto-start camera when modal opens
+    function openCameraModal() {
+      if (!cameraPermissionRequested) {
+        openCameraPermissionModal();
+      } else {
+        document.getElementById('cameraModal').classList.add('active');
+        document.body.style.overflow = 'hidden';
+        // Auto-start camera
+        setTimeout(() => {
+          startCamera();
+        }, 500);
+      }
+    }
+
+    // Update startCamera to work seamlessly
+    async function startCamera() {
+      const video = document.getElementById('cameraVideo');
+      
+      try {
+        clearCameraError();
+        
+        const constraints = {
+          video: {
+            facingMode: currentFacingMode || 'user',
+            width: { ideal: 1280 },
+            height: { ideal: 720 }
+          },
+          audio: true
+        };
+
+        const stream = await navigator.mediaDevices.getUserMedia(constraints);
+        video.srcObject = stream;
+        currentStream = stream;
+
+      } catch (error) {
+        let errorMessage = 'Camera access error';
+        if (error.name === 'NotAllowedError') {
+          errorMessage = 'Camera permission denied. Please enable camera access.';
+        } else if (error.name === 'NotFoundError') {
+          errorMessage = 'No camera found on this device.';
+        } else {
+          errorMessage = 'Error: ' + error.message;
+        }
+        showCameraError(errorMessage);
+      }
+    }
+
+    // Switch between front/back camera
+    let currentFacingMode = 'user';
+    let currentStream = null;
+
+    async function switchCamera() {
+      currentFacingMode = currentFacingMode === 'user' ? 'environment' : 'user';
+      
+      // Stop current stream
+      if (currentStream) {
+        currentStream.getTracks().forEach(track => track.stop());
+      }
+      
+      // Start new stream with different camera
+      await startCamera();
+    }
+
+    // Enhanced closeCameraModal
+    function closeCameraModal() {
+      // Stop recording if active
+      if (isRecording) {
+        stopRecording();
+      }
+      
+      // Stop camera stream
+      if (currentStream) {
+        currentStream.getTracks().forEach(track => track.stop());
+        currentStream = null;
+      }
+      
+      const video = document.getElementById('cameraVideo');
+      video.srcObject = null;
+      
+      document.getElementById('cameraModal').classList.remove('active');
+      document.body.style.overflow = '';
+      clearCameraError();
+      
+      // Close effects panel if open
+      document.getElementById('effectsPanel').classList.remove('active');
+    }
+  </script>
+  <script src="title-fixer.js"></script>
+  
+  <!-- Temporary: Disable reel uploads -->
+  <script>
+    window.addEventListener('DOMContentLoaded', function() {
+      alert('🎬 Reel Creation Coming Soon!\n\nWe\'re working hard to bring you an amazing reel creation experience. This feature will be available soon. Stay tuned!');
+      window.location.href = 'reels.html';
+    });
+  </script>
+</body>
+</html>
+

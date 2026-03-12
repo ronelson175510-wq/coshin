@@ -1,0 +1,1806 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reels & Live</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="style.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            overflow: hidden;
+            font-family: Helvetica, Arial, sans-serif;
+            font-size: 14px;
+            line-height: 1.34;
+            font-weight: 400;
+            color: #1c1e21;
+        }
+
+        /* Top Navigation */
+        .top-nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 50px;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(10px);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 20px;
+            z-index: 100;
+            color: white;
+        }
+
+        .top-nav h1 {
+            font-size: 20px;
+            font-weight: 700;
+        }
+
+        .nav-icons {
+            display: flex;
+            gap: 20px;
+            font-size: 24px;
+        }
+
+        .nav-icons i {
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .nav-icons i:hover {
+            transform: scale(1.1);
+        }
+
+        /* Reels Container - Full Screen Snap Scroll */
+        .reels-container {
+            height: 100vh;
+            overflow-y: scroll;
+            scroll-snap-type: y mandatory;
+            scroll-behavior: smooth;
+        }
+
+        .reels-container::-webkit-scrollbar {
+            display: none;
+        }
+
+        /* Individual Reel - Full Screen */
+        .reel {
+            position: relative;
+            height: 100vh;
+            width: 100vw;
+            scroll-snap-align: start;
+            background: #000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .reel-video {
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #1a1a1a, #2d1b69, #FF6B6B, #0EA5E9);
+            background-size: 400% 400%;
+            animation: gradientShift 15s ease infinite;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            cursor: pointer;
+        }
+
+        .play-pause-indicator {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 72px;
+            color: rgba(255, 255, 255, 0.9);
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            z-index: 5;
+        }
+
+        .reel-video.show-indicator .play-pause-indicator {
+            opacity: 1;
+        }
+
+        @keyframes gradientShift {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+
+        .reel-video-placeholder {
+            color: white;
+            font-size: 80px;
+            opacity: 0.8;
+        }
+
+        /* Bottom Info Overlay */
+        .reel-info {
+            position: absolute;
+            bottom: 100px;
+            left: 0;
+            right: 0;
+            padding: 20px;
+            background: linear-gradient(to top, rgba(0, 0, 0, 0.8) 0%, rgba(0, 0, 0, 0.4) 50%, transparent 100%);
+            color: white;
+            z-index: 10;
+        }
+
+        .reel-user {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+
+        .reel-user-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #0EA5E9, #FF6B6B);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 14px;
+            border: 2px solid white;
+            overflow: hidden;
+            flex-shrink: 0;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .reel-user-avatar:hover {
+            transform: scale(1.15);
+            box-shadow: 0 0 15px rgba(14, 165, 233, 0.5);
+            border-color: #0EA5E9;
+        }
+        
+        .reel-user-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .reel-user-name {
+            font-weight: 600;
+            font-size: 15px;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+        }
+
+        .follow-btn {
+            margin-left: auto;
+            background: transparent;
+            border: 2px solid white;
+            color: white;
+            padding: 6px 16px;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .follow-btn:hover {
+            background: white;
+            color: #000;
+        }
+
+        .reel-description {
+            font-size: 14px;
+            line-height: 1.4;
+            margin-bottom: 8px;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+            max-width: 80%;
+        }
+
+        .reel-music {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 13px;
+            opacity: 0.9;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+        }
+
+        /* Right Side Action Buttons */
+        .reel-actions {
+            position: absolute;
+            right: 12px;
+            bottom: 120px;
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+            z-index: 10;
+        }
+
+        .action-btn {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            color: white;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .action-btn:hover {
+            transform: scale(1.1);
+        }
+
+        .action-btn i {
+            font-size: 28px;
+            filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.5));
+        }
+
+        .action-btn span {
+            font-size: 12px;
+            font-weight: 600;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+        }
+
+        .action-btn.like i {
+            color: #FF6B6B;
+        }
+
+        .action-btn.comment i {
+            color: white;
+        }
+
+        .action-btn.share i {
+            color: white;
+        }
+
+        .action-btn.shop {
+            background: linear-gradient(135deg, #0EA5E9, #FF6B6B);
+            padding: 10px 14px;
+            border-radius: 50px;
+            text-decoration: none;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        .action-btn.shop:hover {
+            transform: scale(1.05);
+            border-color: rgba(255, 255, 255, 0.6);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        }
+
+        .action-btn.shop i {
+            color: white;
+            font-size: 24px;
+        }
+
+        .action-btn.shop span {
+            display: block;
+            text-align: center;
+            word-wrap: break-word;
+        }
+
+        .action-btn.more i {
+            color: white;
+        }
+
+        .comment-modal {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.55);
+            z-index: 200;
+            display: none;
+            align-items: flex-end;
+            justify-content: center;
+        }
+
+        .comment-modal.active {
+            display: flex;
+        }
+
+        .comment-sheet {
+            width: min(680px, 100%);
+            height: min(72vh, 620px);
+            background: #fff;
+            border-radius: 16px 16px 0 0;
+            box-shadow: 0 -12px 28px rgba(0, 0, 0, 0.22);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .comment-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 14px 16px;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .comment-header h3 {
+            margin: 0;
+            font-size: 16px;
+            color: #111827;
+        }
+
+        .comment-close {
+            border: none;
+            background: transparent;
+            color: #111827;
+            font-size: 20px;
+            cursor: pointer;
+        }
+
+        .comment-list {
+            flex: 1;
+            overflow-y: auto;
+            padding: 12px 16px;
+            background: #f9fafb;
+        }
+
+        .comment-empty {
+            text-align: center;
+            color: #6b7280;
+            font-size: 14px;
+            padding: 28px 12px;
+        }
+
+        .comment-item {
+            background: #fff;
+            border: 1px solid #e5e7eb;
+            border-radius: 12px;
+            padding: 10px 12px;
+            margin-bottom: 10px;
+        }
+
+        .comment-item-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 6px;
+        }
+
+        .comment-author {
+            font-size: 13px;
+            font-weight: 700;
+            color: #111827;
+        }
+
+        .comment-time {
+            font-size: 11px;
+            color: #6b7280;
+        }
+
+        .comment-text {
+            font-size: 14px;
+            color: #1f2937;
+            line-height: 1.4;
+            word-break: break-word;
+        }
+
+        .comment-compose {
+            padding: 10px 12px;
+            border-top: 1px solid #e5e7eb;
+            display: flex;
+            gap: 8px;
+            background: #fff;
+        }
+
+        .comment-compose input {
+            flex: 1;
+            border: 1px solid #d1d5db;
+            border-radius: 999px;
+            padding: 10px 14px;
+            font-size: 14px;
+        }
+
+        .comment-compose input:focus {
+            outline: none;
+            border-color: #0EA5E9;
+        }
+
+        .comment-send {
+            border: none;
+            border-radius: 999px;
+            background: #0EA5E9;
+            color: #fff;
+            font-weight: 600;
+            padding: 0 16px;
+            cursor: pointer;
+        }
+
+        .comment-send:hover {
+            background: #0284c7;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .top-nav h1 {
+                font-size: 18px;
+            }
+
+            .nav-icons {
+                gap: 15px;
+                font-size: 20px;
+            }
+
+            .reel-info {
+                bottom: 80px;
+                padding: 15px;
+            }
+
+            .reel-user-avatar {
+                width: 32px;
+                height: 32px;
+                font-size: 12px;
+            }
+
+            .reel-user-name {
+                font-size: 14px;
+            }
+
+            .reel-description {
+                font-size: 13px;
+            }
+
+            .follow-btn {
+                padding: 5px 12px;
+                font-size: 12px;
+            }
+
+            .reel-actions {
+                right: 8px;
+                bottom: 100px;
+                gap: 20px;
+            }
+
+            .action-btn i {
+                font-size: 24px;
+            }
+
+            .action-btn span {
+                font-size: 11px;
+            }
+        }
+
+        /* Upload Modal Styles */
+        .upload-modal {
+          display: none;
+          position: fixed;
+          z-index: 1000;
+          left: 0;
+          top: 0;
+          width: 100%;
+          height: 100%;
+          background-color: rgba(0, 0, 0, 0.7);
+          animation: fadeIn 0.3s ease;
+        }
+
+        .upload-modal.active,
+        .upload-modal[style*="display: flex"] {
+          display: flex !important;
+          align-items: center;
+          justify-content: center;
+        }
+
+        /* Full-Screen Camera Modal */
+        #reelCameraModal {
+          background-color: #000;
+        }
+
+        #reelCameraModal.active,
+        #reelCameraModal[style*="display: flex"] {
+          display: flex !important;
+          align-items: stretch;
+          justify-content: center;
+        }
+
+        .fullscreen-camera-container {
+          position: relative;
+          width: 100%;
+          height: 100vh;
+          background: #000;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          overflow: hidden;
+        }
+
+        #reelCameraPreview {
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+          background: #000;
+        }
+
+        .camera-overlay {
+          position: absolute;
+          top: 0;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          pointer-events: none;
+        }
+
+        .camera-top-bar {
+          position: absolute;
+          top: 0;
+          left: 0;
+          right: 0;
+          padding: env(safe-area-inset-top, 20px) 20px 20px;
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          background: linear-gradient(to bottom, rgba(0,0,0,0.6), transparent);
+          pointer-events: auto;
+        }
+
+        .camera-close-btn {
+          background: rgba(255, 255, 255, 0.2);
+          backdrop-filter: blur(10px);
+          border: none;
+          width: 40px;
+          height: 40px;
+          border-radius: 50%;
+          color: white;
+          font-size: 24px;
+          cursor: pointer;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          transition: all 0.3s;
+        }
+
+        .camera-close-btn:hover {
+          background: rgba(255, 255, 255, 0.3);
+        }
+
+        .camera-timer {
+          background: rgba(220, 38, 38, 0.9);
+          backdrop-filter: blur(10px);
+          padding: 8px 16px;
+          border-radius: 20px;
+          color: white;
+          font-size: 16px;
+          font-weight: 600;
+          display: flex;
+          align-items: center;
+          gap: 8px;
+        }
+
+        .recording-dot {
+          width: 8px;
+          height: 8px;
+          background: white;
+          border-radius: 50%;
+          animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+          0%, 100% { opacity: 1; }
+          50% { opacity: 0.3; }
+        }
+
+        .camera-bottom-bar {
+          position: absolute;
+          bottom: 0;
+          left: 0;
+          right: 0;
+          padding: 20px 20px calc(env(safe-area-inset-bottom, 20px) + 20px);
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          gap: 30px;
+          background: linear-gradient(to top, rgba(0,0,0,0.6), transparent);
+          pointer-events: auto;
+        }
+
+        .camera-control-btn {
+          background: rgba(255, 255, 255, 0.2);
+          backdrop-filter: blur(10px);
+          border: 3px solid white;
+          width: 70px;
+          height: 70px;
+          border-radius: 50%;
+          color: white;
+          font-size: 28px;
+          cursor: pointer;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          transition: all 0.3s;
+        }
+
+        .camera-control-btn:hover {
+          background: rgba(255, 255, 255, 0.3);
+          transform: scale(1.05);
+        }
+
+        .camera-control-btn.recording {
+          background: rgba(220, 38, 38, 0.9);
+          border-color: #dc2626;
+        }
+
+        .camera-control-btn.recording:hover {
+          background: rgba(220, 38, 38, 1);
+        }
+
+        .camera-switch-btn {
+          background: rgba(255, 255, 255, 0.2);
+          backdrop-filter: blur(10px);
+          border: 2px solid white;
+          width: 50px;
+          height: 50px;
+          border-radius: 50%;
+          color: white;
+          font-size: 20px;
+          cursor: pointer;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          transition: all 0.3s;
+        }
+
+        .camera-switch-btn:hover {
+          background: rgba(255, 255, 255, 0.3);
+          transform: rotate(180deg);
+        }
+
+        .camera-switch-btn:disabled {
+          opacity: 0.3;
+          cursor: not-allowed;
+        }
+
+        .camera-switch-btn:disabled:hover {
+          transform: none;
+        }
+
+        /* Filter Sidebar */
+        .filter-sidebar {
+          position: absolute;
+          right: 12px;
+          top: 50%;
+          transform: translateY(-50%);
+          display: flex;
+          flex-direction: column;
+          gap: 12px;
+          pointer-events: auto;
+          max-height: 70vh;
+          overflow-y: auto;
+          padding: 8px;
+        }
+
+        .filter-sidebar::-webkit-scrollbar {
+          width: 4px;
+        }
+
+        .filter-sidebar::-webkit-scrollbar-track {
+          background: transparent;
+        }
+
+        .filter-sidebar::-webkit-scrollbar-thumb {
+          background: rgba(255, 255, 255, 0.3);
+          border-radius: 2px;
+        }
+
+        .filter-option {
+          position: relative;
+          width: 60px;
+          cursor: pointer;
+          transition: all 0.3s;
+        }
+
+        .filter-preview {
+          width: 60px;
+          height: 80px;
+          border-radius: 12px;
+          border: 2px solid rgba(255, 255, 255, 0.3);
+          background: rgba(0, 0, 0, 0.4);
+          backdrop-filter: blur(10px);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-size: 10px;
+          color: white;
+          font-weight: 600;
+          text-align: center;
+          overflow: hidden;
+          transition: all 0.3s;
+        }
+
+        .filter-option.active .filter-preview {
+          border-color: #0EA5E9;
+          border-width: 3px;
+          box-shadow: 0 0 20px rgba(14, 165, 233, 0.6);
+        }
+
+        .filter-option:hover .filter-preview {
+          transform: scale(1.05);
+          border-color: rgba(255, 255, 255, 0.6);
+        }
+
+        .filter-name {
+          margin-top: 4px;
+          font-size: 10px;
+          color: white;
+          text-align: center;
+          text-shadow: 0 1px 3px rgba(0, 0, 0, 0.8);
+          font-weight: 600;
+        }
+
+        .filter-icon {
+          font-size: 24px;
+        }
+
+        @media (max-width: 768px) {
+          .filter-sidebar {
+            right: 8px;
+            gap: 8px;
+          }
+
+          .filter-option {
+            width: 50px;
+          }
+
+          .filter-preview {
+            width: 50px;
+            height: 65px;
+          }
+
+          .filter-name {
+            font-size: 9px;
+          }
+        }
+
+        .upload-modal-content {
+          background: white;
+          border-radius: 16px;
+          padding: 24px;
+          max-width: 90%;
+          max-height: 90vh;
+          overflow-y: auto;
+          position: relative;
+          box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+          animation: slideUp 0.3s ease;
+        }
+
+        .upload-modal-header {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          margin-bottom: 20px;
+          padding-bottom: 12px;
+          border-bottom: 1px solid #e5e7eb;
+        }
+
+        .upload-modal-header h2 {
+          font-size: 20px;
+          font-weight: 700;
+          margin: 0;
+          color: #111;
+        }
+
+        .close-upload-modal {
+          background: transparent;
+          border: none;
+          font-size: 28px;
+          cursor: pointer;
+          color: #999;
+          padding: 0;
+          line-height: 1;
+        }
+
+        .close-upload-modal:hover {
+          color: #FF6B6B;
+        }
+
+        .camera-error {
+          padding: 16px;
+          background: #fee2e2;
+          color: #dc2626;
+          border-radius: 8px;
+          margin-bottom: 16px;
+          border-left: 4px solid #dc2626;
+        }
+
+        .camera-btn {
+          padding: 10px 16px;
+          border: 1px solid #ddd;
+          border-radius: 8px;
+          background: white;
+          cursor: pointer;
+          font-size: 14px;
+          transition: all 0.3s;
+          display: flex;
+          align-items: center;
+          gap: 6px;
+        }
+
+        .camera-btn:hover {
+          background: #f5f5f5;
+          border-color: #0095f6;
+          color: #0095f6;
+        }
+
+        .camera-btn:disabled {
+          opacity: 0.5;
+          cursor: not-allowed;
+        }
+
+        .upload-form-actions {
+          display: flex;
+          gap: 12px;
+          justify-content: flex-end;
+          margin-top: 20px;
+        }
+
+        .upload-cancel-btn, .upload-submit-btn {
+          padding: 12px 24px;
+          border: none;
+          border-radius: 8px;
+          font-weight: 600;
+          cursor: pointer;
+          transition: all 0.3s;
+        }
+
+        .upload-cancel-btn {
+          background: #f3f4f6;
+          color: #374151;
+        }
+
+        .upload-cancel-btn:hover {
+          background: #e5e7eb;
+        }
+
+        .upload-submit-btn {
+          background: linear-gradient(135deg, #0EA5E9, #0284c7);
+          color: white;
+        }
+
+        .upload-submit-btn:hover {
+          background: linear-gradient(135deg, #0284c7, #0369a1);
+        }
+
+        .upload-submit-btn:disabled {
+          opacity: 0.5;
+          cursor: not-allowed;
+        }
+
+        @keyframes fadeIn {
+          from { opacity: 0; }
+          to { opacity: 1; }
+        }
+
+        @keyframes slideUp {
+          from {
+            transform: translateY(20px);
+            opacity: 0;
+          }
+          to {
+            transform: translateY(0);
+            opacity: 1;
+          }
+        }
+    </style>
+    <!-- Firebase Libraries -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.2/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.2/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.2/firebase-database-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.2/firebase-storage-compat.js"></script>
+    <!-- Your Firebase Config -->
+    <script src="firebase-config.js"></script>
+    <!-- MySQL Backend API -->
+    <script src="coshin-api.js"></script>
+</head>
+<body>
+    <!-- Top Navigation -->
+    <div class="top-nav">
+        <h1>Reels</h1>
+        <div class="nav-icons">
+            <i class="fa-solid fa-camera" onclick="openReelCameraModal()" title="Create Reel - Coming Soon!" style="cursor: pointer; opacity: 0.6;"></i>
+        </div>
+    </div>
+
+    <!-- Reels Container - Full Screen Scroll -->
+    <div id="reels" class="reels-container">
+        <!-- Reels will be dynamically inserted here -->
+    </div>
+
+    <div class="comment-modal" id="commentModal" aria-hidden="true">
+        <div class="comment-sheet" role="dialog" aria-modal="true" aria-label="Comments">
+            <div class="comment-header">
+                <h3>Comments</h3>
+                <button class="comment-close" id="closeCommentModal" title="Close comments">×</button>
+            </div>
+            <div class="comment-list" id="commentList"></div>
+            <div class="comment-compose">
+                <input type="text" id="commentInput" maxlength="250" placeholder="Write a comment...">
+                <button class="comment-send" id="sendCommentBtn">Send</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Reels source (user uploads only)
+        const sampleReels = [];
+        let activeCommentReelId = null;
+
+        const commentModal = document.getElementById('commentModal');
+        const commentList = document.getElementById('commentList');
+        const commentInput = document.getElementById('commentInput');
+        const sendCommentBtn = document.getElementById('sendCommentBtn');
+        const closeCommentModalBtn = document.getElementById('closeCommentModal');
+
+        function getAllReels() {
+            const userReels = JSON.parse(localStorage.getItem('userReels')) || [];
+            return [...userReels, ...sampleReels];
+        }
+
+        function updateReelCountInStorage(reelId, field) {
+            const reels = JSON.parse(localStorage.getItem('userReels')) || [];
+            const reelIndex = reels.findIndex(reel => reel.id === reelId);
+
+            if (reelIndex === -1) {
+                return null;
+            }
+
+            reels[reelIndex][field] = (reels[reelIndex][field] || 0) + 1;
+            localStorage.setItem('userReels', JSON.stringify(reels));
+            return reels[reelIndex][field];
+        }
+
+        function displayReels() {
+            const reelsContainer = document.getElementById('reels');
+            const allReels = getAllReels();
+            
+            if (allReels.length === 0) {
+                reelsContainer.innerHTML = `
+                    <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; color: white; text-align: center; padding: 20px;">
+                        <i class="fa-solid fa-video" style="font-size: 80px; margin-bottom: 20px; opacity: 0.5;"></i>
+                        <h2 style="margin-bottom: 10px;">No Reels Yet</h2>
+                        <p style="opacity: 0.8; margin-bottom: 30px;">Create your first reel to get started!</p>
+                        <button onclick="openReelCameraModal()" style="background: linear-gradient(135deg, #0EA5E9, #FF6B6B); color: white; border: none; padding: 14px 32px; border-radius: 25px; font-size: 16px; font-weight: 600; cursor: pointer; opacity: 0.7;">
+                            <i class="fa-solid fa-plus"></i> Create Reel (Coming Soon)
+                        </button>
+                    </div>
+                `;
+                return;
+            }
+            
+            reelsContainer.innerHTML = allReels.map(reel => {
+                const likeCount = reel.likes || 0;
+                const commentCount = Array.isArray(reel.commentsList) ? reel.commentsList.length : (reel.comments || 0);
+                const shareCount = reel.shares || 0;
+
+                // Determine video source
+                let videoContent = '';
+                if (reel.videoData) {
+                    // Local uploaded video
+                    videoContent = `<video 
+                        src="${reel.videoData}" 
+                        class="reel-video-element" 
+                        loop 
+                        playsinline 
+                        style="width: 100%; height: 100%; object-fit: cover; position: absolute; top: 0; left: 0;"
+                    ></video>`;
+                } else if (reel.url) {
+                    // URL-based video (for now just show placeholder, could add iframe for YouTube/Vimeo)
+                    videoContent = `<div class="reel-video-placeholder">
+                        <i class="fa-solid fa-video"></i>
+                    </div>`;
+                } else {
+                    // Default placeholder
+                    videoContent = `<div class="reel-video-placeholder">
+                        <i class="fa-solid fa-video"></i>
+                    </div>`;
+                }
+
+                return `
+                <div class="reel" data-reel-id="${reel.id}">
+                    <div class="reel-video" onclick="togglePlayPause(${reel.id})">
+                        ${videoContent}
+                        <div class="play-pause-indicator">
+                            <i class="fa-solid fa-play"></i>
+                        </div>
+                    </div>
+                    
+                    <!-- Bottom Info Overlay -->
+                    <div class="reel-info">
+                        <div class="reel-user">
+                            <a href="account.html" class="reel-user-avatar" style="text-decoration: none; cursor: pointer;" title="View profile">${reel.profilePicture ? `<img src="${reel.profilePicture}" alt="${reel.username}">` : reel.avatar}</a>
+                            <div class="reel-user-name">${reel.username}</div>
+                            <button class="follow-btn">Follow</button>
+                        </div>
+                        <div class="reel-description">${reel.description}</div>
+                        <div class="reel-music">
+                            <i class="fa-solid fa-music"></i>
+                            <span>${reel.music}</span>
+                        </div>
+                    </div>
+                    
+                    <!-- Right Side Actions -->
+                    <div class="reel-actions">
+                        <div class="action-btn like" onclick="likeReel(${reel.id})">
+                            <i class="fa-solid fa-heart"></i>
+                            <span>${formatNumber(likeCount)}</span>
+                        </div>
+                        <div class="action-btn comment" onclick="commentReel(${reel.id})">
+                            <i class="fa-solid fa-comment"></i>
+                            <span>${formatNumber(commentCount)}</span>
+                        </div>
+                        <div class="action-btn share" onclick="shareReel(${reel.id})">
+                            <i class="fa-solid fa-share"></i>
+                            <span>${formatNumber(shareCount)}</span>
+                        </div>
+                        ${reel.shop ? `
+                        <a href="${reel.shop.link}" target="_blank" class="action-btn shop" title="${reel.shop.text}">
+                            <i class="fa-solid fa-shopping-bag"></i>
+                            <span style="font-size: 11px; max-width: 50px; line-height: 1.1; margin-top: 2px;">${reel.shop.text}</span>
+                        </a>
+                        ` : ''}
+                        <div class="action-btn more" onclick="moreOptions(${reel.id})">
+                            <i class="fa-solid fa-ellipsis-vertical"></i>
+                        </div>
+                    </div>
+                </div>
+                `;
+            }).join('');
+
+            // Auto-play the first video if it exists
+            setTimeout(() => {
+                const firstVideo = document.querySelector('.reel-video-element');
+                if (firstVideo) {
+                    firstVideo.play().catch(() => {
+                        // Auto-play failed, user needs to interact first
+                    });
+                }
+
+                // Setup scroll observer for auto-play
+                setupVideoAutoPlay();
+            }, 100);
+        }
+
+        function setupVideoAutoPlay() {
+            const options = {
+                root: null,
+                threshold: 0.5 // Video is considered visible when 50% is in view
+            };
+
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    const video = entry.target.querySelector('video');
+                    if (video) {
+                        if (entry.isIntersecting) {
+                            // Video is in view - play it
+                            video.play().catch(() => {});
+                            video.muted = false; // Unmute when in view (if autoplay was muted)
+                        } else {
+                            // Video is out of view - pause it
+                            video.pause();
+                        }
+                    }
+                });
+            }, options);
+
+            // Observe all reels
+            document.querySelectorAll('.reel').forEach(reel => {
+                observer.observe(reel);
+            });
+        }
+
+        function togglePlayPause(reelId) {
+            const reel = document.querySelector(`[data-reel-id="${reelId}"]`);
+            const video = reel?.querySelector('video');
+            const reelVideo = reel?.querySelector('.reel-video');
+            const indicator = reel?.querySelector('.play-pause-indicator i');
+            
+            if (video && reelVideo && indicator) {
+                if (video.paused) {
+                    video.play();
+                    indicator.className = 'fa-solid fa-pause';
+                } else {
+                    video.pause();
+                    indicator.className = 'fa-solid fa-play';
+                }
+                
+                // Show indicator briefly
+                reelVideo.classList.add('show-indicator');
+                setTimeout(() => {
+                    reelVideo.classList.remove('show-indicator');
+                }, 500);
+            }
+        }
+
+        function formatNumber(num) {
+            if (num >= 1000000) {
+                return (num / 1000000).toFixed(1) + 'M';
+            } else if (num >= 1000) {
+                return (num / 1000).toFixed(1) + 'K';
+            }
+            return num.toString();
+        }
+
+        function likeReel(reelId) {
+            const updatedLikes = updateReelCountInStorage(reelId, 'likes');
+            if (updatedLikes === null) {
+                return;
+            }
+
+            const reelElement = document.querySelector(`[data-reel-id="${reelId}"]`);
+            const likeCountElement = reelElement?.querySelector('.action-btn.like span');
+            if (likeCountElement) {
+                likeCountElement.textContent = formatNumber(updatedLikes);
+            }
+        }
+
+        function getReelsFromStorage() {
+            return JSON.parse(localStorage.getItem('userReels')) || [];
+        }
+
+        function saveReelsToStorage(reels) {
+            localStorage.setItem('userReels', JSON.stringify(reels));
+        }
+
+        function formatCommentTime(isoString) {
+            if (!isoString) return '';
+            const date = new Date(isoString);
+            if (Number.isNaN(date.getTime())) return '';
+            return date.toLocaleString();
+        }
+
+        function renderCommentsForReel(reelId) {
+            const reels = getReelsFromStorage();
+            const reel = reels.find(item => item.id === reelId);
+            const comments = Array.isArray(reel?.commentsList) ? reel.commentsList : [];
+
+            if (!comments.length) {
+                commentList.innerHTML = '<div class="comment-empty">No comments yet. Start the conversation.</div>';
+                return;
+            }
+
+            commentList.innerHTML = comments.map(comment => `
+                <div class="comment-item">
+                    <div class="comment-item-header">
+                        <span class="comment-author">${comment.author || 'User'}</span>
+                        <span class="comment-time">${formatCommentTime(comment.createdAt)}</span>
+                    </div>
+                    <div class="comment-text">${comment.text}</div>
+                </div>
+            `).join('');
+
+            commentList.scrollTop = commentList.scrollHeight;
+        }
+
+        function openCommentModal(reelId) {
+            activeCommentReelId = reelId;
+            commentModal.classList.add('active');
+            commentModal.setAttribute('aria-hidden', 'false');
+            renderCommentsForReel(reelId);
+            setTimeout(() => commentInput.focus(), 50);
+        }
+
+        function closeCommentModal() {
+            activeCommentReelId = null;
+            commentModal.classList.remove('active');
+            commentModal.setAttribute('aria-hidden', 'true');
+            commentInput.value = '';
+        }
+
+        function submitComment() {
+            if (activeCommentReelId === null) {
+                return;
+            }
+
+            const text = commentInput.value.trim();
+            if (!text) {
+                return;
+            }
+
+            const reels = getReelsFromStorage();
+            const reelIndex = reels.findIndex(item => item.id === activeCommentReelId);
+            if (reelIndex === -1) {
+                return;
+            }
+
+            if (!Array.isArray(reels[reelIndex].commentsList)) {
+                reels[reelIndex].commentsList = [];
+            }
+
+            const profileData = JSON.parse(localStorage.getItem('userProfile') || '{}');
+            reels[reelIndex].commentsList.push({
+                text,
+                author: profileData.name || 'You',
+                createdAt: new Date().toISOString()
+            });
+
+            reels[reelIndex].comments = reels[reelIndex].commentsList.length;
+            saveReelsToStorage(reels);
+
+            const reelElement = document.querySelector(`[data-reel-id="${activeCommentReelId}"]`);
+            const commentCountElement = reelElement?.querySelector('.action-btn.comment span');
+            if (commentCountElement) {
+                commentCountElement.textContent = formatNumber(reels[reelIndex].comments);
+            }
+
+            commentInput.value = '';
+            renderCommentsForReel(activeCommentReelId);
+        }
+
+        function commentReel(reelId) {
+            openCommentModal(reelId);
+        }
+
+        function shareReel(reelId) {
+            const updatedShares = updateReelCountInStorage(reelId, 'shares');
+            if (updatedShares === null) {
+                return;
+            }
+
+            const reelElement = document.querySelector(`[data-reel-id="${reelId}"]`);
+            const shareCountElement = reelElement?.querySelector('.action-btn.share span');
+            if (shareCountElement) {
+                shareCountElement.textContent = formatNumber(updatedShares);
+            }
+
+            alert('Reel shared.');
+        }
+
+        function moreOptions(reelId) {
+            alert(`More options for reel ${reelId}:\n• Report\n• Not Interested\n• Save\n• Copy Link`);
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            // One-time cleanup: remove old reels from previous version
+            if (!localStorage.getItem('reelsDataResetV1')) {
+                localStorage.setItem('userReels', JSON.stringify([]));
+                localStorage.setItem('reelsDataResetV1', 'true');
+            }
+
+            displayReels();
+
+            closeCommentModalBtn.addEventListener('click', closeCommentModal);
+            sendCommentBtn.addEventListener('click', submitComment);
+            commentInput.addEventListener('keypress', (event) => {
+                if (event.key === 'Enter') {
+                    event.preventDefault();
+                    submitComment();
+                }
+            });
+
+            commentModal.addEventListener('click', (event) => {
+                if (event.target === commentModal) {
+                    closeCommentModal();
+                }
+            });
+        });
+
+        // Reel Camera Modal Functions
+        let reelCameraStream = null;
+        let reelMediaRecorder = null;
+        let reelRecordedChunks = [];
+        let reelRecordingInterval = null;
+        let reelRecordingTime = 0;
+        let reelCurrentCamera = 'user';
+        let reelFlashEnabled = false;
+
+        function openReelCameraModal() {
+            alert('🎬 Reel Creation Coming Soon!\n\nWe\'re working hard to bring you an amazing reel creation experience. This feature will be available soon. Stay tuned!');
+            return;
+            
+            // Temporarily disabled
+            // const modal = document.getElementById('reelCameraModal');
+            // modal.style.display = 'flex';
+            // startReelCamera();
+        }
+
+        function closeReelCameraModal() {
+            const modal = document.getElementById('reelCameraModal');
+            modal.style.display = 'none';
+            stopReelCamera();
+        }
+
+        async function startReelCamera() {
+            const videoPreview = document.getElementById('reelCameraPreview');
+            const errorDiv = document.getElementById('reelCameraError');
+            errorDiv.style.display = 'none';
+
+            try {
+                const constraints = {
+                    video: {
+                        facingMode: reelCurrentCamera,
+                        width: { ideal: 1080 },
+                        height: { ideal: 1920 }
+                    },
+                    audio: true
+                };
+
+                reelCameraStream = await navigator.mediaDevices.getUserMedia(constraints);
+                videoPreview.srcObject = reelCameraStream;
+                videoPreview.play();
+
+                // Enable flash if it was previously enabled
+                if (reelFlashEnabled && reelCurrentCamera === 'environment') {
+                    await enableReelFlash();
+                }
+            } catch (error) {
+                console.error('Camera access error:', error);
+                errorDiv.textContent = 'Could not access camera. Please allow camera permissions.';
+                errorDiv.style.display = 'block';
+            }
+        }
+
+        function stopReelCamera() {
+            if (reelCameraStream) {
+                reelCameraStream.getTracks().forEach(track => track.stop());
+                reelCameraStream = null;
+            }
+            if (reelRecordingInterval) {
+                clearInterval(reelRecordingInterval);
+                reelRecordingInterval = null;
+            }
+            reelRecordingTime = 0;
+            document.getElementById('reelTimerText').textContent = '0:00';
+            document.getElementById('reelRecordingTimer').style.display = 'none';
+            document.getElementById('reelCameraPreview').srcObject = null;
+        }
+
+        function switchReelCamera() {
+            reelCurrentCamera = reelCurrentCamera === 'user' ? 'environment' : 'user';
+            stopReelCamera();
+            startReelCamera();
+        }
+
+        let currentReelFilter = 'none';
+
+        function applyReelFilter(filterName) {
+            currentReelFilter = filterName;
+            const video = document.getElementById('reelCameraPreview');
+            
+            // Remove active class from all filters
+            document.querySelectorAll('.filter-option').forEach(opt => {
+                opt.classList.remove('active');
+            });
+            
+            // Add active class to selected filter
+            const selectedFilter = document.querySelector(`[data-filter="${filterName}"]`);
+            if (selectedFilter) {
+                selectedFilter.classList.add('active');
+            }
+            
+            // Apply filter
+            switch(filterName) {
+                case 'none':
+                    video.style.filter = 'none';
+                    break;
+                case 'vintage':
+                    video.style.filter = 'sepia(0.5) contrast(1.2) brightness(0.9)';
+                    break;
+                case 'vivid':
+                    video.style.filter = 'saturate(1.8) contrast(1.2)';
+                    break;
+                case 'cool':
+                    video.style.filter = 'hue-rotate(180deg) saturate(1.2)';
+                    break;
+                case 'warm':
+                    video.style.filter = 'sepia(0.3) saturate(1.4) brightness(1.1)';
+                    break;
+                case 'bw':
+                    video.style.filter = 'grayscale(1) contrast(1.1)';
+                    break;
+                case 'dramatic':
+                    video.style.filter = 'contrast(1.5) brightness(0.9) saturate(1.3)';
+                    break;
+                case 'sunset':
+                    video.style.filter = 'sepia(0.4) hue-rotate(330deg) saturate(1.5)';
+                    break;
+                case 'bright':
+                    video.style.filter = 'brightness(1.3) contrast(1.1) saturate(1.2)';
+                    break;
+                case 'blur':
+                    video.style.filter = 'blur(3px)';
+                    break;
+                default:
+                    video.style.filter = 'none';
+            }
+        }
+
+        function openReelGallery() {
+            document.getElementById('reelGalleryInput').click();
+        }
+
+        async function toggleReelFlash() {
+            if (!reelCameraStream) {
+                alert('Camera not ready');
+                return;
+            }
+
+            // Flash only works on back camera (environment)
+            if (reelCurrentCamera === 'user') {
+                alert('Flash is only available on the back camera');
+                return;
+            }
+
+            reelFlashEnabled = !reelFlashEnabled;
+            const flashIcon = document.getElementById('flashIcon');
+            const flashBtn = document.getElementById('flashToggleBtn');
+
+            if (reelFlashEnabled) {
+                await enableReelFlash();
+                flashIcon.style.color = '#FFD700';
+                flashBtn.style.background = 'rgba(255, 215, 0, 0.3)';
+            } else {
+                await disableReelFlash();
+                flashIcon.style.color = 'white';
+                flashBtn.style.background = 'rgba(255, 255, 255, 0.2)';
+            }
+        }
+
+        async function enableReelFlash() {
+            try {
+                const track = reelCameraStream.getVideoTracks()[0];
+                const capabilities = track.getCapabilities();
+                
+                if (capabilities.torch) {
+                    await track.applyConstraints({
+                        advanced: [{ torch: true }]
+                    });
+                } else {
+                    console.log('Flash not supported on this device');
+                }
+            } catch (error) {
+                console.error('Flash error:', error);
+            }
+        }
+
+        async function disableReelFlash() {
+            try {
+                const track = reelCameraStream.getVideoTracks()[0];
+                await track.applyConstraints({
+                    advanced: [{ torch: false }]
+                });
+            } catch (error) {
+                console.error('Flash error:', error);
+            }
+        }
+
+        async function handleReelGallerySelection(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            try {
+                // Validate file size (max 100MB)
+                const maxSize = 100 * 1024 * 1024;
+                if (file.size > maxSize) {
+                    alert('File is too large. Maximum size is 100MB.');
+                    return;
+                }
+
+                // Show loading state
+                const errorDiv = document.getElementById('reelCameraError');
+                errorDiv.style.display = 'none';
+                
+                // Stop camera stream
+                stopReelCamera();
+
+                // Preview the selected media
+                const videoPreview = document.getElementById('reelCameraPreview');
+                const fileUrl = URL.createObjectURL(file);
+                videoPreview.srcObject = null;
+                videoPreview.src = fileUrl;
+                videoPreview.controls = false;
+                videoPreview.muted = false;
+                videoPreview.play();
+
+                // Convert to base64 and upload
+                const reader = new FileReader();
+                reader.onloadend = async () => {
+                    try {
+                        const base64Data = reader.result;
+                        const profileData = JSON.parse(localStorage.getItem('userProfile') || '{}');
+                        
+                        // Show uploading message
+                        errorDiv.textContent = 'Uploading...';
+                        errorDiv.style.background = '#dbeafe';
+                        errorDiv.style.color = '#1e40af';
+                        errorDiv.style.borderLeft = '4px solid #3b82f6';
+                        errorDiv.style.display = 'block';
+
+                        let result;
+                        if (file.type.startsWith('video/')) {
+                            const videoData = {
+                                video: base64Data,
+                                caption: 'Uploaded from gallery',
+                                profile_picture: profileData.profile_picture || profileData.profilePicture || ''
+                            };
+                            result = await coshinAPI.uploadVideo(videoData);
+                        } else {
+                            const photoData = {
+                                photo: base64Data,
+                                caption: 'Uploaded from gallery',
+                                profile_picture: profileData.profile_picture || profileData.profilePicture || ''
+                            };
+                            result = await coshinAPI.uploadPhoto(photoData);
+                        }
+
+                        if (result.success) {
+                            alert('Uploaded successfully!');
+                            closeReelCameraModal();
+                            loadReels();
+                        } else {
+                            throw new Error(result.error || 'Upload failed');
+                        }
+                    } catch (error) {
+                        console.error('Upload error:', error);
+                        errorDiv.textContent = 'Upload failed: ' + error.message;
+                        errorDiv.style.background = '#fee2e2';
+                        errorDiv.style.color = '#dc2626';
+                        errorDiv.style.borderLeft = '4px solid #dc2626';
+                        errorDiv.style.display = 'block';
+                    }
+                };
+                reader.readAsDataURL(file);
+
+            } catch (error) {
+                console.error('File selection error:', error);
+                alert('Failed to process file: ' + error.message);
+            } finally {
+                // Reset file input
+                event.target.value = '';
+            }
+        }
+
+        function startReelRecording() {
+            if (!reelCameraStream) {
+                alert('Camera not ready');
+                return;
+            }
+
+            reelRecordedChunks = [];
+            reelRecordingTime = 0;
+
+            // Try different MIME types
+            let mimeType = 'video/webm;codecs=vp9';
+            if (!MediaRecorder.isTypeSupported(mimeType)) {
+                mimeType = 'video/webm;codecs=vp8';
+            }
+            if (!MediaRecorder.isTypeSupported(mimeType)) {
+                mimeType = 'video/webm';
+            }
+
+            try {
+                reelMediaRecorder = new MediaRecorder(reelCameraStream, { mimeType });
+
+                reelMediaRecorder.ondataavailable = (event) => {
+                    if (event.data && event.data.size > 0) {
+                        reelRecordedChunks.push(event.data);
+                    }
+                };
+
+                reelMediaRecorder.onstop = () => {
+                    const blob = new Blob(reelRecordedChunks, { type: mimeType });
+                    uploadRecordedReel(blob);
+                };
+
+                reelMediaRecorder.start();
+                
+                // Update UI
+                document.getElementById('startReelRecording').style.display = 'none';
+                document.getElementById('stopReelRecording').style.display = 'flex';
+                document.getElementById('switchReelCamera').disabled = true;
+                document.getElementById('reelRecordingTimer').style.display = 'flex';
+
+                // Start timer
+                reelRecordingInterval = setInterval(() => {
+                    reelRecordingTime++;
+                    const minutes = Math.floor(reelRecordingTime / 60);
+                    const seconds = reelRecordingTime % 60;
+                    document.getElementById('reelTimerText').textContent = 
+                        `${minutes}:${seconds.toString().padStart(2, '0')}`;
+                }, 1000);
+
+            } catch (error) {
+                console.error('Recording error:', error);
+                alert('Failed to start recording: ' + error.message);
+            }
+        }
+
+        function stopReelRecording() {
+            if (reelMediaRecorder && reelMediaRecorder.state !== 'inactive') {
+                reelMediaRecorder.stop();
+                
+                // Stop timer
+                if (reelRecordingInterval) {
+                    clearInterval(reelRecordingInterval);
+                    reelRecordingInterval = null;
+                }
+
+                // Update UI
+                document.getElementById('startReelRecording').style.display = 'flex';
+                document.getElementById('stopReelRecording').style.display = 'none';
+                document.getElementById('switchReelCamera').disabled = false;
+                document.getElementById('reelRecordingTimer').style.display = 'none';
+            }
+        }
+
+        async function uploadRecordedReel(blob) {
+            try {
+                // Show loading state
+                document.getElementById('stopReelRecording').disabled = true;
+                document.getElementById('stopReelRecording').textContent = 'Uploading...';
+
+                // Convert blob to base64
+                const reader = new FileReader();
+                reader.readAsDataURL(blob);
+                
+                reader.onloadend = async () => {
+                    const base64Video = reader.result;
+                    
+                    const profileData = JSON.parse(localStorage.getItem('userProfile') || '{}');
+                    const videoData = {
+                        video: base64Video,
+                        caption: 'Recorded from camera',
+                        profile_picture: profileData.profile_picture || profileData.profilePicture || ''
+                    };
+
+                    const result = await coshinAPI.uploadVideo(videoData);
+                    
+                    if (result.success) {
+                        alert('Reel uploaded successfully!');
+                        closeReelCameraModal();
+                        // Refresh reels
+                        loadReels();
+                    } else {
+                        throw new Error(result.error || 'Upload failed');
+                    }
+                };
+
+                reader.onerror = () => {
+                    throw new Error('Failed to read video file');
+                };
+
+            } catch (error) {
+                console.error('Upload error:', error);
+                alert('Failed to upload reel: ' + error.message);
+                document.getElementById('stopReelRecording').disabled = false;
+                document.getElementById('stopReelRecording').textContent = 'Stop Recording';
+            }
+        }
+
+        // Close modal when clicking outside
+        document.addEventListener('DOMContentLoaded', () => {
+            const modal = document.getElementById('reelCameraModal');
+            if (modal) {
+                modal.addEventListener('click', (event) => {
+                    if (event.target === modal) {
+                        closeReelCameraModal();
+                    }
+                });
+            }
+        });
+    </script>
+
+    <!-- Reel Camera Modal - Full Screen -->
+    <div id="reelCameraModal" class="upload-modal">
+        <div class="fullscreen-camera-container">
+            <video id="reelCameraPreview" autoplay playsinline muted></video>
+            
+            <div class="camera-overlay">
+                <!-- Top Bar -->
+                <div class="camera-top-bar">
+                    <button class="camera-close-btn" onclick="closeReelCameraModal()">
+                        <i class="fa-solid fa-xmark"></i>
+                    </button>
+                    <div id="reelRecordingTimer" class="camera-timer" style="display: none;">
+                        <span class="recording-dot"></span>
+                        <span id="reelTimerText">0:00</span>
+                    </div>
+                    <button id="flashToggleBtn" class="camera-close-btn" onclick="toggleReelFlash()" title="Toggle flash">
+                        <i class="fa-solid fa-bolt" id="flashIcon"></i>
+                    </button>
+                </div>
+
+                <!-- Error Message -->
+                <div id="reelCameraError" class="camera-error" style="display: none; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); max-width: 90%; z-index: 10;"></div>
+
+                <!-- Filter Sidebar -->
+                <div class="filter-sidebar">
+                    <div class="filter-option active" onclick="applyReelFilter('none')" data-filter="none">
+                        <div class="filter-preview">
+                            <span class="filter-icon">✨</span>
+                        </div>
+                        <div class="filter-name">Normal</div>
+                    </div>
+                    <div class="filter-option" onclick="applyReelFilter('vintage')" data-filter="vintage">
+                        <div class="filter-preview" style="filter: sepia(0.5) contrast(1.2) brightness(0.9);">
+                            <span class="filter-icon">📷</span>
+                        </div>
+                        <div class="filter-name">Vintage</div>
+                    </div>
+                    <div class="filter-option" onclick="applyReelFilter('vivid')" data-filter="vivid">
+                        <div class="filter-preview" style="filter: saturate(1.8) contrast(1.2);">
+                            <span class="filter-icon">🌈</span>
+                        </div>
+                        <div class="filter-name">Vivid</div>
+                    </div>
+                    <div class="filter-option" onclick="applyReelFilter('cool')" data-filter="cool">
+                        <div class="filter-preview" style="filter: hue-rotate(180deg) saturate(1.2);">
+                            <span class="filter-icon">❄️</span>
+                        </div>
+                        <div class="filter-name">Cool</div>
+                    </div>
+                    <div class="filter-option" onclick="applyReelFilter('warm')" data-filter="warm">
+                        <div class="filter-preview" style="filter: sepia(0.3) saturate(1.4) brightness(1.1);">
+                            <span class="filter-icon">☀️</span>
+                        </div>
+                        <div class="filter-name">Warm</div>
+                    </div>
+                    <div class="filter-option" onclick="applyReelFilter('bw')" data-filter="bw">
+                        <div class="filter-preview" style="filter: grayscale(1) contrast(1.1);">
+                            <span class="filter-icon">⚫</span>
+                        </div>
+                        <div class="filter-name">B&W</div>
+                    </div>
+                    <div class="filter-option" onclick="applyReelFilter('dramatic')" data-filter="dramatic">
+                        <div class="filter-preview" style="filter: contrast(1.5) brightness(0.9) saturate(1.3);">
+                            <span class="filter-icon">🎭</span>
+                        </div>
+                        <div class="filter-name">Drama</div>
+                    </div>
+                    <div class="filter-option" onclick="applyReelFilter('sunset')" data-filter="sunset">
+                        <div class="filter-preview" style="filter: sepia(0.4) hue-rotate(330deg) saturate(1.5);">
+                            <span class="filter-icon">🌅</span>
+                        </div>
+                        <div class="filter-name">Sunset</div>
+                    </div>
+                    <div class="filter-option" onclick="applyReelFilter('bright')" data-filter="bright">
+                        <div class="filter-preview" style="filter: brightness(1.3) contrast(1.1) saturate(1.2);">
+                            <span class="filter-icon">💡</span>
+                        </div>
+                        <div class="filter-name">Bright</div>
+                    </div>
+                    <div class="filter-option" onclick="applyReelFilter('blur')" data-filter="blur">
+                        <div class="filter-preview" style="filter: blur(3px);">
+                            <span class="filter-icon">🌫️</span>
+                        </div>
+                        <div class="filter-name">Blur</div>
+                    </div>
+                </div>
+
+                <!-- Bottom Controls -->
+                <div class="camera-bottom-bar">
+                    <!-- Switch Camera Button -->
+                    <button id="switchReelCamera" onclick="switchReelCamera()" class="camera-switch-btn">
+                        <i class="fa-solid fa-camera-rotate"></i>
+                    </button>
+
+                    <!-- Record Button -->
+                    <button id="startReelRecording" onclick="startReelRecording()" class="camera-control-btn">
+                        <i class="fa-solid fa-circle" style="font-size: 32px;"></i>
+                    </button>
+                    <button id="stopReelRecording" onclick="stopReelRecording()" class="camera-control-btn recording" style="display: none;">
+                        <i class="fa-solid fa-stop"></i>
+                    </button>
+
+                    <!-- Gallery Button -->
+                    <button onclick="openReelGallery()" class="camera-switch-btn" title="Choose from gallery">
+                        <i class="fa-solid fa-image"></i>
+                    </button>
+                </div>
+
+                <!-- Hidden File Input -->
+                <input type="file" id="reelGalleryInput" accept="video/*,image/*" capture="user" style="display: none;" onchange="handleReelGallerySelection(event)">
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>

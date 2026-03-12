@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Products - COSHIN</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+    <script src="coshin-api.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Helvetica, Arial, sans-serif;
+            font-size: 14px;
+            line-height: 1.34;
+            font-weight: 400;
+            color: #1c1e21;
+            background: #fafafa;
+            padding-bottom: 80px;
+        }
+
+        .products-header {
+            position: relative;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 60px 20px 40px;
+            text-align: center;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        .products-header h1 {
+            font-size: 32px;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+
+        .products-header p {
+            font-size: 14px;
+            opacity: 0.95;
+        }
+
+        .back-btn {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background: rgba(255,255,255,0.2);
+            color: white;
+            border: none;
+            padding: 10px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s;
+            z-index: 10;
+        }
+
+        .back-btn:hover {
+            background: rgba(255,255,255,0.3);
+            transform: translateX(-2px);
+        }
+
+        .edit-shop-btn {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(255,255,255,0.2);
+            color: white;
+            border: none;
+            padding: 10px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s;
+            z-index: 10;
+        }
+
+        .edit-shop-btn:hover {
+            background: rgba(255,255,255,0.3);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 24px;
+            margin-top: 30px;
+        }
+
+        .product-card {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .product-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+        }
+
+        .product-image {
+            width: 100%;
+            height: 240px;
+            object-fit: cover;
+            background: #f0f0f0;
+        }
+
+        .product-info {
+            padding: 16px;
+        }
+
+        .product-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 8px;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .product-description {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 12px;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .product-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 12px;
+            padding-top: 12px;
+            border-top: 1px solid #eee;
+        }
+
+        .product-price {
+            font-size: 22px;
+            font-weight: 700;
+            color: #0EA5E9;
+        }
+
+        .product-category {
+            display: inline-block;
+            padding: 4px 10px;
+            background: #e0f2fe;
+            color: #0284c7;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .product-condition {
+            margin-top: 8px;
+            font-size: 13px;
+            color: #888;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 80px 20px;
+            color: #999;
+        }
+
+        .empty-state i {
+            font-size: 80px;
+            color: #ddd;
+            margin-bottom: 20px;
+        }
+
+        .empty-state h2 {
+            font-size: 24px;
+            color: #666;
+            margin-bottom: 12px;
+        }
+
+        .empty-state p {
+            font-size: 16px;
+            margin-bottom: 24px;
+        }
+
+        .add-product-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 14px 28px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            border-radius: 25px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+
+        .add-product-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .filter-bar {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            flex-wrap: wrap;
+            margin-bottom: 24px;
+        }
+
+        .filter-bar select {
+            padding: 10px 14px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            background: white;
+            font-size: 14px;
+            cursor: pointer;
+        }
+
+        .product-count {
+            color: #666;
+            font-size: 14px;
+            margin-left: auto;
+        }
+
+        @media (max-width: 768px) {
+            .products-header h1 {
+                font-size: 28px;
+            }
+            
+            .products-grid {
+                grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+                gap: 16px;
+            }
+            
+            .back-btn {
+                top: 10px;
+                left: 10px;
+                padding: 8px 12px;
+                font-size: 14px;
+            }
+            
+            .edit-shop-btn {
+                top: 10px;
+                right: 10px;
+                padding: 8px 12px;
+                font-size: 14px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="products-header">
+        <button class="back-btn" onclick="window.history.back()">
+            <i class="fa-solid fa-arrow-left"></i> Back
+        </button>
+        <button class="edit-shop-btn" onclick="editShopName()">
+            <i class="fa-solid fa-pen"></i> Edit Shop
+        </button>
+        <h1 id="shopTitle"><i class="fa-solid fa-store"></i> My Shop</h1>
+        <p id="shopDescription">Browse all available products</p>
+    </div>
+
+    <div class="container">
+        <div class="filter-bar">
+            <select id="categoryFilter" onchange="filterProducts()">
+                <option value="all">All Categories</option>
+                <option value="Electronics">Electronics</option>
+                <option value="Fashion">Fashion</option>
+                <option value="Home">Home & Garden</option>
+                <option value="Sports">Sports</option>
+                <option value="Books">Books</option>
+                <option value="Other">Other</option>
+            </select>
+            
+            <select id="conditionFilter" onchange="filterProducts()">
+                <option value="all">All Conditions</option>
+                <option value="New">New</option>
+                <option value="Like New">Like New</option>
+                <option value="Good">Good</option>
+                <option value="Fair">Fair</option>
+            </select>
+            
+            <select id="sortBy" onchange="sortProducts()">
+                <option value="newest">Newest First</option>
+                <option value="oldest">Oldest First</option>
+                <option value="price-low">Price: Low to High</option>
+                <option value="price-high">Price: High to Low</option>
+            </select>
+            
+            <span class="product-count" id="productCount">0 products</span>
+        </div>
+
+        <div id="productsGrid" class="products-grid">
+            <!-- Products will be loaded here -->
+        </div>
+
+        <div id="emptyState" class="empty-state" style="display: none;">
+            <i class="fa-solid fa-box-open"></i>
+            <h2>No Products Yet</h2>
+            <p>Start selling by adding your first product!</p>
+            <a href="mylistings.html" class="add-product-btn">
+                <i class="fa-solid fa-plus"></i> Add Product
+            </a>
+        </div>
+    </div>
+
+    <script>
+        let allProducts = [];
+
+        function getShopSettings() {
+            return JSON.parse(localStorage.getItem('shopSettings') || '{"name": "My Shop", "description": "Browse all available products"}');
+        }
+
+        function loadShopInfo() {
+            try {
+                const settings = getShopSettings();
+                const shopName = settings.name || 'My Shop';
+                const shopDesc = settings.description || 'Browse all available products';
+                
+                // Safely update the title with HTML
+                const titleElement = document.getElementById('shopTitle');
+                if (titleElement) {
+                    titleElement.innerHTML = '<i class="fa-solid fa-store"></i> ' + escapeHtml(shopName);
+                }
+                
+                // Update description
+                const descElement = document.getElementById('shopDescription');
+                if (descElement) {
+                    descElement.textContent = shopDesc;
+                }
+            } catch (error) {
+                console.error('Error loading shop info:', error);
+            }
+        }
+
+        function editShopName() {
+            try {
+                const settings = getShopSettings();
+                const newName = prompt('Enter your shop name:', settings.name || 'My Shop');
+                
+                if (newName !== null && newName.trim()) {
+                    const newDescription = prompt('Enter shop description (optional):', settings.description || '');
+                    
+                    const updatedSettings = {
+                        name: newName.trim(),
+                        description: newDescription !== null ? newDescription.trim() : (settings.description || ''),
+                        updatedAt: new Date().toISOString()
+                    };
+                    
+                    localStorage.setItem('shopSettings', JSON.stringify(updatedSettings));
+                    loadShopInfo();
+                    alert('Shop settings updated successfully!');
+                }
+            } catch (error) {
+                console.error('Error editing shop name:', error);
+                alert('Failed to update shop settings. Please try again.');
+            }
+        }
+
+        function loadProducts() {
+            allProducts = JSON.parse(localStorage.getItem('userProducts')) || [];
+            displayProducts(allProducts);
+            updateProductCount(allProducts.length);
+        }
+
+        function displayProducts(products) {
+            const grid = document.getElementById('productsGrid');
+            const emptyState = document.getElementById('emptyState');
+
+            if (products.length === 0) {
+                grid.style.display = 'none';
+                emptyState.style.display = 'block';
+                return;
+            }
+
+            grid.style.display = 'grid';
+            emptyState.style.display = 'none';
+
+            grid.innerHTML = products.map((product, index) => {
+                const price = parseFloat(product.price) || 0;
+                const formattedPrice = '$' + price.toFixed(2);
+                const image = product.images && product.images.length > 0 
+                    ? product.images[0] 
+                    : 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="300" height="300"%3E%3Crect width="300" height="300" fill="%23f0f0f0"/%3E%3Ctext x="50%25" y="50%25" text-anchor="middle" dy=".3em" fill="%23999" font-size="18"%3ENo Image%3C/text%3E%3C/svg%3E';
+
+                return `
+                    <div class="product-card" onclick="viewProduct(${index})">
+                        <img src="${image}" alt="${escapeHtml(product.title)}" class="product-image" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=\\'http://www.w3.org/2000/svg\\' width=\\'300\\' height=\\'300\\'%3E%3Crect width=\\'300\\' height=\\'300\\' fill=\\'%23f0f0f0\\'/%3E%3Ctext x=\\'50%25\\' y=\\'50%25\\' text-anchor=\\'middle\\' dy=\\'.3em\\' fill=\\'%23999\\' font-size=\\'18\\'%3ENo Image%3C/text%3E%3C/svg%3E'">
+                        <div class="product-info">
+                            <span class="product-category">${escapeHtml(product.category || 'Other')}</span>
+                            <h3 class="product-title">${escapeHtml(product.title)}</h3>
+                            <p class="product-description">${escapeHtml(product.description || '')}</p>
+                            <div class="product-footer">
+                                <span class="product-price">${formattedPrice}</span>
+                                <span class="product-condition">${escapeHtml(product.condition || 'N/A')}</span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function escapeHtml(str) {
+            const div = document.createElement('div');
+            div.textContent = str || '';
+            return div.innerHTML;
+        }
+
+        function filterProducts() {
+            const categoryFilter = document.getElementById('categoryFilter').value;
+            const conditionFilter = document.getElementById('conditionFilter').value;
+
+            let filtered = allProducts;
+
+            if (categoryFilter !== 'all') {
+                filtered = filtered.filter(p => p.category === categoryFilter);
+            }
+
+            if (conditionFilter !== 'all') {
+                filtered = filtered.filter(p => p.condition === conditionFilter);
+            }
+
+            displayProducts(filtered);
+            updateProductCount(filtered.length);
+        }
+
+        function sortProducts() {
+            const sortBy = document.getElementById('sortBy').value;
+            let sorted = [...allProducts];
+
+            switch(sortBy) {
+                case 'newest':
+                    sorted.reverse();
+                    break;
+                case 'oldest':
+                    // Already in original order
+                    break;
+                case 'price-low':
+                    sorted.sort((a, b) => parseFloat(a.price) - parseFloat(b.price));
+                    break;
+                case 'price-high':
+                    sorted.sort((a, b) => parseFloat(b.price) - parseFloat(a.price));
+                    break;
+            }
+
+            displayProducts(sorted);
+        }
+
+        function updateProductCount(count) {
+            const countEl = document.getElementById('productCount');
+            countEl.textContent = count + (count === 1 ? ' product' : ' products');
+        }
+
+        function viewProduct(index) {
+            // Store the product index and redirect to a product detail page
+            localStorage.setItem('selectedProductIndex', index);
+            // For now, we can show an alert or you can create a product detail page
+            const product = allProducts[index];
+            alert(`Product: ${product.title}\nPrice: $${product.price}\nCondition: ${product.condition}\n\nClick OK to continue browsing.`);
+        }
+
+        // Load products on page load
+        window.addEventListener('DOMContentLoaded', function() {
+            loadShopInfo();
+            loadProducts();
+        });
+    </script>
+</body>
+</html>
